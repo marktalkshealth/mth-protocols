@@ -87,6 +87,10 @@
         ["Study time","Video time","Level"].forEach(function(lbl){ var i=lines.indexOf(lbl); if(i>-1&&lines[i+1]) facts.push([lbl,lines[i+1]]); });
         var p=[].slice.call(info.querySelectorAll("p,.learnworlds-main-text")).map(txt).filter(function(t){return t.length>40&&!/^Add your/i.test(t);})[0]; if(p) sub=p;
       }
+      /* use the course's catalog thumbnail (set in LearnWorlds course settings) over the page-builder picture */
+      var CIMG={"new-autoimmune":"6eec355b2cfe342f0ac9f7061029e4e7.png","autoimmune":"fe26b6c96fac54ea10f9208392449ea2.png","total-body-healing":"85077c63e15333e491250e4536f2ee4c.png"};
+      var slug=path.replace(/^\/course\//,"").split("/")[0];
+      if(CIMG[slug]) img='url("https://api.us-e1.learnworlds.com/imagefile//'+CIMG[slug]+'?client_id=6ac2bb5648140f5f6d8ca00c&width=1000&height=0")';
       var mods=[].map.call(chapters,function(c){
         var units=c.querySelector(".lw-course-contents-units");
         return {num:txt(c.querySelector(".lw-course-chapter-num")),name:txt(c.querySelector(".learnworlds-heading3-small"))||txt(c.querySelector("h3:not(.lw-course-chapter-circle)")),units:units,count:units?units.querySelectorAll(".lw-course-contents-unit").length:0};
