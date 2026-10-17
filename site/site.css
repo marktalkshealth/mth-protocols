@@ -1,0 +1,110 @@
+/* =================================================================
+   MARK TALKS HEALTH — SITE-WIDE DESIGN SYSTEM (LearnWorlds skin)
+   Loaded on every page from Netlify. Edit here, every page updates.
+================================================================= */
+:root{
+  --mth-bg:#f7f1e7;--mth-bg2:#efe5d6;--mth-card:#fffcf7;--mth-ink:#2b2724;--mth-muted:#6e6259;--mth-faint:#a8998b;
+  --mth-line:#e7dccb;--mth-terra:#c0623f;--mth-terraD:#a8522f;--mth-terraS:#f6dccf;--mth-gold:#b8924a;--mth-sage:#7a8f6e;--mth-dark:#2b2724;
+  --mth-serif:'Cormorant Garamond',Georgia,serif;--mth-sans:Inter,system-ui,-apple-system,Segoe UI,sans-serif;
+}
+
+/* ---------- base ---------- */
+body{background:var(--mth-bg)!important;-webkit-font-smoothing:antialiased}
+.learnworlds-section.lw-light-bg,.learnworlds-section.lw-body-bg:not(.lw-topbar){background-color:var(--mth-bg)!important}
+.learnworlds-heading1,.learnworlds-heading2,.learnworlds-heading-large{font-family:var(--mth-serif)!important;font-weight:500!important;letter-spacing:-.01em;color:var(--mth-ink)!important}
+.learnworlds-main-text,.learnworlds-main-text-normal,.learnworlds-main-text-large{font-family:var(--mth-sans)!important}
+
+/* ---------- buttons everywhere ---------- */
+.learnworlds-button{font-family:var(--mth-sans)!important;font-weight:600!important;border-radius:999px!important;letter-spacing:0!important;text-transform:none!important;transition:background .15s,transform .15s,box-shadow .15s}
+.learnworlds-button-solid-accent1,.learnworlds-button-solid-accent2,.learnworlds-button-solid-brand,.product-card-enroll-button{background:var(--mth-terra)!important;border-color:var(--mth-terra)!important;color:#fff!important}
+.learnworlds-button-solid-accent1:hover,.learnworlds-button-solid-accent2:hover,.learnworlds-button-solid-brand:hover,.product-card-enroll-button:hover{background:var(--mth-terraD)!important;transform:translateY(-1px);box-shadow:0 10px 22px rgba(192,98,63,.28)}
+
+/* ---------- app bar (top navigation) ---------- */
+.lw-topbar{background:rgba(247,241,231,.92)!important;backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--mth-line)!important;box-shadow:none!important}
+.lw-topbar .learnworlds-section-content{padding-top:8px!important;padding-bottom:8px!important}
+.lw-topbar .lw-logo{max-height:34px!important;width:auto!important}
+.lw-topbar .lw-topbar-option-link{font-family:var(--mth-sans)!important;font-size:14px!important;font-weight:600!important;color:var(--mth-ink)!important;padding:8px 12px!important;border-radius:999px;transition:background .15s}
+.lw-topbar .lw-topbar-option-link:hover{background:var(--mth-terraS)!important;color:var(--mth-terraD)!important}
+.lw-topbar .lw-topbar-option-link svg,.lw-topbar .lw-topbar-option-link i{color:var(--mth-terra)!important}
+.lw-topbar-submenu{background:var(--mth-card)!important;border:1px solid var(--mth-line)!important;border-radius:14px!important;box-shadow:0 18px 40px rgba(43,39,36,.12)!important;padding:6px!important}
+.mobile-nav-menu-link,.mobile-nav-menu-l,.subMenu-toggle{font-family:var(--mth-sans)!important;font-weight:600!important;color:var(--mth-ink)!important}
+
+/* ---------- course cards (catalog, homepage lists) ---------- */
+.lw-course-card{background:transparent!important;padding:6px!important}
+.lw-course-card>.learnworlds-image{border-radius:18px 18px 0 0!important;overflow:hidden;aspect-ratio:16/10;height:auto!important;background-size:cover!important}
+.lw-course-card>.flex-item{background:var(--mth-card)!important;border:1px solid var(--mth-line);border-top:0;border-radius:0 0 18px 18px;padding:16px 16px 18px!important;box-shadow:0 16px 36px rgba(43,39,36,.07)}
+.lw-course-card h3{font-family:var(--mth-sans)!important;font-weight:700!important;font-size:18px!important;letter-spacing:-.01em;color:var(--mth-ink)!important;line-height:1.25!important}
+.lw-course-card .learnworlds-overline-text{font-family:var(--mth-sans)!important;font-size:11px!important;letter-spacing:.16em!important;color:var(--mth-muted)!important}
+.lw-course-card-progress{background:var(--mth-bg2)!important;height:6px!important;border-radius:999px!important;overflow:hidden}
+.lw-course-card-progress-bar{background:linear-gradient(90deg,var(--mth-gold),var(--mth-terra))!important;border-radius:999px!important}
+.lw-course-card .mt-3rem{margin-top:14px!important}
+.lw-course-card .mt-2rem{margin-top:10px!important}
+.lw-course-card:hover>.learnworlds-image{filter:saturate(1.08)}
+
+/* catalog filter pills */
+.lw-catalog-filters a,.lw-filter-item,.learnworlds-catalog-filter{font-family:var(--mth-sans)!important;border-radius:999px!important}
+
+/* ---------- LearnWorlds footer replaced by ours ---------- */
+html.mth-ready .lw-footer{display:none!important}
+.mthf{background:var(--mth-dark);color:#e9dfd2;font-family:var(--mth-sans);padding:36px 20px 28px}
+.mthf .w{max-width:1080px;margin:0 auto;display:grid;gap:22px}
+.mthf .brand{font-family:var(--mth-serif);font-size:26px;color:#fff}
+.mthf .brand small{display:block;font-family:var(--mth-sans);font-size:13px;color:#b9ad9f;margin-top:6px;max-width:320px;line-height:1.5}
+.mthf nav{display:flex;flex-wrap:wrap;gap:8px}
+.mthf nav a{color:#fff;text-decoration:none;font-size:14px;font-weight:600;padding:8px 14px;border:1px solid rgba(255,255,255,.16);border-radius:999px}
+.mthf nav a:hover{background:rgba(255,255,255,.08)}
+.mthf .fine{font-size:11.5px;color:#9d9083;line-height:1.6;border-top:1px solid rgba(255,255,255,.1);padding-top:16px}
+@media(min-width:800px){.mthf .w{grid-template-columns:1fr auto;align-items:center}.mthf .fine{grid-column:1/-1}}
+
+/* ---------- page takeovers: hide LearnWorlds' sections until ours is in ---------- */
+html.mth-r-home body .js-learnworlds-section:not(.lw-topbar):not(.lw-footer){display:none!important}
+html.mth-r-social .social-app-page{display:none!important}
+html.mth-r-funnel body .js-learnworlds-section.mth-old{display:none!important}
+html.mth-r-funnel:not(.mth-ready) body .js-learnworlds-section:not(.lw-topbar){visibility:hidden}
+.mth-mount{display:block;width:100%}
+
+/* ---------- course pages (compact hero + module rail) ---------- */
+html.mth-course .mth-hide{display:none!important}
+.mthc{font-family:var(--mth-sans);color:var(--mth-ink);background:var(--mth-bg);padding:28px 0 40px}
+.mthc *{box-sizing:border-box}
+.mthc .w{max-width:1080px;margin:0 auto;padding:0 20px}
+.mthc .hero{display:grid;gap:22px;align-items:center;background:var(--mth-card);border:1px solid var(--mth-line);border-radius:22px;padding:16px;box-shadow:0 20px 50px rgba(43,39,36,.08)}
+.mthc .img{aspect-ratio:16/10;border-radius:16px;background:var(--mth-bg2) center/cover no-repeat}
+.mthc .k{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--mth-terra)}
+.mthc h1{font-family:var(--mth-serif);font-weight:500;font-size:clamp(36px,8vw,52px);line-height:1.02;letter-spacing:-.01em;margin:8px 0 10px;color:var(--mth-ink)}
+.mthc .sub{color:var(--mth-muted);font-size:15.5px;line-height:1.55;margin:0 0 14px}
+.mthc .facts{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
+.mthc .facts span{font-size:12.5px;font-weight:600;background:var(--mth-bg);border:1px solid var(--mth-line);border-radius:999px;padding:6px 11px;color:var(--mth-muted)}
+.mthc .facts b{color:var(--mth-ink);font-weight:600}
+.mthc .cta .learnworlds-button{background:var(--mth-terra)!important;border:0!important;color:#fff!important;font-size:16px!important;padding:15px 28px!important;box-shadow:0 10px 24px rgba(192,98,63,.28)}
+.mthc .cta .learnworlds-button *{color:#fff!important}
+.mthc .mh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:34px 0 12px}
+.mthc .mh h2{font-family:var(--mth-serif);font-weight:500;font-size:clamp(28px,6.5vw,38px);margin:0;line-height:1;color:var(--mth-ink)}
+.mthc .mh span{font-size:13px;color:var(--mth-muted)}
+.mthc .rail{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:8px 20px 10px;margin:0 -20px;scrollbar-width:none}
+.mthc .rail::-webkit-scrollbar{display:none}
+.mthc .mod{flex:0 0 46%;max-width:210px;scroll-snap-align:start;text-align:left;border:0;padding:0;background:none;cursor:pointer;font:inherit;color:inherit}
+.mthc .mod .t{position:relative;aspect-ratio:4/3;border-radius:16px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;overflow:hidden;transition:transform .18s,box-shadow .18s}
+.mthc .mod .t:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.28));pointer-events:none}
+.mthc .mod .n{font-family:var(--mth-serif);font-size:34px;font-weight:600;line-height:1;position:relative}
+.mthc .mod .nm{font-weight:700;font-size:15.5px;line-height:1.15;text-transform:capitalize;position:relative;z-index:1}
+.mthc .mod small{display:block;font-size:12px;color:var(--mth-muted);margin-top:7px}
+.mthc .mod.on .t{box-shadow:0 0 0 3px var(--mth-card),0 0 0 5px var(--mth-terra);transform:translateY(-2px)}
+.mthc .mod:hover .t{transform:translateY(-2px)}
+.mthc .panel{background:var(--mth-card);border:1px solid var(--mth-line);border-radius:18px;padding:8px 10px;margin-top:4px}
+.mthc .panel h3{font-family:var(--mth-serif);font-weight:500;font-size:24px;margin:8px 8px 4px;text-transform:capitalize;color:var(--mth-ink)}
+.mthc .lw-course-contents-unit{border:0!important;border-radius:10px;padding:10px 8px!important;margin:0;cursor:pointer;transition:background .15s}
+.mthc .lw-course-contents-unit + .lw-course-contents-unit{border-top:1px solid var(--mth-line)!important;border-radius:0}
+.mthc .lw-course-contents-unit:hover{background:var(--mth-terraS);border-radius:10px}
+.mthc .lw-contents-svg{color:var(--mth-terra)!important;width:22px!important;height:22px!important;flex:none}
+.mthc [data-testid="course-contents-unit-title"]{color:var(--mth-ink)!important;font-family:var(--mth-sans)!important;font-size:15px!important;font-weight:500!important;text-transform:capitalize}
+.mthc [data-testid="course-contents-unit-extra-info"]{color:var(--mth-faint)!important;font-family:var(--mth-sans)!important;font-size:13px!important}
+@media(min-width:800px){
+  .mthc{padding:44px 0 64px}
+  .mthc .hero{grid-template-columns:1fr 1.1fr;padding:22px;gap:34px}
+  .mthc .mod{flex-basis:180px}
+  .mthc .rail{margin:0;padding:8px 4px 10px}
+}
+
+/* ---------- community page: Healing Hub app frame ---------- */
+.mth-hub-frame{display:block;width:100%;border:0;height:calc(100vh - 64px);height:calc(100dvh - 64px);background:var(--mth-bg)}
