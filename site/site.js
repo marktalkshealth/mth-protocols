@@ -98,7 +98,7 @@
       var total=mods.reduce(function(a,m){return a+m.count;},0);
       var wrap=document.createElement("section"); wrap.className="mthc";
       wrap.innerHTML='<div class="w"><div class="hero"><div class="img" style="'+(img?'background-image:'+img.replace(/"/g,"&quot;"):'')+'"></div><div>'+
-        '<div class="k">Mark Talks Health</div><h1>'+esc(title)+'</h1>'+(sub?'<p class="sub">'+esc(sub)+'</p>':'')+
+        '<h1>'+esc(title)+'</h1>'+(sub?'<p class="sub">'+esc(sub)+'</p>':'')+
         '<div class="facts"><span><b>'+mods.length+'</b> modules</span><span><b>'+total+'</b> lessons</span>'+facts.map(function(f){return '<span>'+esc(f[0])+' · <b>'+esc(f[1])+'</b></span>';}).join("")+'</div><div class="cta"></div></div></div>'+
         '<div class="mh"><h2>Your modules</h2><span>Tap a module</span></div><div class="rail"></div><div class="panel"><h3></h3><div class="list"></div></div></div>';
       var rail=wrap.querySelector(".rail"), list=wrap.querySelector(".list"), ph=wrap.querySelector(".panel h3");
