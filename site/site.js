@@ -172,7 +172,22 @@
     try{ new MutationObserver(later).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["class"]}); }catch(e){}
   }
 
+  /* ---------------- dead links: the GLP-1 menu item points at a page that doesn't exist ---------------- */
+  var FIX={"/totalbodyhealing":"/course/total-body-healing"};
+  function fixLinks(){
+    document.addEventListener("click",function(e){
+      var a=e.target.closest&&e.target.closest("a"); if(!a) return;
+      var h=(a.getAttribute("href")||"").replace(/^https?:\/\/[^/]+/,"").replace(/\/+$/,"").toLowerCase();
+      var v=(a.getAttribute("data-interactive-link-var1")||"").toLowerCase();
+      var to=FIX[h]||FIX["/"+v]; if(!to) return;
+      e.preventDefault(); e.stopImmediatePropagation(); location.href=to;
+    },true);
+    function relabel(){ [].forEach.call(document.querySelectorAll('a[href$="/totalbodyhealing"],a[data-interactive-link-var1="totalbodyhealing"]'),function(a){ a.setAttribute("href",FIX["/totalbodyhealing"]); }); }
+    relabel(); setTimeout(relabel,1500); setTimeout(relabel,4000);
+  }
+
   ready(function(){
+    try{ fixLinks(); }catch(e){}
     try{ wordmark(); }catch(e){}
     try{ mobileMenu(); }catch(e){}
     try{
