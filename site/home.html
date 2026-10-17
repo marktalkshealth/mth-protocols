@@ -2,16 +2,17 @@
 <style>
 #mh{font-family:var(--mth-sans,Inter,system-ui,sans-serif);color:#2b2724;background:#f7f1e7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 #mh *{box-sizing:border-box;margin:0;padding:0}
-#mh a{color:inherit;text-decoration:none}
+#mh a,#mh a:visited{color:inherit!important;text-decoration:none!important}
+#mh .pcard h3,#mh .pcard p{color:inherit!important}#mh .pcard h3{color:#2b2724!important}#mh .pcard p{color:#6e6259!important}
 #mh .w{max-width:1120px;margin:0 auto;padding:0 20px}
 #mh .k{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#c0623f}
 #mh h1,#mh h2{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;letter-spacing:-.01em;line-height:1.02;color:#2b2724}
 #mh h1 em,#mh h2 em{font-style:italic;color:#c0623f}
 #mh h2{font-size:clamp(32px,7vw,46px);margin:8px 0 10px}
 #mh .lead{font-size:16.5px;color:#6e6259;line-height:1.6;max-width:580px}
-#mh .btn{display:inline-flex;align-items:center;gap:8px;background:#c0623f;color:#fff;font-weight:600;font-size:15.5px;padding:14px 24px;border-radius:999px;transition:background .15s,transform .15s,box-shadow .15s}
+#mh .btn{display:inline-flex;align-items:center;gap:8px;background:#c0623f;color:#fff!important;font-weight:600;font-size:15.5px;padding:14px 24px;border-radius:999px;transition:background .15s,transform .15s,box-shadow .15s}
 #mh .btn:hover{background:#a8522f;transform:translateY(-1px);box-shadow:0 10px 24px rgba(192,98,63,.3)}
-#mh .btn.ghost{background:#fffcf7;color:#2b2724;border:1px solid #e7dccb}
+#mh .btn.ghost{background:#fffcf7;color:#2b2724!important;border:1px solid #e7dccb}
 #mh .btn.ghost:hover{background:#fff;box-shadow:0 8px 20px rgba(43,39,36,.08)}
 #mh section{padding:56px 0}
 #mh .rv{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s}
@@ -58,7 +59,7 @@
 #mh .pcard p{font-size:14.5px;color:#6e6259;line-height:1.5;flex:1}
 #mh .pcard .ft{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
 #mh .pcard .pr2{font-weight:700;font-size:18px}
-#mh .pcard .go{font-size:14px;font-weight:600;color:#fff;background:#c0623f;padding:9px 16px;border-radius:999px}
+#mh .pcard .go{font-size:14px;font-weight:600;color:#fff!important;background:#c0623f;padding:9px 16px;border-radius:999px}
 #mh .pcard.soon{opacity:.75}#mh .pcard.soon .go{background:#a8998b}
 /* steps */
 #mh .dark{background:#2b2724;color:#efe6da}
