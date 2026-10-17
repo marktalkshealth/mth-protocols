@@ -35,41 +35,6 @@
 #g2 .hero h1{font-size:clamp(46px,12vw,76px);margin:12px 0 16px}
 #g2 .ticks{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:16px;font-size:13.5px;color:var(--muted)}
 #g2 .ticks span::before{content:"✓";color:var(--sage);font-weight:700;margin-right:6px}
-/* phone */
-#g2 .phwrap{position:relative;display:flex;flex-direction:column;align-items:center}
-#g2 .phone{width:min(290px,80vw);aspect-ratio:9/18.6;border-radius:42px;background:#111;padding:10px;box-shadow:0 34px 70px rgba(43,39,36,.25)}
-#g2 .scr{width:100%;height:100%;border-radius:33px;background:#fffcf7;color:#2b2724;overflow:hidden;position:relative;font-size:11px}
-#g2 .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:86px;height:22px;border-radius:12px;background:#111;z-index:3}
-#g2 .pane{position:absolute;inset:0;padding:38px 14px 56px;transition:opacity .4s,transform .4s;opacity:0;transform:translateX(16px);pointer-events:none}
-#g2 .pane.on{opacity:1;transform:none;pointer-events:auto}
-#g2 .pk{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#c0623f;font-weight:700}
-#g2 .ph{font-family:var(--serif);font-size:23px;line-height:1;margin:3px 0 10px}
-#g2 .pdays{display:flex;gap:4px;margin-bottom:10px}
-#g2 .pdays i{flex:1;aspect-ratio:1;border-radius:50%;border:1px solid #e7dccb;display:grid;place-items:center;font-style:normal;font-size:9px;font-weight:700;color:#a8998b}
-#g2 .pdays i.d{background:#e7ecdd;color:#7a8f6e;border-color:#d3dcc8}
-#g2 .pdays i.t{background:#c0623f;color:#fff;border-color:#c0623f}
-#g2 .pc{border:1px solid #e7dccb;border-radius:12px;padding:9px;margin-bottom:8px;background:#fff}
-#g2 .pr{display:flex;gap:9px;align-items:center}
-#g2 .ring{width:56px;height:56px;flex:none;position:relative}
-#g2 .ring svg{width:56px;height:56px;transform:rotate(-90deg)}
-#g2 .ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:12px;font-variant-numeric:tabular-nums}
-#g2 .pt{font-weight:700;font-size:11px}
-#g2 .ps{color:#6e6259;font-size:9.5px;line-height:1.35}
-#g2 .chk{display:flex;gap:6px;align-items:center;padding:4px 0;font-size:10px;width:100%;text-align:left}
-#g2 .chk i{width:13px;height:13px;border-radius:4px;border:1.5px solid #dcc8ae;flex:none;transition:.2s}
-#g2 .chk.on i{background:#7a8f6e;border-color:#7a8f6e}
-#g2 .chk.on span{color:#a8998b;text-decoration:line-through}
-#g2 .meal{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid #f0e8dc}
-#g2 .meal:last-child{border:0}
-#g2 .meal .e{width:30px;height:30px;border-radius:9px;background:#f6dccf;display:grid;place-items:center;font-size:15px;flex:none}
-#g2 .spark{height:70px;display:flex;align-items:flex-end;gap:5px;margin-top:8px}
-#g2 .spark span{flex:1;border-radius:4px 4px 0 0;background:#ece0cf;transition:height .8s ease}
-#g2 .spark span.on{background:#c0623f}
-#g2 .ptabs{position:absolute;left:0;right:0;bottom:0;height:50px;border-top:1px solid #efe5d6;background:#fffcf7;display:grid;grid-template-columns:repeat(3,1fr);z-index:2}
-#g2 .ptabs button{font-size:9.5px;font-weight:700;color:#a8998b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-#g2 .ptabs button.on{color:#c0623f}
-#g2 .ptabs b{font-size:15px;font-weight:400}
-#g2 .hint{font-size:12px;color:var(--faint);margin-top:12px}
 /* video */
 #g2 .vid{position:relative;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#141210;box-shadow:0 24px 60px rgba(43,39,36,.18)}
 #g2 .vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
@@ -205,37 +170,7 @@
     <div style="margin-top:24px"><button class="btn g2-buy">Start my protocol <small>· $97</small></button></div>
     <div class="ticks"><span>80+ published studies</span><span>Personalised plan</span><span>30-day guarantee</span></div>
   </div>
-  <div class="phwrap">
-    <div class="phone"><div class="scr"><span class="notch"></span>
-      <div class="pane on" data-p="0">
-        <div class="pk">Diabetes Protocol</div><div class="ph">Day 3 of 7</div>
-        <div class="pdays"><i class="d">1</i><i class="d">2</i><i class="t">3</i><i>4</i><i>5</i><i>6</i><i>7</i></div>
-        <div class="pc pr"><div class="ring"><svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="23" fill="none" stroke="#ece0cf" stroke-width="6"/><circle id="g2Ring" cx="28" cy="28" r="23" fill="none" stroke="#c0623f" stroke-width="6" stroke-linecap="round" stroke-dasharray="144.5" stroke-dashoffset="50"/></svg><b id="g2Hrs">14:02</b></div><div><div class="pt">Fasting clock</div><div class="ps">Overnight window · goal 14h</div></div></div>
-        <div class="pc"><div class="pt" style="margin-bottom:3px">Today · Food order &amp; movement</div>
-          <button class="chk on"><i></i><span>Protein-first breakfast</span></button>
-          <button class="chk on"><i></i><span>Veg before carbs at lunch</span></button>
-          <button class="chk"><i></i><span>10-minute walk after dinner</span></button>
-          <button class="chk"><i></i><span>Log your bedtime reading</span></button></div>
-      </div>
-      <div class="pane" data-p="1">
-        <div class="pk">Your plan</div><div class="ph">Low-carb day</div>
-        <div class="pc"><div class="meal"><span class="e">🥑</span><div><div class="pt">Breakfast</div><div class="ps">Eggs, greens &amp; avocado</div></div></div>
-          <div class="meal"><span class="e">🥗</span><div><div class="pt">Lunch</div><div class="ps">Salmon salad, olive oil</div></div></div>
-          <div class="meal"><span class="e">🍗</span><div><div class="pt">Dinner</div><div class="ps">Chicken &amp; roasted veg</div></div></div></div>
-        <div class="pc"><div class="pt">Supplements</div><div class="ps">Magnesium · fibre · ask your doctor first</div></div>
-        <div class="pc"><div class="pt">Tests to ask about</div><div class="ps">HbA1c · fasting insulin · lipid panel</div></div>
-      </div>
-      <div class="pane" data-p="2">
-        <div class="pk">Progress · example</div><div class="ph">Morning glucose</div>
-        <div class="pc"><div class="ps">Your meter readings, charted</div><div class="spark" id="g2Spark"><span style="height:10%"></span><span style="height:10%"></span><span style="height:10%"></span><span style="height:10%"></span><span style="height:10%"></span><span style="height:10%"></span><span style="height:10%"></span></div>
-          <div class="ps" style="display:flex;justify-content:space-between;margin-top:4px"><span>D1</span><span>D7</span></div></div>
-        <div class="pc pr"><div><div class="pt">Energy</div><div class="ps">Logged daily, charted over time</div></div></div>
-        <div class="pc pr"><div><div class="pt">Sleep</div><div class="ps">Hours and quality, tracked for you</div></div></div>
-      </div>
-      <div class="ptabs"><button class="on" data-t="0"><b>☀︎</b>Today</button><button data-t="1"><b>☰</b>Plan</button><button data-t="2"><b>↗</b>Progress</button></div>
-    </div></div>
-    <div class="hint">Tap the app to explore</div>
-  </div>
+  <div class="mthp" data-proto="sugar"></div>
 </div></section>
 
 <!-- VIDEO -->
@@ -348,16 +283,6 @@ function findCheckout(doc){ try{ var n=doc.querySelectorAll("h1,h2,h3,h4,div,spa
 function buy(){ var el=findCheckout(document); if(!el){ try{ el=findCheckout(window.top.document); }catch(e){} }
   if(el) el.scrollIntoView({behavior:"smooth",block:"start"}); else { try{ window.top.scrollTo({top:window.top.document.body.scrollHeight,behavior:"smooth"}); }catch(e){} } }
 R.querySelectorAll(".g2-buy").forEach(function(b){ b.addEventListener("click",buy); });
-
-/* ---- phone mockup: tabs, auto-rotate, live clock, tappable checklist ---- */
-var tab=0, auto=true, panes=R.querySelectorAll(".pane"), tabs=R.querySelectorAll(".ptabs button");
-function show(i){ tab=i; panes.forEach(function(p,j){p.classList.toggle("on",j===i);}); tabs.forEach(function(t,j){t.classList.toggle("on",j===i);}); if(i===2) spark(); }
-tabs.forEach(function(t){ t.addEventListener("click",function(){ auto=false; show(+t.dataset.t); }); });
-R.querySelectorAll(".chk").forEach(function(c){ c.addEventListener("click",function(){ auto=false; c.classList.toggle("on"); }); });
-setInterval(function(){ if(auto) show((tab+1)%3); },4200);
-var sec=14*3600+2*60;
-setInterval(function(){ sec+=1; var h=Math.floor(sec/3600), m=Math.floor(sec%3600/60); $("g2Hrs").textContent=h+":"+("0"+m).slice(-2); $("g2Ring").setAttribute("stroke-dashoffset",144.5*(1-Math.min(sec/57600,1))); },1000);
-function spark(){ var v=[88,80,74,66,60,55,50]; R.querySelectorAll("#g2Spark span").forEach(function(s,i){ s.style.height="10%"; setTimeout(function(){ s.style.height=v[i]+"%"; s.classList.toggle("on",i===6); },80+i*90); }); }
 
 /* ---- symptom picker ---- */
 var SYM=[["Energy crashes",2,[2,3]],["Sugar cravings",3,[2,0]],["Brain fog after meals",2,[2,3]],["High morning readings",3,[0,5]],["Belly weight",2,[3,2]],["Always thirsty",2,[2,0]],["Tingling feet",3,[3,2]],["High blood pressure",2,[1,3]],["Poor sleep",2,[5,1]],["Stress",2,[1,4]],["Low activity",2,[3,6]],["Snacking at night",2,[0,5]]];

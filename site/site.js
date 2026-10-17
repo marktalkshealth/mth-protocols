@@ -34,7 +34,14 @@
     var scripts=[].slice.call(box.querySelectorAll("script"));
     if(before) target.parentNode.insertBefore(box,target); else target.appendChild(box);
     scripts.forEach(function(old){ var s=document.createElement("script"); if(old.src) s.src=old.src; else s.textContent=old.textContent; old.parentNode.replaceChild(s,old); });
+    if(box.querySelector(".mthp[data-proto]")) phone();
     return box;
+  }
+  /* the five-tab "test drive" phone (home + sales pages) */
+  function phone(){
+    if(window.MTHPhone){ window.MTHPhone.scan(); return; }
+    if(document.getElementById("mthp-js")) return;
+    var s=document.createElement("script"); s.id="mthp-js"; s.src=BASE+"phone.js?v=1"; document.head.appendChild(s);
   }
   function load(file){ return fetch(BASE+file,{cache:"no-cache"}).then(function(r){ if(!r.ok) throw new Error(file+" "+r.status); return r.text(); }); }
   function topbar(){ return document.querySelector(".lw-topbar"); }

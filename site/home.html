@@ -25,25 +25,6 @@
 #mh .stats{display:flex;gap:22px;margin-top:26px;flex-wrap:wrap}
 #mh .stats b{display:block;font-family:'Cormorant Garamond',Georgia,serif;font-size:34px;font-weight:600;line-height:1;color:#c0623f}
 #mh .stats span{font-size:12.5px;color:#6e6259}
-/* phone */
-#mh .phone{width:min(290px,78vw);aspect-ratio:9/18.6;margin:0 auto;border-radius:42px;background:#111;padding:10px;box-shadow:0 34px 70px rgba(43,39,36,.25)}
-#mh .scr{width:100%;height:100%;border-radius:33px;background:#fffcf7;overflow:hidden;position:relative;padding:36px 14px 14px;font-size:11px}
-#mh .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:86px;height:22px;border-radius:12px;background:#111}
-#mh .pk{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#c0623f;font-weight:700}
-#mh .ph{font-family:'Cormorant Garamond',Georgia,serif;font-size:23px;line-height:1;margin:3px 0 10px}
-#mh .pd{display:flex;gap:4px;margin-bottom:10px}
-#mh .pd i{flex:1;aspect-ratio:1;border-radius:50%;border:1px solid #e7dccb;display:grid;place-items:center;font-style:normal;font-size:9px;font-weight:700;color:#a8998b}
-#mh .pd i.d{background:#e7ecdd;color:#7a8f6e;border-color:#d3dcc8}#mh .pd i.t{background:#c0623f;color:#fff;border-color:#c0623f}
-#mh .pc{border:1px solid #e7dccb;border-radius:12px;padding:9px;margin-bottom:8px;background:#fff}
-#mh .pr{display:flex;gap:9px;align-items:center}
-#mh .ring{width:56px;height:56px;flex:none;position:relative}
-#mh .ring svg{width:56px;height:56px;transform:rotate(-90deg)}
-#mh .ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:12px}
-#mh .pt{font-weight:700;font-size:11px}#mh .ps{color:#6e6259;font-size:9.5px;line-height:1.35}
-#mh .ck{display:flex;gap:6px;align-items:center;padding:4px 0;font-size:10px}
-#mh .ck i{width:12px;height:12px;border-radius:4px;border:1.5px solid #dcc8ae;flex:none}#mh .ck i.on{background:#7a8f6e;border-color:#7a8f6e}
-#mh .bars{display:flex;align-items:flex-end;gap:5px;height:44px;margin-top:6px}
-#mh .bars span{flex:1;background:#ece0cf;border-radius:3px 3px 0 0}#mh .bars span.on{background:#c0623f}
 /* rows */
 #mh .rowh{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
 #mh .rowh a.more{font-size:13.5px;font-weight:600;color:#c0623f;white-space:nowrap}
@@ -112,13 +93,7 @@
     <div class="cta"><a class="btn" href="#mh-protocols">Find your protocol</a><a class="btn ghost" href="/social">Join the community</a></div>
     <div class="stats"><div><b>80+</b><span>published studies</span></div><div><b>7</b><span>healing steps</span></div><div><b>3</b><span>personalised protocols</span></div></div>
   </div>
-  <div><div class="phone"><div class="scr"><span class="notch"></span>
-    <div class="pk">Your protocol</div><div class="ph">Day 3 of 7</div>
-    <div class="pd"><i class="d">1</i><i class="d">2</i><i class="t">3</i><i>4</i><i>5</i><i>6</i><i>7</i></div>
-    <div class="pc pr"><div class="ring"><svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="23" fill="none" stroke="#ece0cf" stroke-width="6"/><circle cx="28" cy="28" r="23" fill="none" stroke="#c0623f" stroke-width="6" stroke-linecap="round" stroke-dasharray="144.5" stroke-dashoffset="44"/></svg><b>14h</b></div><div><div class="pt">Fasting clock</div><div class="ps">Fat-burning shift · goal 16h</div></div></div>
-    <div class="pc"><div class="pt" style="margin-bottom:3px">Today · Keto &amp; Broths</div><div class="ck"><i class="on"></i>Morning green juice</div><div class="ck"><i class="on"></i>Bone broth, 1 cup</div><div class="ck"><i></i>Evening walk, 20 min</div></div>
-    <div class="pc"><div class="pt">Energy · example</div><div class="bars"><span style="height:30%"></span><span style="height:45%"></span><span class="on" style="height:65%"></span><span style="height:8%"></span><span style="height:8%"></span><span style="height:8%"></span><span style="height:8%"></span></div></div>
-  </div></div></div>
+  <div><div class="mthp" data-proto="all"></div></div>
 </div></section>
 
 <section id="mh-protocols" style="padding-top:12px"><div class="w">
