@@ -127,6 +127,11 @@ html.mth-course .mth-hide{display:none!important}
 .mthc .mod small{display:block;font-size:12px;color:var(--mth-muted);margin-top:7px}
 .mthc .mod.on .t{box-shadow:0 0 0 3px var(--mth-card),0 0 0 5px var(--mth-terra);transform:translateY(-2px)}
 .mthc .mod:hover .t{transform:translateY(-2px)}
+.mthc .mod.ph .t{aspect-ratio:1/1;background:var(--mth-bg2) center/cover no-repeat;padding:8px;align-items:flex-end;justify-content:flex-start}
+.mthc .mod.ph .t:after{content:none}
+.mthc .mod.ph .n{font-family:var(--mth-sans);font-size:11px;font-weight:700;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:rgba(43,39,36,.6);color:#fff;opacity:1}
+.mthc .mod.ph small b{color:var(--mth-ink);font-weight:600;text-transform:capitalize}
+.mthc .mod:not(.ph) .t{aspect-ratio:1/1}
 .mthc .panel{background:var(--mth-card);border:1px solid var(--mth-line);border-radius:18px;padding:8px 10px;margin-top:4px}
 .mthc .panel h3{font-family:var(--mth-serif);font-weight:500;font-size:24px;margin:8px 8px 4px;text-transform:capitalize;color:var(--mth-ink)}
 .mthc .lw-course-contents-unit{border:0!important;border-radius:10px;padding:10px 8px!important;margin:0;cursor:pointer;transition:background .15s}

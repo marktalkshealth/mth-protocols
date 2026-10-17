@@ -75,6 +75,16 @@
   var TILES=[["#c0623f","#7e3b25"],["#7a8f6e","#3f4b38"],["#b8924a","#6e5427"],["#8a7b6e","#463b33"],["#a8735a","#5a3a2b"],["#6f7a8c","#363c48"]];
   function txt(el){ return el?(el.textContent||"").replace(/\s+/g," ").trim():""; }
   var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});};
+  /* the 7 healing-step pictures, matched to module names */
+  function stepPic(name){ var t=(name||"").toLowerCase();
+    if(/fast|cleans/.test(t)) return "1-fasting";
+    if(/meditat|journal/.test(t)) return "2-meditation";
+    if(/keto|diet|broth|food|nutrition/.test(t)) return "3-keto";
+    if(/exercis|cardio|weight|strength|movement/.test(t)) return "4-cardio";
+    if(/music|spirit/.test(t)) return "5-music";
+    if(/sleep|air/.test(t)) return "6-sleep";
+    if(/sun|nature|outdoor/.test(t)) return "7-nature";
+    return ""; }
   function course(){
     waitFor(function(){ var c=document.querySelector(".lw-course-contents"); return c&&c.querySelector(".lw-course-contents-chapter")?c:null; },function(contents){
       if(!contents||document.querySelector(".mthc")){ reveal(); return; }
@@ -106,6 +116,8 @@
       var rail=wrap.querySelector(".rail"), list=wrap.querySelector(".list"), ph=wrap.querySelector(".panel h3");
       mods.forEach(function(m,i){
         var c=TILES[i%TILES.length], b=document.createElement("button"); b.className="mod"; b.type="button";
+        var ph=stepPic(m.name);
+        if(ph){ b.className="mod ph"; b.innerHTML='<div class="t" style="background-image:url('+BASE+'steps/'+ph+'.jpg)"><span class="n">'+esc(m.num||String(i+1))+'</span></div><small><b>'+esc(m.name||("Module "+(i+1)))+'</b> · '+m.count+' lesson'+(m.count===1?'':'s')+'</small>'; b.addEventListener("click",function(){ show(i); }); rail.appendChild(b); return; }
         b.innerHTML='<div class="t" style="background:linear-gradient(150deg,'+c[0]+','+c[1]+')"><span class="n">'+esc(m.num||String(i+1))+'</span><span class="nm">'+esc(m.name||("Module "+(i+1)))+'</span></div><small>'+m.count+' lesson'+(m.count===1?'':'s')+'</small>';
         b.addEventListener("click",function(){ show(i); }); rail.appendChild(b);
       });
