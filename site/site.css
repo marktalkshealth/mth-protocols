@@ -196,3 +196,4 @@ html.mth-course .mth-hide{display:none!important}
 /* total */
 .payment-section .order-summary strong{font-size:18px!important}
 .payment-section .order-summary .flex>div:last-child strong{font-family:var(--mth-serif)!important;font-size:32px!important;font-weight:600!important}
+@media(max-width:767px){.payment-section .checkout-coupon input,.payment-section .checkout-coupon button{border-radius:999px!important}.payment-section .checkout-coupon button{margin-top:8px}}
