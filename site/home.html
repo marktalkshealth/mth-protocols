@@ -62,6 +62,9 @@
 #mh .pcard .go{font-size:14px;font-weight:600;color:#fff!important;background:#c0623f;padding:9px 16px;border-radius:999px}
 #mh .pcard.soon{opacity:.75}#mh .pcard.soon .go{background:#a8998b}
 /* steps */
+#mh .step.ph{aspect-ratio:1/1;background:#efe5d6 center/cover no-repeat;padding:10px;justify-content:flex-start;box-shadow:0 10px 26px rgba(0,0,0,.25)}
+#mh .step.ph:after{content:none}
+#mh .step.ph b{align-self:flex-end;font-family:Inter,sans-serif;font-size:12px;font-weight:700;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:rgba(43,39,36,.55);color:#fff;line-height:1}
 #mh .dark{background:#2b2724;color:#efe6da}
 #mh .dark h2{color:#fff}#mh .dark .lead{color:#b9ad9f}#mh .dark .k{color:#e3a184}
 #mh .step{flex:0 0 42%;max-width:200px;scroll-snap-align:start;aspect-ratio:4/5;border-radius:18px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;position:relative;overflow:hidden}
@@ -98,6 +101,8 @@
   #mh .hub{grid-template-columns:1fr 1fr;padding:40px}
   #mh .founder{grid-template-columns:.8fr 1.2fr}
 }
+#mh .step.ph{flex:0 0 68%;max-width:290px}
+@media(min-width:860px){#mh .step.ph{flex:0 0 250px;min-width:250px;max-width:none}}
 </style>
 
 <section class="hero"><div class="w">
@@ -159,20 +164,21 @@
 (function(){
   var ROOT=document.getElementById("mh");
   var loggedIn=false; try{ var u=window.MTH_USER; loggedIn=!!(u&&u.id&&!/\{\{/.test(u.id)); }catch(e){}
-  var IMG="https://api.us-e1.learnworlds.com/imagefile//{id}.jpg?client_id=6ac2bb5648140f5f6d8ca00c&width=800&height=0";
+  var IMG="https://api.us-e1.learnworlds.com/imagefile//{id}?client_id=6ac2bb5648140f5f6d8ca00c&width=800&height=0";
   var COURSES=[
-    {t:"Gut Health Protocol",tag:"GUT",img:"f4eb5dc6ce3882a4cb8638723b911087",d:"Calm the gut lining and rebuild your microbiome with a guided juice and ice cream cleanse.",funnel:"/guthealthprotocol",course:"/course/new-autoimmune",price:"$97"},
-    {t:"Diabetes Protocol",tag:"BLOOD SUGAR",img:"1eabe14dd098f0bba1f3b499c429d103",d:"Steadier glucose and better energy through fasting, food order, movement and sleep.",funnel:"/thediabetesprotocol",course:"/course/autoimmune",price:"$97"},
-    {t:"GLP-1 Weight Loss Protocol",tag:"GLP-1",img:"9ee86d995e9a7a68605fc19ba80faa6b",d:"Lose fat while protecting muscle, built for people on or coming off GLP-1 medication.",funnel:"/course/total-body-healing",course:"/course/total-body-healing",price:"$97"}
+    {t:"Gut Health Protocol",tag:"GUT",img:"6eec355b2cfe342f0ac9f7061029e4e7.png",d:"Calm the gut lining and rebuild your microbiome with a guided juice and ice cream cleanse.",funnel:"/guthealthprotocol",course:"/course/new-autoimmune",price:"$97"},
+    {t:"Diabetes Protocol",tag:"BLOOD SUGAR",img:"fe26b6c96fac54ea10f9208392449ea2.png",d:"Steadier glucose and better energy through fasting, food order, movement and sleep.",funnel:"/thediabetesprotocol",course:"/course/autoimmune",price:"$97"},
+    {t:"GLP-1 Weight Loss Protocol",tag:"GLP-1",img:"85077c63e15333e491250e4536f2ee4c.png",d:"Lose fat while protecting muscle, built for people on or coming off GLP-1 medication.",funnel:"/course/total-body-healing",course:"/course/total-body-healing",price:"$97"}
   ];
   var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});};
   document.getElementById("mhCards").innerHTML=COURSES.map(function(c){
     var href=loggedIn?c.course:c.funnel;
-    return '<a class="pcard" href="'+href+'"><div class="im" style="background-image:url(\''+IMG.replace("{id}",c.img)+'\')"><span class="tag">'+esc(c.tag)+'</span></div><div class="tx"><h3>'+esc(c.t)+'</h3><p>'+esc(c.d)+'</p><div class="ft"><span class="pr2">'+(loggedIn?'':esc(c.price))+'</span><span class="go">'+(loggedIn?'Open':'Learn more')+'</span></div></div></a>';
+    return '<a class="pcard" href="'+href+'"><div class="im" style="background-image:url(\''+IMG.replace("{id}",c.img)+'\')"></div><div class="tx"><h3>'+esc(c.t)+'</h3><p>'+esc(c.d)+'</p><div class="ft"><span class="pr2">'+(loggedIn?'':esc(c.price))+'</span><span class="go">'+(loggedIn?'Open':'Learn more')+'</span></div></div></a>';
   }).join("")+'<div class="pcard soon" aria-hidden="true"><div class="im" style="background:linear-gradient(150deg,#d8c4ad,#a8998b)"><span class="tag">COMING SOON</span></div><div class="tx"><h3>More protocols</h3><p>New protocols for more conditions are on the way. Members hear first.</p><div class="ft"><span></span><span class="go">Soon</span></div></div></div>';
+  var SIMG=["1-fasting","2-meditation","3-keto","4-cardio","5-music","6-sleep","7-nature"];
   var STEPS=[["Fasting & cleanse","Rest digestion"],["Meditation & journaling","Calm the nervous system"],["Keto & broths","Feed repair"],["Cardio & strength","Move to heal"],["Music & spirit","Sound as medicine"],["Sleep & clean air","Repair at night"],["Nature & sun","Reset outdoors"]];
   var TILE=[["#c0623f","#7e3b25"],["#7a8f6e","#3f4b38"],["#b8924a","#6e5427"],["#8a7b6e","#463b33"],["#a8735a","#5a3a2b"],["#6f7a8c","#363c48"],["#7a8f6e","#2f3d2c"]];
-  document.getElementById("mhSteps").innerHTML=STEPS.map(function(s,i){ return '<div class="step" style="background:linear-gradient(150deg,'+TILE[i][0]+','+TILE[i][1]+')"><b>'+(i+1)+'</b><span>'+esc(s[0])+'<small>'+esc(s[1])+'</small></span></div>'; }).join("");
+  document.getElementById("mhSteps").innerHTML=STEPS.map(function(s,i){ return '<div class="step ph" role="img" aria-label="Step '+(i+1)+': '+esc(s[0])+'" style="background-image:url(https://marktalkshealth.github.io/mth-protocols/site/steps/'+SIMG[i]+'.jpg)"><b>'+(i+1)+'</b></div>'; }).join("");
   var els=ROOT.querySelectorAll(".rv");
   if("IntersectionObserver" in window){ var io=new IntersectionObserver(function(es){es.forEach(function(e){ if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);} });},{threshold:.12}); els.forEach(function(e){io.observe(e);}); }
   else els.forEach(function(e){e.classList.add("in");});
