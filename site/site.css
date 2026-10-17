@@ -109,3 +109,11 @@ html.mth-course .mth-hide{display:none!important}
 
 /* ---------- community page: Healing Hub app frame ---------- */
 .mth-hub-frame{display:block;width:100%;border:0;height:calc(100vh - 64px);height:calc(100dvh - 64px);background:var(--mth-bg)}
+
+/* ---------- courses catalog header ---------- */
+.mthh{background:var(--mth-bg);padding:34px 0 6px;font-family:var(--mth-sans)}
+.mthh .w{max-width:1080px;margin:0 auto;padding:0 20px}
+.mthh .k{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--mth-terra)}
+.mthh h1{font-family:var(--mth-serif);font-weight:500;font-size:clamp(38px,9vw,58px);line-height:1.02;margin:8px 0 10px;color:var(--mth-ink)}
+.mthh h1 em{font-style:italic;color:var(--mth-terra)}
+.mthh p{color:var(--mth-muted);font-size:16px;max-width:560px;line-height:1.55}

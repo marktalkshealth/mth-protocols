@@ -12,12 +12,13 @@
   var HUB=BASE.replace(/site\/$/,"hub/");
   var H=document.documentElement;
   var path=(location.pathname.replace(/\/+$/,"")||"/").toLowerCase();
+  var FUNNELS={"/guthealthprotocol":"funnel-gut.html","/thediabetesprotocol":"funnel-diabetes.html"};
   var ROUTE= (path==="/"||path==="/home")?"home"
-           : path==="/guthealthprotocol"?"funnel"
+           : FUNNELS[path]?"funnel"
+           : path==="/courses"?"courses"
            : path.indexOf("/course/")===0?"course"
            : path==="/social"?"social" : "";
   if(ROUTE) H.classList.add("mth-r-"+ROUTE);
-  var FUNNELS={"/guthealthprotocol":"funnel-gut.html"};
 
   function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
   function waitFor(test,fn,ms){ var t0=Date.now(); (function loop(){ var r=null; try{r=test();}catch(e){} if(r) return fn(r); if(Date.now()-t0<(ms||12000)) setTimeout(loop,120); else fn(null); })(); }
@@ -115,6 +116,19 @@
     });
   }
 
+  /* ---------------- courses catalog ---------------- */
+  function courses(){
+    waitFor(function(){ return document.querySelector(".lw-course-card"); },function(card){
+      var secs=[].slice.call(document.querySelectorAll(".js-learnworlds-section"));
+      var catalog=card&&card.closest(".js-learnworlds-section");
+      secs.forEach(function(s){ if(s===catalog||s.classList.contains("lw-topbar")||s.classList.contains("lw-footer")) return; if(!s.querySelector(".lw-course-card")) s.style.display="none"; });
+      var head=document.createElement("section"); head.className="mthh";
+      head.innerHTML='<div class="w"><div class="k">Protocols</div><h1>Your healing <em>protocols</em></h1><p>Each protocol pairs a video course with software that builds your personal day-by-day plan.</p></div>';
+      if(catalog) catalog.parentNode.insertBefore(head,catalog);
+      reveal();
+    });
+  }
+
   /* ---------------- community (Healing Hub) ---------------- */
   function social(){
     var frame=document.createElement("iframe");
@@ -133,6 +147,7 @@
       else if(ROUTE==="funnel") funnel();
       else if(ROUTE==="course") course();
       else if(ROUTE==="social") social();
+      else if(ROUTE==="courses") courses();
       else reveal();
       if(ROUTE!=="social") footer();
     }catch(e){ console.warn("MTH site",e); reveal(); }
