@@ -12,7 +12,7 @@
   var HUB=BASE.replace(/site\/$/,"hub/");
   var H=document.documentElement;
   var path=(location.pathname.replace(/\/+$/,"")||"/").toLowerCase();
-  var FUNNELS={"/guthealthprotocol":"funnel-gut.html","/thediabetesprotocol":"funnel-diabetes.html"};
+  var FUNNELS={"/guthealthprotocol":"funnel-gut.html","/thediabetesprotocol":"funnel-diabetes.html","/glp1-weightloss":"funnel-glp1.html"};
   var ROUTE= (path==="/"||path==="/home")?"home"
            : FUNNELS[path]?"funnel"
            : path==="/courses"?"courses"
@@ -173,7 +173,7 @@
   }
 
   /* ---------------- dead links: the GLP-1 menu item points at a page that doesn't exist ---------------- */
-  var FIX={"/totalbodyhealing":"/course/total-body-healing"};
+  var FIX={"/totalbodyhealing":"/glp1-weightloss"};
   function fixLinks(){
     document.addEventListener("click",function(e){
       var a=e.target.closest&&e.target.closest("a"); if(!a) return;
