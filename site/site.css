@@ -20,7 +20,34 @@ body{background:var(--mth-bg)!important;-webkit-font-smoothing:antialiased}
 .learnworlds-button-solid-accent1:hover,.learnworlds-button-solid-accent2:hover,.learnworlds-button-solid-brand:hover,.product-card-enroll-button:hover{background:var(--mth-terraD)!important;transform:translateY(-1px);box-shadow:0 10px 22px rgba(192,98,63,.28)}
 
 /* ---------- app bar (top navigation) ---------- */
-.lw-topbar{background:rgba(247,241,231,.92)!important;backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--mth-line)!important;box-shadow:none!important}
+.lw-topbar{background:transparent!important;border-bottom:1px solid var(--mth-line)!important;box-shadow:none!important}
+.lw-topbar .lw-h-row,.lw-topbar .bgcolor-inherit:not(.lw-topbar-hamburger-menu){background:transparent!important}
+/* frosted glass lives on a pseudo-element: backdrop-filter on the bar itself traps the fixed mobile menu inside the bar */
+.lw-topbar:before{content:"";position:absolute;inset:0;z-index:-1;background:rgba(247,241,231,.92);-webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px);pointer-events:none}
+/* ---- mobile menu: full-screen sheet ---- */
+.lw-topbar .lw-topbar-hamburger-menu{position:fixed!important;inset:0!important;height:100dvh!important;width:100vw!important;background:var(--mth-bg)!important;padding:84px 24px calc(28px + env(safe-area-inset-bottom))!important;display:flex;flex-direction:column!important;justify-content:flex-start!important;align-items:stretch!important;text-align:left!important;overflow-y:auto!important;animation:mthSheet .22s ease-out}
+@keyframes mthSheet{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.lw-topbar .lw-topbar-logo-col{position:relative;z-index:102}
+.lw-topbar .lw-topbar-hamburger-button{z-index:103!important}
+.lw-topbar-hamburger-menu-item{width:100%!important;max-width:520px;margin:0 auto!important;padding:0!important}
+.lw-topbar-hamburger-menu .mobile-nav-menu{display:flex!important;flex-direction:column!important;width:100%!important;margin:0!important;padding:0!important;list-style:none}
+.lw-topbar-hamburger-menu .mobile-nav-menu>.mobile-nav-menu-item{border-bottom:1px solid var(--mth-line);padding:0!important;margin:0!important;text-align:left!important}
+.lw-topbar-hamburger-menu .mobile-nav-menu>.mobile-nav-menu-item>.mobile-nav-menu-link{display:flex!important;align-items:center;justify-content:space-between;width:100%;padding:16px 2px!important;font-family:var(--mth-serif)!important;font-size:30px!important;font-weight:500!important;line-height:1.1!important;letter-spacing:-.01em!important;color:var(--mth-ink)!important;text-decoration:none!important}
+.lw-topbar-hamburger-menu .mobile-nav-menu>.mobile-nav-menu-item>.mobile-nav-menu-link:after{content:"→";font-family:var(--mth-sans);font-size:18px;color:var(--mth-terra)}
+.lw-topbar-hamburger-menu .has-subMenu>.mobile-nav-menu-link:after{content:none!important}
+.lw-topbar-hamburger-menu .chevron{display:none!important}
+.lw-topbar-hamburger-menu .mobile-nav-subMenu{display:flex!important;flex-wrap:wrap;gap:8px;padding:0 0 18px!important;margin:0!important;list-style:none}
+.lw-topbar-hamburger-menu .mobile-nav-subMenu .mobile-nav-menu-item{padding:0!important;margin:0!important;border:0!important}
+.lw-topbar-hamburger-menu .mobile-nav-subMenu .mobile-nav-menu-link{display:inline-flex!important;padding:9px 15px!important;border-radius:999px;background:var(--mth-card,#fffaf3)!important;border:1px solid var(--mth-line)!important;font-family:var(--mth-sans)!important;font-size:14px!important;font-weight:600!important;color:var(--mth-ink)!important;text-decoration:none!important}
+.lw-topbar-hamburger-menu .mobile-nav-menu-link span{font:inherit!important;color:inherit!important;text-transform:none!important}
+/* sign in / sign up become buttons at the bottom of the sheet */
+.lw-topbar-hamburger-menu .mobile-nav-menu>.mth-auth{order:50;border-bottom:0!important;margin-top:10px!important}
+.lw-topbar-hamburger-menu .mobile-nav-menu>.mth-auth.mth-signin{margin-top:28px!important}
+.lw-topbar-hamburger-menu .mobile-nav-menu>.mth-auth>.mobile-nav-menu-link{justify-content:center!important;padding:15px 20px!important;border-radius:999px;font-family:var(--mth-sans)!important;font-size:16px!important;font-weight:600!important;border:1.5px solid var(--mth-ink)!important;color:var(--mth-ink)!important;background:transparent!important}
+.lw-topbar-hamburger-menu .mobile-nav-menu>.mth-auth.mth-signup>.mobile-nav-menu-link{background:var(--mth-terra)!important;border-color:var(--mth-terra)!important;color:#fff!important}
+.lw-topbar-hamburger-menu .mobile-nav-menu>.mth-auth>.mobile-nav-menu-link:after{content:none!important}
+.lw-topbar-hamburger-menu .mobile-nav-menu>.mth-out>.mobile-nav-menu-link,.lw-topbar-hamburger-menu .mth-out>.mobile-nav-menu-link{color:var(--mth-terra)!important}
+html.mth-menu-open,html.mth-menu-open body{overflow:hidden!important}
 .lw-topbar .learnworlds-section-content{padding-top:8px!important;padding-bottom:8px!important}
 .lw-topbar .lw-logo{max-height:34px!important;width:auto!important}
 /* text wordmark replaces the PNG logo (its white edge showed on cream) */

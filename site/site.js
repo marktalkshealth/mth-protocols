@@ -151,8 +151,26 @@
     },8000);
   }
 
+  /* ---------------- mobile menu: tag sign in / sign up / sign out, lock page scroll ---------------- */
+  function mobileMenu(){
+    function tag(){
+      [].forEach.call(document.querySelectorAll(".lw-topbar-hamburger-menu .mobile-nav-menu-item"),function(li){
+        var a=li.querySelector(":scope > .mobile-nav-menu-link"); if(!a) return;
+        var t=(a.textContent||"").trim().toLowerCase();
+        if(t==="sign in"||t==="log in"||t==="login") li.classList.add("mth-auth","mth-signin");
+        else if(t==="sign up"||t==="register"||t==="join") li.classList.add("mth-auth","mth-signup");
+        else if(t==="sign out"||t==="log out") li.classList.add("mth-out");
+      });
+      H.classList.toggle("mth-menu-open",!!document.querySelector(".lw-topbar .hamburger-open .lw-topbar-hamburger-menu"));
+    }
+    tag();
+    var q=0; function later(){ if(q) return; q=1; requestAnimationFrame(function(){ q=0; tag(); }); }
+    try{ new MutationObserver(later).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["class"]}); }catch(e){}
+  }
+
   ready(function(){
     try{ wordmark(); }catch(e){}
+    try{ mobileMenu(); }catch(e){}
     try{
       if(ROUTE==="home") home();
       else if(ROUTE==="funnel") funnel();
