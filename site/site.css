@@ -23,6 +23,12 @@ body{background:var(--mth-bg)!important;-webkit-font-smoothing:antialiased}
 .lw-topbar{background:rgba(247,241,231,.92)!important;backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--mth-line)!important;box-shadow:none!important}
 .lw-topbar .learnworlds-section-content{padding-top:8px!important;padding-bottom:8px!important}
 .lw-topbar .lw-logo{max-height:34px!important;width:auto!important}
+/* text wordmark replaces the PNG logo (its white edge showed on cream) */
+html.mth-wm .lw-topbar .lw-logo{display:none!important}
+.mth-logo{font-family:"Cormorant Garamond",Georgia,serif!important;font-size:27px;font-weight:600;letter-spacing:-.01em;line-height:1;color:#2b2724!important;text-decoration:none!important;white-space:nowrap;display:inline-flex;align-items:center;gap:7px}
+.mth-logo i{font-style:italic;font-weight:500;color:#c0623f}
+.mth-logo:before{content:"";width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,#c0623f,#b8924a);flex:none}
+@media(max-width:600px){.mth-logo{font-size:23px}}
 .lw-topbar .lw-topbar-option-link{font-family:var(--mth-sans)!important;font-size:14px!important;font-weight:600!important;color:var(--mth-ink)!important;padding:8px 12px!important;border-radius:999px;transition:background .15s}
 .lw-topbar .lw-topbar-option-link:hover{background:var(--mth-terraS)!important;color:var(--mth-terraD)!important}
 .lw-topbar .lw-topbar-option-link svg,.lw-topbar .lw-topbar-option-link i{color:var(--mth-terra)!important}

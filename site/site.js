@@ -141,7 +141,18 @@
     H.classList.add("mth-hub-page"); reveal();
   }
 
+  /* ---------------- wordmark (replaces PNG logo) ---------------- */
+  function wordmark(){
+    waitFor(function(){ return document.querySelector(".lw-topbar .lw-logo"); },function(img){
+      if(!img||document.querySelector(".mth-logo")) return;
+      var a=document.createElement("a"); a.className="mth-logo"; a.href="/home"; a.setAttribute("aria-label","Mark Talks Health, home");
+      a.innerHTML='Mark <i>Talks</i> Health';
+      img.parentNode.insertBefore(a,img); H.classList.add("mth-wm");
+    },8000);
+  }
+
   ready(function(){
+    try{ wordmark(); }catch(e){}
     try{
       if(ROUTE==="home") home();
       else if(ROUTE==="funnel") funnel();
