@@ -77,6 +77,7 @@
   var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});};
   /* the 7 healing-step pictures, matched to module names */
   function stepPic(name){ var t=(name||"").toLowerCase();
+    if(/^intro|introduction|welcome|start here/.test(t)) return "0-intro";
     if(/fast|cleans/.test(t)) return "1-fasting";
     if(/meditat|journal/.test(t)) return "2-meditation";
     if(/keto|diet|broth|food|nutrition/.test(t)) return "3-keto";
