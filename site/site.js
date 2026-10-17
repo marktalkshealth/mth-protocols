@@ -70,6 +70,10 @@
       load(file).then(function(html){
         var first=secs.filter(function(s){return !s.classList.contains("lw-topbar");})[0]||document.body.firstChild;
         mount(html,first,true); reveal();
+        /* checkout header */
+        (function head(n){ var co=document.querySelector(".payment-section"); if(!co){ if(n<20) setTimeout(function(){head(n+1);},500); return; } if(co.querySelector(".mth-co-head")) return;
+          var h=document.createElement("div"); h.className="mth-co-head"; h.innerHTML='<div class="k">Secure checkout</div><h2>Complete your order</h2><p>Instant access to your course, your personalised software and the Healing Hub.</p><div class="trust"><span>Lifetime access</span><span>30-day guarantee</span><span>Encrypted payment</span></div>';
+          var c=co.querySelector(".learnworlds-section-content"); (c||co).insertBefore(h,(c||co).firstChild); })(0);
         /* the checkout renders late: un-hide it whenever it shows up */
         var tries=0; (function recheck(){ secs.forEach(function(s){ if(s.classList.contains("mth-old")&&isCheckout(s)) s.classList.remove("mth-old"); }); if(++tries<20) setTimeout(recheck,500); })();
       }).catch(function(e){ console.warn("MTH funnel",e); secs.forEach(function(s){s.classList.remove("mth-old");}); reveal(); });

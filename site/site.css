@@ -157,3 +157,40 @@ html.mth-course .mth-hide{display:none!important}
 .mthh h1{font-family:var(--mth-serif);font-weight:500;font-size:clamp(38px,9vw,58px);line-height:1.02;margin:8px 0 10px;color:var(--mth-ink)}
 .mthh h1 em{font-style:italic;color:var(--mth-terra)}
 .mthh p{color:var(--mth-muted);font-size:16px;max-width:560px;line-height:1.55}
+
+/* ================= CHECKOUT (LearnWorlds payment section, restyled) ================= */
+.payment-section{background:var(--mth-bg)!important;padding:8px 0 56px!important}
+.payment-section .learnworlds-section-content{max-width:1000px!important;margin:0 auto!important}
+.mth-co-head{text-align:center;max-width:640px;margin:0 auto;padding:56px 20px 22px;font-family:var(--mth-sans);color:var(--mth-ink)}
+.mth-co-head .k{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--mth-terra)}
+.mth-co-head h2{font-family:var(--mth-serif)!important;font-weight:500!important;font-size:clamp(36px,8vw,52px)!important;line-height:1.02!important;margin:10px 0 10px!important;color:var(--mth-ink)!important}
+.mth-co-head p{color:var(--mth-muted);font-size:15px;margin:0}
+.mth-co-head .trust{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px}
+.mth-co-head .trust span{font-size:12.5px;font-weight:600;border:1px solid var(--mth-line);background:var(--mth-card);border-radius:999px;padding:6px 12px;color:var(--mth-muted)}
+/* the two columns become one card */
+.payment-section .lw-cols.a-i-fs{background:var(--mth-card)!important;border:1px solid var(--mth-line)!important;border-radius:26px!important;overflow:hidden;box-shadow:0 30px 70px rgba(43,39,36,.10)!important;margin:0 4px!important}
+.payment-section .lw-cols.a-i-fs>.col{background:transparent!important;padding:26px 24px!important}
+.payment-section .lw-cols.a-i-fs>.col:last-child{background:var(--mth-bg2)!important;border-left:1px solid var(--mth-line)!important}
+@media(max-width:767px){.payment-section .lw-cols.a-i-fs>.col:last-child{border-left:0!important;border-bottom:1px solid var(--mth-line)!important}}
+.payment-section .pt-25{padding-top:6px!important}.payment-section .pb-25{padding-bottom:10px!important}
+.payment-section h3.learnworlds-heading3{font-family:var(--mth-serif)!important;font-weight:500!important;font-size:27px!important;color:var(--mth-ink)!important;letter-spacing:-.01em!important;margin-bottom:14px!important}
+.payment-section label,.payment-section .learnworlds-overline-text,.payment-section .learnworlds-input-label,.payment-section .payment-authentication-template .col>div:first-child{font-family:var(--mth-sans)!important;font-size:11px!important;font-weight:700!important;letter-spacing:.14em!important;text-transform:uppercase!important;color:var(--mth-faint)!important}
+.payment-section .learnworlds-input,.payment-section input.learnworlds-input,.payment-section input[type=text],.payment-section input[type=email],.payment-section input[type=password]{background:#fff!important;border:1px solid var(--mth-line)!important;border-radius:12px!important;min-height:50px!important;padding:0 14px!important;font-family:var(--mth-sans)!important;font-size:16px!important;color:var(--mth-ink)!important;box-shadow:none!important;transition:border-color .15s,box-shadow .15s;display:flex;align-items:center}
+.payment-section .learnworlds-input:focus-within,.payment-section input:focus{border-color:var(--mth-terra)!important;box-shadow:0 0 0 4px rgba(192,98,63,.12)!important;outline:0!important}
+.payment-section .learnworlds-main-text,.payment-section .learnworlds-main-text-small{font-family:var(--mth-sans)!important;color:var(--mth-muted)!important;font-size:14.5px!important;line-height:1.55!important}
+.payment-section strong{color:var(--mth-ink)!important;font-weight:600!important}
+/* product */
+.payment-section .learnworlds-image{border-radius:16px!important;overflow:hidden;margin-bottom:16px!important}
+.payment-section .single-product-view a.learnworlds-heading3{font-family:var(--mth-serif)!important;font-size:26px!important;color:var(--mth-ink)!important;text-decoration:none!important}
+.payment-section .learnworlds-overline-text{color:var(--mth-terra)!important}
+/* buy button */
+.payment-section button.learnworlds-button-large{width:100%!important;min-height:58px!important;border-radius:999px!important;background:var(--mth-terra)!important;border:0!important;color:#fff!important;font-family:var(--mth-sans)!important;font-size:17px!important;font-weight:600!important;letter-spacing:0!important;box-shadow:0 14px 30px rgba(192,98,63,.30)!important;transition:transform .15s,background .15s}
+.payment-section button.learnworlds-button-large:hover{background:var(--mth-terraD)!important;transform:translateY(-1px)}
+.payment-section button.learnworlds-button-large:before{content:"";display:inline-block;width:14px;height:14px;margin-right:9px;vertical-align:-1px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17 9V7a5 5 0 0 0-10 0v2H5v13h14V9h-2zM9 7a3 3 0 0 1 6 0v2H9V7z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17 9V7a5 5 0 0 0-10 0v2H5v13h14V9h-2zM9 7a3 3 0 0 1 6 0v2H9V7z'/%3E%3C/svg%3E") center/contain no-repeat}
+.payment-section .payment-method .mt-2rem:after{content:"Secure, encrypted checkout · 30-day money-back guarantee";display:block;text-align:center;font-family:var(--mth-sans);font-size:12.5px;color:var(--mth-faint);margin-top:12px}
+/* coupon */
+.payment-section .checkout-coupon input{border-radius:999px 0 0 999px!important;min-height:46px!important}
+.payment-section .checkout-coupon button{border-radius:0 999px 999px 0!important;background:var(--mth-ink)!important;border:0!important;color:#fff!important;font-family:var(--mth-sans)!important;font-weight:600!important;min-height:46px!important}
+/* total */
+.payment-section .order-summary strong{font-size:18px!important}
+.payment-section .order-summary .flex>div:last-child strong{font-family:var(--mth-serif)!important;font-size:32px!important;font-weight:600!important}
