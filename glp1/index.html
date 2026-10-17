@@ -5528,6 +5528,8 @@ document.addEventListener('click', function(e) {
 // Animate slope bars on load
 window.addEventListener('load', () => { setTimeout(animateSlopeBars, 300); });
 </script>
+<script src="https://marktalkshealth.github.io/mth-protocols/shared/train.js?v=1"></script>
+<script src="https://marktalkshealth.github.io/mth-protocols/shared/kitchen.js?v=1"></script>
 <script>
 /* ═══════════════════════════════════════════════════════════════
    EAT & MOVE: daily food + movement tracker
@@ -5759,11 +5761,11 @@ function fxRender() {
   const PR = pracFor(d, M), pracRec = rec.prac = rec.prac || {};
   const pracDone = PR.items.filter(o => pracRec[o.r.n]).length;
   const eatView = S.eatView === 'week' ? 'week' : 'day';
-  const eatTools = `<div class="mw-bar"><div class="mw-seg"><button class="${eatView === 'day' ? 'on' : ''}" data-fx="vday">Today</button><button class="${eatView === 'week' ? 'on' : ''}" data-fx="vweek">This week</button></div>
+  const eatTools = window.MTHKitchen ? MTHKitchen.toolbar(eatView, `<button class="fx-btn ${S.small ? 'dark' : ''}" data-fx="small" aria-pressed="${!!S.small}">${S.small ? '✓ ' : ''}Small-appetite mode</button>`) : `<div class="mw-bar"><div class="mw-seg"><button class="${eatView === 'day' ? 'on' : ''}" data-fx="vday">Today</button><button class="${eatView === 'week' ? 'on' : ''}" data-fx="vweek">This week</button></div>
     <button class="fx-btn ${S.small ? 'dark' : ''}" data-fx="small" aria-pressed="${!!S.small}">${S.small ? '✓ ' : ''}Small-appetite mode</button>
     ${eatView === 'week' ? `<button class="fx-btn" data-fx="newweek">${ICO.shuffle}New week of meals</button>` : ''}
     <button class="fx-btn" data-fx="lib">📖 Recipe library</button></div>`;
-  const eatHTML = eatTools + (eatView === 'week' ? weekHTML(M) : `
+  const eatHTML = eatTools + (eatView === 'week' ? (window.MTHKitchen ? MTHKitchen.weekView() : weekHTML(M)) : `
   <div class="fx-grid">
     <aside class="fx-dash" aria-label="Today's totals">
       <div class="fx-phase"><i></i>${esc(P.name)}${d >= 1 && d <= 14 ? ` · calendar day ${d}` : ''}</div>
@@ -5945,6 +5947,7 @@ function openRecipe(id) {
   <div><h4>Method</h4><ol class="fx-steps">${r.steps.map(s => `<li><span>${esc(s)}</span></li>`).join('')}</ol>
   ${r.batch && r.batch.note ? `<div class="fx-tip"><b>Meal prep.</b> ${esc(r.batch.note)}</div>` : ''}</div></div>
   <p class="fx-mm" style="margin-top:14px">Macros are per serving.</p></div>`);
+  if (window.MTHKitchen) MTHKitchen.enhanceRecipe(r);
 }
 function openSwap(k, iso) {
   iso = iso || sel;
@@ -5956,6 +5959,7 @@ function openSwap(k, iso) {
   else list = pool({ B: 'Breakfast', L: 'Lunch', D: 'Dinner' }[k]);
   list = list.slice().sort((a, b) => b.protein - a.protein);
   const cur = dayRec(iso).plan[k], dt = fromISO(iso);
+  if (window.MTHKitchen) { const dt = fromISO(iso); return MTHKitchen.picker(list, k, iso, dayRec(iso).plan[k], `${CA_WD[dt.getDay()]} ${CA_MO[dt.getMonth()]} ${dt.getDate()} · ${P.name} · ${SLOT[k]}`); }
   modal(`<div class="fx-pad"><div class="fx-kicker">${CA_WD[dt.getDay()]} ${CA_MO[dt.getMonth()]} ${dt.getDate()} · ${esc(P.name)} · ${SLOT[k]}</div><h2>Choose a different ${SLOT[k].toLowerCase()}</h2>
     <p class="fx-mm" style="margin-top:6px">Highest protein first.</p>
     <div class="fx-pick">${list.filter(r => r.id !== cur).map(r => `<button data-pick="${r.id}">${ph(r, 360).replace('<button', '<span').replace('</button>', '</span>')}<div class="t">${esc(r.title)}<span>${r.kcal} kcal · ${r.protein} g protein</span></div></button>`).join('')}</div></div>`, true);
@@ -5978,16 +5982,22 @@ function openShop() {
   const M = model(), days = [...Array(7)].map((_, i) => addD(sel, i)), items = {};
   days.forEach(x => { const p = planFor(x, M); Object.values(p).forEach(id => { const r = byId(id); if (!r) return;
     (r.ing || []).forEach(([q, u, n, a]) => { const key = n.toLowerCase().replace(/\s*\(.*?\)/g, '').replace(/(clove|stalk|leave|onion|egg|fillet|carrot|lemon|lime|avocado|zucchini|sprig)s\b/g, '$1').trim() + '|' + u;
-      (items[key] = items[key] || { q: 0, u, n, a: a || 'Pantry' }).q += (+q || 0) / Math.max(1, r.serv); }); }); });
+      (items[key] = items[key] || { q: 0, u, n, a: a || 'Pantry' }).q += (+q || 0) / Math.max(1, r.serv) * (S.serv || 1); }); }); });
   const by = {}; Object.entries(items).forEach(([k, it]) => (by[it.a] = by[it.a] || []).push([k, it]));
   const d0 = fromISO(days[0]), d6 = fromISO(days[6]);
-  modal(`<div class="fx-pad fx-shop"><div class="fx-kicker">${CA_MO[d0.getMonth()]} ${d0.getDate()} – ${CA_MO[d6.getMonth()]} ${d6.getDate()} · for one person</div><h2>Shopping list</h2>
+  modal(`<div class="fx-pad fx-shop"><div class="fx-kicker">${CA_MO[d0.getMonth()]} ${d0.getDate()} – ${CA_MO[d6.getMonth()]} ${d6.getDate()} · for ${(S.serv || 1) > 1 ? S.serv + ' people' : 'one person'}</div><h2>Shopping list</h2>${window.MTHKitchen ? MTHKitchen.servPicker() : ''}
     <p class="fx-mm" style="margin-top:6px">Everything for the next 7 days of your plan, by aisle. Tick items as they go in the basket.</p>
     ${AISLES.filter(a => by[a]).map(a => `<h4>${a}<span>${by[a].length} items</span></h4>${by[a].sort((x, y) => x[1].n.localeCompare(y[1].n)).map(([k, it]) => `<label class="${S.shop[k] ? 'got' : ''}"><input type="checkbox" data-shop="${esc(k)}" ${S.shop[k] ? 'checked' : ''}><b>${esc(qfmt(Math.ceil(it.q * 4) / 4, it.u))}</b><span>${esc(it.n)}</span></label>`).join('')}`).join('')}
     <div style="display:flex;gap:8px;margin-top:18px"><button class="fx-btn" data-fx="shopreset">Untick all</button><button class="fx-btn dark" data-fx="shopprint">Print list</button></div></div>`);
   $$('#fxModal [data-shop]').forEach(cb => cb.onchange = () => { S.shop[cb.dataset.shop] = cb.checked; cb.parentElement.classList.toggle('got', cb.checked); save(); });
 }
 function toast(msg) { let t = $('#fxToast'); if (!t) { t = document.createElement('div'); t.id = 'fxToast'; t.className = 'fx-toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); } t.textContent = msg; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2000); }
+
+
+/* ---------- Meal planner: shared kitchen engine (shared/kitchen.js) ---------- */
+if (window.MTHKitchen) MTHKitchen.init({ S: () => S, save: () => save(), R: () => R, byId, esc, fmt, qfmt: (q, u) => qfmt(q, u), photoURL, sel: () => sel,
+  model, phaseOf, dayIdx, planFor, dayRec, addD, fromISO, SLOT, ORDER, PCOL, canSwap, carbLabel: 'net carbs', protTarget: () => protTarget(), get libCats() { return MEAL_CATS; },
+  modal: (h, w) => modal(h, w), closeModal: () => closeModal(), toast: m => toast(m), rerender: () => fxRender(), openSwap: (k, x) => openSwap(k, x), openShop: () => openShop() });
 
 /* ---------- events ---------- */
 document.addEventListener('click', e => {
@@ -6014,7 +6024,7 @@ document.addEventListener('click', e => {
     else if (a === 'vday' || a === 'vweek') { S.eatView = a === 'vweek' ? 'week' : 'day'; save(); fxRender(); }
     else if (a === 'small') { S.small = !S.small; save(); regenWeek(); fxRender(); toast(S.small ? 'Small-appetite mode: lighter meals plus two protein snacks' : 'Back to three main meals'); }
     else if (a === 'newweek') { regenWeek(); fxRender(); toast('New week of meals'); }
-    else if (a === 'lib') openLib();
+    else if (a === 'lib') { if (window.MTHKitchen) MTHKitchen.openLibrary(); else openLib(); }
     else if (a === 'shopreset') { S.shop = {}; save(); openShop(); }
     else if (a === 'shopprint') { const w = window.open('', '_blank'); if (w) { w.document.write('<title>Shopping list</title><style>body{font-family:sans-serif;padding:24px}label{display:block;padding:4px 0}input{display:none}h4{margin:14px 0 4px}</style>' + $('#fxModal .fx-shop').innerHTML.replace(/<button[\s\S]*?<\/button>/g, '')); w.document.close(); w.print(); } }
   }
@@ -6294,6 +6304,17 @@ function msOpenEx(ex) {
     <p class="fx-mm" style="margin-top:12px">Breathe out on the effort. Stop if anything hurts sharply. With osteoporosis, a past fracture or a hernia, have a physiotherapist check your form first.</p></div>`);
 }
 
+
+// ── Shared training engine (shared/train.js): exercise videos, rest timer, personal bests ──
+function trT(iso) {
+  const M = model(), d = dayIdx(iso, M), T = msToday(d, M), mv = moveFor(d, M);
+  if (T.k === 'lift') return { k: 'lift', day: T.day, sets: T.sets, note: T.reset ? 'Reset day: easier effort, stop 3 reps short of failure.' : '' };
+  if (T.k === 'cardio') return { k: 'cardio', min: T.min, title: T.reset ? 'Easy walk' : 'Zone 2 cardio', next: 'Strength tomorrow', text: T.reset ? 'Reset day: an easy walk at a talking pace. A 10-minute walk after a meal also counts and steadies blood sugar.' : '' };
+  return { k: T.k === 'prep' || T.k === 'off' ? 'walk' : 'rest', min: mv.min, title: T.k === 'prep' ? 'Prep day' : T.k === 'off' ? 'Easy walk' : 'Rest & mobility', text: mv.t };
+}
+if (window.MTHTrain) MTHTrain.init({ store: () => MS, save: () => save(), sel: () => sel, esc, toast: m => toast(m), modal: h => modal(h, false), rerender: () => fxRender(),
+  dayRec: (iso, peek) => peek ? S.days[iso] : dayRec(iso), fromISO, addD, today: trT, level: () => msLevel(), baseW: () => msCurlMax() });
+
 // ── Move tab ──
 function msMoveView(d, M, rec, mv) {
   const T = msToday(d, M), iso = sel, log = MS.log[iso] = MS.log[iso] || {}, lvl = msLevel();
@@ -6305,6 +6326,9 @@ function msMoveView(d, M, rec, mv) {
   const since = d >= 1 ? [...Array(Math.max(0, Math.min(d, 7)))].map((_, i) => addD(iso, -i)) : [];
   const liftsWeek = since.filter(x => msToday(dayIdx(x, M), M).k === 'lift' && S.days[x] && S.days[x].move).length;
   let main;
+  if (window.MTHTrain) {
+    main = MTHTrain.main(iso, trT(iso));
+  } else {
   if (T.k === 'lift') {
     const exs = MS_DAYS[T.day];
     const cards = exs.map(ex => {
@@ -6337,10 +6361,12 @@ function msMoveView(d, M, rec, mv) {
       <div class="ms-mob">${['Cat-cow, 8 slow reps', 'Hip flexor stretch, 30 sec each side', 'Thoracic rotations, 6 each side', 'Calf stretch, 30 sec each side', 'Doorway chest stretch, 30 sec', '10-minute walk after a meal'].map(x => `<span>${esc(x)}</span>`).join('')}</div>
       <div class="ms-finish"><button class="fx-btn ${rec.move ? '' : 'dark'}" data-fx="move">${ICO.check}${rec.move ? 'Done' : 'Mark as done'}</button></div>`;
   }
+  }
   return `<div class="ms-grid">
     <aside class="ms-side">${msIndexHTML(false)}
       <div class="ms-wkbox"><div class="fx-slot">Your week</div><div class="ms-wks">${week}</div>
         <div class="ms-wk-sum">${d >= 1 ? `<b>${liftsWeek}</b> strength session${liftsWeek === 1 ? '' : 's'} logged in the last 7 days · aim for 3` : 'Strength starts on Day 1'}</div></div>
+      ${window.MTHTrain ? MTHTrain.settings(false) + MTHTrain.history(iso) : ''}
     </aside>
     <div class="ms-main">${main}</div></div>`;
 }

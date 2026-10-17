@@ -5440,6 +5440,8 @@ document.addEventListener('click', function(e) {
 // Animate slope bars on load
 window.addEventListener('load', () => { setTimeout(animateSlopeBars, 300); });
 </script>
+<script src="https://marktalkshealth.github.io/mth-protocols/shared/train.js?v=1"></script>
+<script src="https://marktalkshealth.github.io/mth-protocols/shared/kitchen.js?v=1"></script>
 <script>
 /* ═══════════════════════════════════════════════════════════════
    EAT & MOVE: daily food + movement tracker
@@ -5465,7 +5467,7 @@ const todayISO = () => ISO(new Date());
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
 if (!S || typeof S !== 'object') S = {};
-S.days = S.days || {}; S.w = S.w || {}; S.shop = S.shop || {};
+S.days = S.days || {}; S.w = S.w || {}; S.shop = S.shop || {}; S.ms = S.ms || { tests: [], log: {} }; S.ms.log = S.ms.log || {};
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
 const dayRec = iso => (S.days[iso] = S.days[iso] || { plan: null, eaten: {}, extra: [], move: false, water: 0 });
 
@@ -5605,6 +5607,25 @@ function moveFor(d, M) {
   return { e: '🌿', n: 'Rest day', min: 15, kcal: kc(2.8, 15), t: 'Recovery day. An optional 15-minute walk after your biggest meal lowers the sugar spike.', tags: ['Optional', 'After a meal'] };
 }
 
+
+/* ---------- Move & Strength: shared training engine (shared/train.js) ---------- */
+// Turns the protocol's movement rules (moveFor) into the engine's day types. Cleanse and bed-rest days stay gentle.
+function trT(iso) {
+  const M = model(), d = dayIdx(iso, M), mv = moveFor(d, M);
+  const isLift = d >= M.after && d % 2 === M.after % 2, isCardio = d >= 3 && d % 2 !== M.after % 2, water = M.type === 'water' && d >= 1 && d <= M.cd;
+  const strong = ((S.ms || {}).tr || {}).lvl === 'strong';
+  if (!M.moveOn) return { k: 'walk', min: 20, title: 'Easy walk', text: mv.t };
+  if (d <= 0) return { k: 'walk', min: 20, title: 'Easy walk', text: mv.t, next: d === 0 ? 'Cleanse starts tomorrow' : '' };
+  if (d <= 2) return { k: 'bed', min: 10, title: 'Rest & gentle stretch', text: mv.t };
+  if (water && isCardio) return { k: 'walk', min: 10, title: 'Easy stroll', text: mv.t };
+  if (isLift) { const n = Math.floor((d - M.after) / 2); return { k: 'lift', day: n % 2 ? 'B' : 'A', sets: d === M.after ? 1 : strong ? 3 : 2, note: d === M.after ? 'First session: one easy set of each.' : '' }; }
+  if (isCardio) return { k: 'cardio', min: 30, title: d <= 4 ? 'Gentle cardio' : 'Zone 2 cardio', text: mv.t, next: d + 1 >= M.after ? 'Strength tomorrow' : '' };
+  return { k: 'rest', min: 15, title: 'Rest & mobility', text: mv.t };
+}
+function trView(iso) { return window.MTHTrain ? MTHTrain.view(iso, trT(iso)) : ''; }
+if (window.MTHTrain) MTHTrain.init({ store: () => S.ms, save: () => save(), sel: () => sel, esc, toast: m => toast(m), modal: h => modal(h, false), rerender: () => fxRender(),
+  dayRec: (iso, peek) => peek ? S.days[iso] : dayRec(iso), fromISO, addD, today: trT });
+
 /* ---------- render ---------- */
 let sel = null;
 const SLOT = { M: 'Morning electrolytes', A: 'All day', N: 'Midday electrolytes', B: 'Breakfast', L: 'Lunch', D: 'Dinner', S: 'Snack', P: 'Evening magnesium' };
@@ -5644,10 +5665,11 @@ function fxRender() {
     refeed: 'Small, soft, warm meals. Chew slowly and stop at the first sign of fullness.',
     gentle: 'Simple whole foods, protein first, while your blood sugar settles into its new rhythm. Keto starts on day ' + M.after + '.',
     keto: 'Your keto plan, matched to a daily target that loses about 1 lb a week.' }[P.k];
-  const tab = S.tab === 'prac' ? 'prac' : 'eat';
+  const tab = S.tab === 'prac' ? 'prac' : S.tab === 'move' && window.MTHTrain ? 'move' : 'eat';
   const PR = pracFor(d, M), pracRec = rec.prac = rec.prac || {};
   const pracDone = PR.items.filter(o => pracRec[o.r.n]).length;
-  const eatHTML = `
+  const eatView = S.eatView === 'week' && window.MTHKitchen ? 'week' : 'day';
+  const eatHTML = (window.MTHKitchen ? MTHKitchen.toolbar(eatView) : '') + (eatView === 'week' ? MTHKitchen.weekView() : `
   <div class="fx-grid">
     <aside class="fx-dash" aria-label="Today's totals">
       <div class="fx-phase"><i></i>${esc(P.name)}${d >= 1 && d <= 14 ? ` · calendar day ${d}` : ''}</div>
@@ -5698,12 +5720,12 @@ function fxRender() {
           <div class="fx-move-top"><div class="fx-move-ico">${mv.e}</div><div><div class="fx-slot">Movement</div><h4>${esc(mv.n)}</h4><div class="fx-move-meta">${mv.min} min · about ${mv.kcal} kcal burned (already built into your goal)</div></div></div>
           <p>${esc(mv.t)}</p>
           <div class="fx-move-steps">${mv.tags.map(x => `<span>${esc(x)}</span>`).join('')}</div>
-          <button class="fx-btn ${rec.move ? 'dark' : ''}" data-fx="move">${ICO.check}${rec.move ? 'Done' : 'Mark as done'}</button>
+          ${window.MTHTrain ? `<button class="fx-btn ${rec.move ? '' : 'dark'}" data-tab="move">${rec.move ? ICO.check + 'Done · see your workout' : 'Open today’s workout →'}</button>` : `<button class="fx-btn ${rec.move ? 'dark' : ''}" data-fx="move">${ICO.check}${rec.move ? 'Done' : 'Mark as done'}</button>`}
         </div>
         ${scoreCard(sel, M, days)}
       </div>
     </div>
-  </div>`;
+  </div>`);
   const pracHTML = pracView(d, M, P, PR, pracRec, pracDone);
   host.innerHTML = `
     <div><div class="fx-kicker">Your daily plan · ${CLEANSE[fastingType].emoji} Level ${CLEANSE[fastingType].lvl} ${esc(CLEANSE[fastingType].name)} · food, movement and healing practices</div>
@@ -5715,14 +5737,15 @@ function fxRender() {
       <button class="fx-btn dark" data-fx="shop">${ICO.cart}Shopping list</button>
     </div>
   </div>
-  <p class="fx-lede">${tab === 'eat' ? esc(subTxt) + ' Tap a photo for the recipe, tick each meal as you eat it, and your calories, macros and movement add up on the left.' : esc(PR.sub)}</p>
+  <p class="fx-lede">${tab === 'move' ? 'Your strength and cardio plan follows your protocol day by day: gentle while you cleanse, building once you are back on whole foods. Log each set and the plan progresses with you.' : tab === 'eat' ? esc(subTxt) + ' Tap a photo for the recipe, tick each meal as you eat it, and your calories, macros and movement add up on the left.' : esc(PR.sub)}</p>
   <div class="fx-strip" id="fxStrip">${days.map(x => { const dd = dayIdx(x, M), pp = phaseOf(dd, M), r = S.days[x], dt = fromISO(x), sc = dayScore(x, M), done = sc.total && sc.pct >= 1;
     return `<button class="fx-d ${x === sel ? 'sel' : ''} ${x === t ? 'today' : ''}" data-day="${x}" style="--pc:${PCOL[pp.k]}" aria-label="${esc(pp.name)}, ${esc(dt.toDateString())}">${done ? '<span class="chk">✓</span>' : ''}<span class="w">${CA_WD[dt.getDay()]}</span><b>${dt.getDate()}</b><span class="p">${esc(pp.short)}</span></button>`; }).join('')}</div>
   <div class="fx-tabs" role="tablist">
-    <button role="tab" aria-selected="${tab === 'eat'}" data-tab="eat"><span class="n">1</span>Eat &amp; Move<small>${fmt(food)} of ${fmt(goal)} kcal</small></button>
-    <button role="tab" aria-selected="${tab === 'prac'}" data-tab="prac"><span class="n">2</span>Healing Practices<small>${PR.items.length ? pracDone + ' of ' + PR.items.length + ' done' : 'Start tomorrow'}</small></button>
+    <button role="tab" aria-selected="${tab === 'eat'}" data-tab="eat"><span class="n">1</span>Eat<small>${fmt(food)} of ${fmt(goal)} kcal</small></button>
+    ${window.MTHTrain ? `<button role="tab" aria-selected="${tab === 'move'}" data-tab="move"><span class="n">2</span>Move &amp; Strength<small>${(() => { const T0 = trT(sel); return T0.k === 'lift' ? 'Strength ' + T0.day : T0.k === 'cardio' ? 'Cardio' : T0.k === 'walk' ? 'Walk' : 'Rest & mobility'; })()}${rec.move ? ' · done ✓' : ''}</small></button>` : ''}
+    <button role="tab" aria-selected="${tab === 'prac'}" data-tab="prac"><span class="n">${window.MTHTrain ? 3 : 2}</span>Healing Practices<small>${PR.items.length ? pracDone + ' of ' + PR.items.length + ' done' : 'Start tomorrow'}</small></button>
   </div>
-  ${tab === 'eat' ? eatHTML : pracHTML}`;
+  ${tab === 'eat' ? eatHTML : tab === 'move' ? trView(sel) : pracHTML}`;
   requestAnimationFrame(() => {
     const a = host.querySelector('.fx-ring .arc'); if (a) a.style.strokeDashoffset = a.dataset.off;
     host.querySelectorAll('.fx-bar i').forEach(i => i.style.width = i.dataset.w + '%');
@@ -5828,17 +5851,20 @@ function openRecipe(id) {
   <div><h4>Method</h4><ol class="fx-steps">${r.steps.map(s => `<li><span>${esc(s)}</span></li>`).join('')}</ol>
   ${r.batch && r.batch.note ? `<div class="fx-tip"><b>Meal prep.</b> ${esc(r.batch.note)}</div>` : ''}</div></div>
   <p class="fx-mm" style="margin-top:14px">Macros are per serving.</p></div>`);
+  if (window.MTHKitchen) MTHKitchen.enhanceRecipe(r);
 }
-function openSwap(k) {
-  const M = model(), d = dayIdx(sel, M), P = phaseOf(d, M);
+function openSwap(k, iso) {
+  iso = iso || sel;
+  const M = model(), d = dayIdx(iso, M), P = phaseOf(d, M);
   let list;
   if (P.k === 'cleanse') list = Object.values(JUICE_ID).map(byId).filter(Boolean);
   else if (P.k === 'gentle' || P.k === 'prep') list = (GENTLE[k] || []).map(byId).filter(Boolean);
   else list = k === 'S' ? R.filter(r => r.cat === 'Treat') : pool({ B: 'Breakfast', L: 'Lunch', D: 'Dinner' }[k]);
-  const cur = dayRec(sel).plan[k];
+  const cur = dayRec(iso).plan[k];
+  if (window.MTHKitchen) { const dt = fromISO(iso); return MTHKitchen.picker(list, k, iso, dayRec(iso).plan[k], `${CA_WD[dt.getDay()]} ${CA_MO[dt.getMonth()]} ${dt.getDate()} · ${P.name} · ${SLOT[k]}`); }
   modal(`<div class="fx-pad"><div class="fx-kicker">${esc(P.name)} · ${SLOT[k]}</div><h2>Choose a different ${SLOT[k].toLowerCase()}</h2>
     <div class="fx-pick">${list.filter(r => r.id !== cur).map(r => `<button data-pick="${r.id}">${ph(r, 360).replace('<button', '<span').replace('</button>', '</span>')}<div class="t">${esc(r.title)}<span>${r.kcal} kcal · ${r.carbs} g net carbs</span></div></button>`).join('')}</div></div>`, true);
-  $$('#fxModal [data-pick]').forEach(b => b.onclick = () => { const rec = dayRec(sel); rec.plan[k] = b.dataset.pick; rec.eaten[k] = false; save(); closeModal(); fxRender(); toast('Meal swapped'); });
+  $$('#fxModal [data-pick]').forEach(b => b.onclick = () => { const rec = dayRec(iso); rec.plan[k] = b.dataset.pick; rec.eaten[k] = false; save(); closeModal(); fxRender(); toast('Meal swapped'); });
 }
 function openAdd() {
   modal(`<div class="fx-pad"><div class="fx-kicker">Add food</div><h2>What else did you eat?</h2>
@@ -5857,16 +5883,22 @@ function openShop() {
   const M = model(), days = [...Array(7)].map((_, i) => addD(sel, i)), items = {};
   days.forEach(x => { const p = planFor(x, M); Object.values(p).forEach(id => { const r = byId(id); if (!r) return;
     (r.ing || []).forEach(([q, u, n, a]) => { const key = n.toLowerCase().replace(/\s*\(.*?\)/g, '').replace(/(clove|stalk|leave|onion|egg|fillet|carrot|lemon|lime|avocado|zucchini|sprig)s\b/g, '$1').trim() + '|' + u;
-      (items[key] = items[key] || { q: 0, u, n, a: a || 'Pantry' }).q += (+q || 0) / Math.max(1, r.serv); }); }); });
+      (items[key] = items[key] || { q: 0, u, n, a: a || 'Pantry' }).q += (+q || 0) / Math.max(1, r.serv) * (S.serv || 1); }); }); });
   const by = {}; Object.entries(items).forEach(([k, it]) => (by[it.a] = by[it.a] || []).push([k, it]));
   const d0 = fromISO(days[0]), d6 = fromISO(days[6]);
-  modal(`<div class="fx-pad fx-shop"><div class="fx-kicker">${CA_MO[d0.getMonth()]} ${d0.getDate()} – ${CA_MO[d6.getMonth()]} ${d6.getDate()} · for one person</div><h2>Shopping list</h2>
+  modal(`<div class="fx-pad fx-shop"><div class="fx-kicker">${CA_MO[d0.getMonth()]} ${d0.getDate()} – ${CA_MO[d6.getMonth()]} ${d6.getDate()} · for ${(S.serv || 1) > 1 ? S.serv + ' people' : 'one person'}</div><h2>Shopping list</h2>${window.MTHKitchen ? MTHKitchen.servPicker() : ''}
     <p class="fx-mm" style="margin-top:6px">Everything for the next 7 days of your plan, by aisle. Tick items as they go in the basket.</p>
     ${AISLES.filter(a => by[a]).map(a => `<h4>${a}<span>${by[a].length} items</span></h4>${by[a].sort((x, y) => x[1].n.localeCompare(y[1].n)).map(([k, it]) => `<label class="${S.shop[k] ? 'got' : ''}"><input type="checkbox" data-shop="${esc(k)}" ${S.shop[k] ? 'checked' : ''}><b>${esc(qfmt(Math.ceil(it.q * 4) / 4, it.u))}</b><span>${esc(it.n)}</span></label>`).join('')}`).join('')}
     <div style="display:flex;gap:8px;margin-top:18px"><button class="fx-btn" data-fx="shopreset">Untick all</button><button class="fx-btn dark" data-fx="shopprint">Print list</button></div></div>`);
   $$('#fxModal [data-shop]').forEach(cb => cb.onchange = () => { S.shop[cb.dataset.shop] = cb.checked; cb.parentElement.classList.toggle('got', cb.checked); save(); });
 }
 function toast(msg) { let t = $('#fxToast'); if (!t) { t = document.createElement('div'); t.id = 'fxToast'; t.className = 'fx-toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); } t.textContent = msg; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2000); }
+
+
+/* ---------- Meal planner: shared kitchen engine (shared/kitchen.js) ---------- */
+if (window.MTHKitchen) MTHKitchen.init({ S: () => S, save: () => save(), R: () => R, byId, esc, fmt, qfmt: (q, u) => qfmt(q, u), photoURL, sel: () => sel,
+  model, phaseOf, dayIdx, planFor, dayRec, addD, fromISO, SLOT, ORDER, PCOL, canSwap, carbLabel: 'net carbs', libCats: ['Breakfast', 'Lunch', 'Dinner', 'Treat'],
+  modal: (h, w) => modal(h, w), closeModal: () => closeModal(), toast: m => toast(m), rerender: () => fxRender(), openSwap: (k, x) => openSwap(k, x), openShop: () => openShop() });
 
 /* ---------- events ---------- */
 document.addEventListener('click', e => {
