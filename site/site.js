@@ -20,6 +20,11 @@
            : path==="/social"?"social" : "";
   if(ROUTE) H.classList.add("mth-r-"+ROUTE);
 
+  /* visitors who aren't signed in see the sales page (funnel), not the bare course page */
+  var SALES={"new-autoimmune":"/guthealthprotocol","autoimmune":"/thediabetesprotocol","total-body-healing":"/glp1-weightloss"};
+  var LOGGED_IN=!!(window.MTH_USER&&window.MTH_USER.id&&window.MTH_USER.id.indexOf("{{")<0);
+  if(ROUTE==="course"&&!LOGGED_IN){ var cs=path.replace(/^\/course\//,"").split("/")[0]; if(SALES[cs]){ location.replace(SALES[cs]+location.search); return; } }
+
   function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
   function waitFor(test,fn,ms){ var t0=Date.now(); (function loop(){ var r=null; try{r=test();}catch(e){} if(r) return fn(r); if(Date.now()-t0<(ms||12000)) setTimeout(loop,120); else fn(null); })(); }
   function reveal(){ H.classList.add("mth-ready"); }
@@ -144,6 +149,7 @@
       var head=document.createElement("section"); head.className="mthh";
       head.innerHTML='<div class="w"><div class="k">Protocols</div><h1>Your healing <em>protocols</em></h1><p>Each protocol pairs a video course with software that builds your personal day-by-day plan.</p></div>';
       if(catalog) catalog.parentNode.insertBefore(head,catalog);
+      if(!LOGGED_IN){ function sales(){ [].forEach.call(document.querySelectorAll('.lw-course-card a[href*="/course/"], a.lw-course-card[href*="/course/"]'),function(a){ var sl=(a.getAttribute("href")||"").split("/course/")[1]; sl=sl&&sl.split(/[/?#]/)[0]; if(SALES[sl]) a.setAttribute("href",SALES[sl]); }); } sales(); setTimeout(sales,1500); }
       reveal();
     });
   }
