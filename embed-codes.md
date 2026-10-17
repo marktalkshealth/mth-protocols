@@ -6,7 +6,7 @@
 <div id="mth-app-gut" style="min-height:400px;display:flex;align-items:center;justify-content:center;font-family:sans-serif;color:#8a7d71">Loading your protocol…</div>
 <script>
 (function(){
-  var src="https://courageous-klepon-0b1291.netlify.app/gut/";
+  var src="https://marktalkshealth.github.io/mth-protocols/gut/";
   var box=document.getElementById("mth-app-gut");
   function frame(){ /* fallback: show the app in a self-sizing frame */
     var f=document.createElement("iframe"); f.src=src; f.title="Mark Talks Health protocol";
@@ -30,7 +30,7 @@
 <div id="mth-app-sugar" style="min-height:400px;display:flex;align-items:center;justify-content:center;font-family:sans-serif;color:#8a7d71">Loading your protocol…</div>
 <script>
 (function(){
-  var src="https://courageous-klepon-0b1291.netlify.app/sugar/";
+  var src="https://marktalkshealth.github.io/mth-protocols/sugar/";
   var box=document.getElementById("mth-app-sugar");
   function frame(){ /* fallback: show the app in a self-sizing frame */
     var f=document.createElement("iframe"); f.src=src; f.title="Mark Talks Health protocol";
@@ -54,7 +54,7 @@
 <div id="mth-app-glp1" style="min-height:400px;display:flex;align-items:center;justify-content:center;font-family:sans-serif;color:#8a7d71">Loading your protocol…</div>
 <script>
 (function(){
-  var src="https://courageous-klepon-0b1291.netlify.app/glp1/";
+  var src="https://marktalkshealth.github.io/mth-protocols/glp1/";
   var box=document.getElementById("mth-app-glp1");
   function frame(){ /* fallback: show the app in a self-sizing frame */
     var f=document.createElement("iframe"); f.src=src; f.title="Mark Talks Health protocol";

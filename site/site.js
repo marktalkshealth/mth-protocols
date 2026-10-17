@@ -8,7 +8,7 @@
 ================================================================= */
 (function(){
   if(window.__MTH_SITE) return; window.__MTH_SITE=1;
-  var BASE=(document.currentScript&&document.currentScript.src||"").replace(/site\.js.*$/,"") || "https://courageous-klepon-0b1291.netlify.app/site/";
+  var BASE=(document.currentScript&&document.currentScript.src||"").replace(/site\.js.*$/,"") || "https://marktalkshealth.github.io/mth-protocols/site/";
   var HUB=BASE.replace(/site\/$/,"hub/");
   var H=document.documentElement;
   var path=(location.pathname.replace(/\/+$/,"")||"/").toLowerCase();
