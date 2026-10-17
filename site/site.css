@@ -29,7 +29,7 @@ body{background:var(--mth-bg)!important;-webkit-font-smoothing:antialiased}
 @keyframes mthSheet{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 .lw-topbar .lw-topbar-logo-col{position:relative;z-index:102}
 html.mth-menu-open .lw-topbar .learnworlds-section-content,html.mth-menu-open .lw-topbar .lw-cols{z-index:auto!important}
-.lw-topbar-hamburger-menu .mobile-nav-menu>.has-subMenu>.mobile-nav-menu-link{pointer-events:none;padding-bottom:10px!important;font-size:13px!important;font-family:var(--mth-sans)!important;font-weight:700!important;letter-spacing:.14em!important;text-transform:uppercase;color:var(--mth-terra)!important;padding-top:20px!important}
+.lw-topbar .lw-topbar-hamburger-menu .mobile-nav-menu>.has-subMenu>.mobile-nav-menu-link{pointer-events:none;padding-bottom:10px!important;font-size:13px!important;font-family:var(--mth-sans)!important;font-weight:700!important;letter-spacing:.14em!important;text-transform:uppercase;color:var(--mth-terra)!important;padding-top:20px!important}
 .lw-topbar .lw-topbar-hamburger-button{z-index:103!important}
 .lw-topbar-hamburger-menu-item{width:100%!important;max-width:520px;margin:0 auto!important;padding:0!important}
 .lw-topbar-hamburger-menu .mobile-nav-menu{display:flex!important;flex-direction:column!important;width:100%!important;margin:0!important;padding:0!important;list-style:none}
