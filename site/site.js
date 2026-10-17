@@ -55,7 +55,7 @@
   }
 
   /* ---------------- funnel ---------------- */
-  function isCheckout(sec){ var t=(sec.innerText||"").toLowerCase(); return t.indexOf("order summary")>-1||t.indexOf("payment method")>-1; }
+  function isCheckout(sec){ if(/checkout/i.test(sec.getAttribute("data-section-id")||"")||sec.querySelector('[class*="checkout"],[class*="Checkout"]')) return true; var t=(sec.innerText||"").toLowerCase(); return t.indexOf("order summary")>-1||t.indexOf("payment method")>-1; }
   function funnel(){
     var file=FUNNELS[path]; if(!file){ reveal(); return; }
     waitFor(function(){ var s=[].slice.call(document.querySelectorAll(".js-learnworlds-section")); return s.length>1?s:null; },function(secs){
@@ -65,6 +65,8 @@
       load(file).then(function(html){
         var first=secs.filter(function(s){return !s.classList.contains("lw-topbar");})[0]||document.body.firstChild;
         mount(html,first,true); reveal();
+        /* the checkout renders late: un-hide it whenever it shows up */
+        var tries=0; (function recheck(){ secs.forEach(function(s){ if(s.classList.contains("mth-old")&&isCheckout(s)) s.classList.remove("mth-old"); }); if(++tries<20) setTimeout(recheck,500); })();
       }).catch(function(e){ console.warn("MTH funnel",e); secs.forEach(function(s){s.classList.remove("mth-old");}); reveal(); });
     });
   }
