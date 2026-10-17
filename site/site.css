@@ -58,7 +58,8 @@ html.mth-ready .lw-footer{display:none!important}
 
 /* ---------- page takeovers: hide LearnWorlds' sections until ours is in ---------- */
 html.mth-r-home body .js-learnworlds-section:not(.lw-topbar):not(.lw-footer){display:none!important}
-html.mth-r-social .social-app-page{display:none!important}
+html.mth-r-social .social-app-page > :not(.lw-topbar):not(.mth-hub-frame):not(script){display:none!important}
+html.mth-r-social .lw-footer{display:none!important}
 html.mth-r-funnel body .js-learnworlds-section.mth-old{display:none!important}
 html.mth-r-funnel:not(.mth-ready) body .js-learnworlds-section:not(.lw-topbar){visibility:hidden}
 .mth-mount{display:block;width:100%}
