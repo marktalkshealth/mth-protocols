@@ -54,7 +54,12 @@
 #g2 .focus b{width:26px;height:26px;border-radius:50%;background:var(--terraS);color:var(--terra);display:grid;place-items:center;font-size:12px;flex:none}
 #g2 .small{font-size:12px;color:var(--faint)}
 /* trio */
-#g2 .trio{display:grid;gap:14px;margin-top:30px}
+#g2 .trio{display:flex;gap:12px;margin:26px -20px 0;padding:4px 20px 6px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+#g2 .trio::-webkit-scrollbar{display:none}
+#g2 .trio>.card{flex:0 0 84%;scroll-snap-align:center}
+#g2 .trio-dots{display:flex;justify-content:center;gap:6px;margin-top:12px}
+#g2 .trio-dots i{width:7px;height:7px;border-radius:50%;background:#dccdb9;transition:all .25s}
+#g2 .trio-dots i.on{width:20px;border-radius:5px;background:#c0623f}
 #g2 .tc{overflow:hidden;transition:transform .2s,box-shadow .2s}
 #g2 .tc:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(43,39,36,.10)}
 #g2 .tc .im{aspect-ratio:16/10;background:var(--bg2) center/cover no-repeat}
@@ -147,7 +152,9 @@
   #g2 .hero{padding:72px 0 96px}
   #g2 .hero .w{grid-template-columns:1.1fr .9fr}
   #g2 .pick{grid-template-columns:1fr 1fr;align-items:start}
-  #g2 .trio{grid-template-columns:repeat(3,1fr)}
+  #g2 .trio{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:30px 0 0;padding:0;overflow:visible}
+  #g2 .trio>.card{flex:none}
+  #g2 .trio-dots{display:none}
   #g2 .lvl{grid-template-columns:1fr 1.2fr;padding:30px}
   #g2 .tdetail{grid-template-columns:1fr 1fr;padding:30px}
   #g2 .stats{grid-template-columns:repeat(4,1fr)}
@@ -202,6 +209,7 @@
     <div class="card tc rv"><div class="im" style="background-image:url('https://lwfiles.mycourse.app/6ac2bb5648140f5f6d8ca00c-public/22c7349909403e2793af8f4b776ef5c7.jpg')"></div><div class="tx"><div class="n">02 · THE CLEANSE</div><h3>A cleanse that tastes great</h3><p>Signature green juices and avocado and coconut-cream ice creams, with three levels so it fits your body and your week.</p></div></div>
     <div class="card tc rv"><div class="im" style="background-image:url('https://lwfiles.mycourse.app/6ac2bb5648140f5f6d8ca00c-public/0a6332bc4c328ebc923ed47446b1c9d3.jpg')"></div><div class="tx"><div class="n">03 · THE COURSE</div><h3>The science, made simple</h3><p>A 7-hour video course and interactive ebook drawing on 80+ published studies, so you understand every step you take.</p></div></div>
   </div>
+  <div class="trio-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
 </div></section>
 
 <!-- LEVELS -->
@@ -344,6 +352,11 @@ var SW=document.getElementById("sectionsWrapper"), Y=function(){ return Math.max
 function onScroll(){ var y=Y(), co=findCheckout(document), near=co&&co.getBoundingClientRect().top<window.innerHeight, ft=document.querySelector(".mthf"), atEnd=ft&&ft.getBoundingClientRect().top<window.innerHeight, down=y>lastY+2, up=y<lastY-2;
   if(y<700||near||atEnd||up) st.classList.remove("on"); else if(down) st.classList.add("on"); lastY=y; }
 window.addEventListener("scroll",onScroll,{passive:true}); if(SW) SW.addEventListener("scroll",onScroll,{passive:true}); onScroll();
+/* ---- solution cards: swipe with dots on phones ---- */
+(function(){ var t=R.querySelector(".trio"), dots=R.querySelectorAll(".trio-dots i"); if(!t||!dots.length) return;
+  t.addEventListener("scroll",function(){ var cs=t.children, best=0, bd=1e9, mid=t.scrollLeft+t.clientWidth/2; for(var i=0;i<cs.length;i++){ var c=cs[i], d=Math.abs(c.offsetLeft+c.offsetWidth/2-mid); if(d<bd){bd=d;best=i;} } dots.forEach(function(x,j){ x.classList.toggle("on",j===best); }); },{passive:true});
+  dots.forEach(function(x,j){ x.style.cursor="pointer"; x.addEventListener("click",function(){ var c=t.children[j]; t.scrollTo({left:c.offsetLeft-(t.clientWidth-c.offsetWidth)/2,behavior:"smooth"}); }); });
+})();
 })();
 </script>
 </div>
