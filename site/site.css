@@ -82,7 +82,10 @@ html.mth-wm .lw-topbar .lw-logo{display:none!important}
 .lw-catalog-filters a,.lw-filter-item,.learnworlds-catalog-filter{font-family:var(--mth-sans)!important;border-radius:999px!important}
 
 /* ---------- LearnWorlds footer replaced by ours ---------- */
-html.mth-ready .lw-footer{display:none!important}
+/* LearnWorlds' own footer is never shown (ours replaces it), and ours waits until the page is ready,
+   so no footer ever flashes at the top while a page is loading */
+.lw-footer{display:none!important}
+html:not(.mth-ready) .mthf{display:none!important}
 .mthf{background:var(--mth-dark);color:#e9dfd2;font-family:var(--mth-sans);padding:18px 16px calc(14px + env(safe-area-inset-bottom))}
 .mthf .w{max-width:1080px;margin:0 auto;display:grid;gap:10px}
 .mthf .brand{font-family:var(--mth-serif);font-size:19px;color:#fff}
