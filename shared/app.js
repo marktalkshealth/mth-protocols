@@ -167,6 +167,29 @@ html.mth-app.mth-setup .mth-wiz-nav { display: flex; gap: 10px; padding: 14px 4p
 }
 html.mth-app.mth-bar-inline .mth-bar { position: static; border: 1px solid #e7dfd4; border-radius: 16px; margin: 0 8px 10px; padding: 4px; }
 
+/* waiting for a saved plan */
+html.mth-app.mth-wait .di-outer, html.mth-app.mth-wait .ca-outer, html.mth-app.mth-wait #main, html.mth-app.mth-wait .mth-bar { visibility: hidden !important; }
+html.mth-app.mth-wait body::after { content: 'Opening your plan…'; position: fixed; left: 0; right: 0; top: 40%; text-align: center;
+  font: 400 1.35rem 'Cormorant Garamond', Georgia, serif; color: #8a7d71; }
+
+/* header: back to course + open as app */
+html.mth-app .hc-title { flex: 1 1 auto; }
+html.mth-app .gp-sync { min-width: 0; max-width: 46%; overflow: hidden; }
+html.mth-app .gp-sync span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mth-back, .mth-expand { display: none; }
+html.mth-app.mth-full .mth-back { display: inline-flex; align-items: center; gap: 2px; flex: none; margin: 0 4px 0 -6px; padding: 6px 8px 6px 2px;
+  border: 0; background: none; color: #2e5c45; font: 600 .82rem/1 'DM Sans', system-ui, sans-serif; cursor: pointer; }
+.mth-back svg { width: 20px; height: 20px; }
+html.mth-app.mth-can-full:not(.mth-full) .mth-expand { display: inline-flex; align-items: center; gap: 6px; flex: none; padding: 7px 12px; border-radius: 999px;
+  border: 0; background: #1e2820; color: #fff; font: 600 .74rem/1 'DM Sans', system-ui, sans-serif; cursor: pointer; }
+.mth-expand svg { width: 14px; height: 14px; }
+html.mth-app.mth-can-full:not(.mth-full) .gp-sync { display: none !important; }
+html.mth-app.mth-full .hc-head { position: sticky; top: 0; z-index: 940; margin: -8px -8px 6px; padding: calc(10px + env(safe-area-inset-top)) 12px 10px !important;
+  background: rgba(246,241,234,.96); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid #e7dfd4; }
+html.mth-app.mth-full .hc-title { font-size: 1.2rem !important; }
+html.mth-app.mth-full .gp-sync { padding: 6px !important; border: 0 !important; background: none !important; }
+html.mth-app.mth-full .gp-sync span { display: none; }
+
 .mth-me-foot { display: none; }
 html.mth-app[data-mth-tab="me"]:not(.mth-setup) .mth-me-foot { display: block; text-align: center; padding: 18px 0 8px; }
 .mth-me-foot button { background: none; border: 0; color: #8a7d71; font: 500 .8rem 'DM Sans', system-ui, sans-serif; text-decoration: underline; cursor: pointer; }
@@ -235,14 +258,42 @@ html.mth-app[data-mth-tab="me"]:not(.mth-setup) .mth-me-foot { display: block; t
     nav.querySelector('.mth-wiz-back').onclick = function () { if (step > 1) setStep(step - 1); };
     nav.querySelector('.mth-wiz-next').onclick = function () { if (step < 3) setStep(step + 1); else genBtn.click(); };
 
-    /* after any Generate, go straight to Today */
-    genBtn.addEventListener('click', function () {
-      setTimeout(function () {
-        if (!isSetUp()) return;
-        root.classList.remove('mth-setup');
-        show('today', true);
-      }, 350);
+    /* the plan can appear by pressing Generate, or a moment after opening when it is
+       restored from the member's account: either way, leave set-up and go to Today */
+    function planReady() {
+      if (!isSetUp()) return;
+      var wasSetup = root.classList.contains('mth-setup') || root.classList.contains('mth-wait');
+      root.classList.remove('mth-setup', 'mth-wait');
+      if (wasSetup || justGenerated) show('today', true);
+      justGenerated = false;
+    }
+    var justGenerated = false;
+    genBtn.addEventListener('click', function () { justGenerated = true; setTimeout(planReady, 350); });
+    try { new MutationObserver(function () { if (isSetUp()) planReady(); }).observe(genBtn, { attributes: true, attributeFilter: ['class'] }); } catch (e) {}
+
+    /* --- full screen inside the course (the LearnWorlds page lays this frame over the screen) --- */
+    var head = document.querySelector('.hc-head');
+    var back = document.createElement('button');
+    back.type = 'button'; back.className = 'mth-back'; back.setAttribute('aria-label', 'Back to the course');
+    back.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg><span>Course</span>';
+    if (head) head.insertBefore(back, head.firstChild);
+    var expand = document.createElement('button');
+    expand.type = 'button'; expand.className = 'mth-expand';
+    expand.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>Open as app';
+    if (head) head.appendChild(expand);
+    function askFull(onOff) {
+      if (window.top === window) return;
+      try { window.top.postMessage({ type: 'mth-app-full', on: onOff }, '*'); } catch (e) {}
+    }
+    window.addEventListener('message', function (e) {
+      var d = e.data; if (!d || d.type !== 'mth-app-full-ok') return;
+      root.classList.add('mth-can-full');
+      root.classList.toggle('mth-full', !!d.on);
+      setTimeout(placeBar, 120);
     });
+    back.onclick = function () { askFull(false); };
+    expand.onclick = function () { askFull(true); };
+    askFull(true);
 
     function show(tab, scroll) {
       root.setAttribute('data-mth-tab', tab);
@@ -274,13 +325,21 @@ html.mth-app[data-mth-tab="me"]:not(.mth-setup) .mth-me-foot { display: block; t
     placeBar();
     window.addEventListener('resize', function () { clearTimeout(placeBar.t); placeBar.t = setTimeout(placeBar, 200); });
 
+    function startSetup() {
+      root.classList.remove('mth-wait');
+      if (isSetUp()) return;
+      root.classList.add('mth-setup');
+      show('me', false);
+      setStep(1);
+    }
     if (isSetUp()) {
       var last = null; try { last = sessionStorage.getItem(TAB_KEY); } catch (e) {}
       show(last && /^(today|plan|progress|me)$/.test(last) ? last : 'today', false);
     } else {
-      root.classList.add('mth-setup');
-      show('me', false);
-      setStep(1);
+      /* give a saved plan a moment to come back from the member's account before offering set-up */
+      root.classList.add('mth-wait');
+      show('today', false);
+      setTimeout(startSetup, 3500);
     }
   });
 })();
