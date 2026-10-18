@@ -31,6 +31,14 @@
 
   function ready(fn) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); }
 
+  /* On the members' /app page on a computer: use the whole screen width */
+  if (!on) {
+    try { if (new URLSearchParams(location.search).get('mode') === 'app') {
+      var wide = document.createElement('style');
+      wide.textContent = '.di-outer,.ca-outer,.fx-outer{max-width:none!important}';
+      (document.head || document.documentElement).appendChild(wide);
+    } } catch (e) {}
+  }
   /* A phone that was switched to the full page layout gets a small way back */
   if (!on) {
     if (touch) ready(function () {
