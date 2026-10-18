@@ -30,7 +30,7 @@
   /* visitors who aren't signed in see the sales page (funnel), not the bare course page */
   var SALES={"new-autoimmune":"/guthealthprotocol","autoimmune":"/thediabetesprotocol","total-body-healing":"/glp1-weightloss"};
   var LOGGED_IN=!!(window.MTH_USER&&window.MTH_USER.id&&window.MTH_USER.id.indexOf("{{")<0);
-  if(ROUTE==="course"&&!LOGGED_IN){ var cs=path.replace(/^\/course\//,"").split("/")[0]; if(SALES[cs]){ location.replace(SALES[cs]+location.search); return; } }
+  if(ROUTE==="course"&&!LOGGED_IN){ var cs=path.replace(/^\/course\//,"").split("/")[0]; if(SALES[cs]){ H.style.visibility="hidden"; location.replace(SALES[cs]+location.search); return; } }
 
   function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
   function waitFor(test,fn,ms){ var t0=Date.now(); (function loop(){ var r=null; try{r=test();}catch(e){} if(r) return fn(r); if(Date.now()-t0<(ms||12000)) setTimeout(loop,120); else fn(null); })(); }
@@ -357,5 +357,5 @@
     }catch(e){ console.warn("MTH site",e); reveal(); }
   });
   /* safety net: never leave a page hidden */
-  setTimeout(function(){ if(!H.classList.contains("mth-ready")){ H.classList.remove("mth-r-home","mth-r-funnel","mth-r-course"); reveal(); } },9000);
+  setTimeout(function(){ if(!H.classList.contains("mth-ready")){ H.classList.remove("mth-r-home","mth-r-funnel","mth-r-course","mth-r-courses"); reveal(); } },9000);
 })();
