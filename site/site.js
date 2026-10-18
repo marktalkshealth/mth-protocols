@@ -262,6 +262,10 @@
     var staff=!!(meObj.isStaff||/admin|instructor|owner/i.test(String(meObj.userRole||"")));
     var MATCH={gut:/gut/,sugar:/sugar|diabetes/,glp1:/glp/};
     var owned=APP_PROTOS.filter(function(x){ return staff||tags.some(function(t){ return MATCH[x[0]].test(t); }); }).map(function(x){return x[0];});
+    /* Until enrolment tags are set up in LearnWorlds, nobody has one: open the app as before
+       (Gut Health by default; /app?p=sugar or /app?p=glp1 from those courses). Set LOCK_BY_TAGS to true once the tags exist. */
+    var LOCK_BY_TAGS=false;
+    if(!LOCK_BY_TAGS&&!owned.length) owned=APP_PROTOS.map(function(x){return x[0];});
     /* a course's own link (/app?p=sugar) or the last one opened decides between several; otherwise the first owned */
     var pick=null; try{ pick=new URLSearchParams(location.search).get("p")||localStorage.getItem("mth_app_proto"); }catch(e){}
     if(owned.indexOf(pick)<0) pick=owned[0]||null;
