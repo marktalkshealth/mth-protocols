@@ -12,14 +12,21 @@
   var HUB=BASE.replace(/site\/$/,"hub/");
   var H=document.documentElement;
   var path=(location.pathname.replace(/\/+$/,"")||"/").toLowerCase();
+  /* short addresses for social media: marktalkshealth.com/gut and friends forward to the real page (keeping ?utm tags) */
+  var SHORT={"/gut":"/guthealthprotocol","/guthealth":"/guthealthprotocol","/sugar":"/thediabetesprotocol","/diabetes":"/thediabetesprotocol",
+             "/bloodsugar":"/thediabetesprotocol","/glp1":"/glp1-weightloss","/glp-1":"/glp1-weightloss","/weightloss":"/glp1-weightloss",
+             "/hub":"/social","/community":"/social","/link":"/links","/bio":"/links"};
+  if(SHORT[path]){ H.style.visibility="hidden"; location.replace(SHORT[path]+location.search); return; }
   var FUNNELS={"/guthealthprotocol":"funnel-gut.html","/thediabetesprotocol":"funnel-diabetes.html","/glp1-weightloss":"funnel-glp1.html"};
   var ROUTE= (path==="/"||path==="/home")?"home"
            : FUNNELS[path]?"funnel"
            : path==="/courses"?"courses"
            : path.indexOf("/course/")===0?"course"
            : path==="/social"?"social"
-           : path==="/app"?"app" : "";
+           : path==="/app"?"app"
+           : path==="/links"?"links" : "";
   if(ROUTE) H.classList.add("mth-r-"+ROUTE);
+  if(ROUTE==="links"){ var lst=document.createElement("style"); lst.textContent="html.mth-r-links body>*:not(#mth-links){display:none!important}html.mth-r-links,html.mth-r-links body{background:#f6f1ea!important}"; (document.head||H).appendChild(lst); }
   /* /app: keep the phone's "install app" offer so our Install button can show it */
   var INSTALL=null;
   if(ROUTE==="app"){
@@ -378,6 +385,43 @@
     reveal();
   }
 
+
+  /* ---------------- /links : link-in-bio page for Instagram, TikTok and YouTube ---------------- */
+  var LINKS=[
+    ["Gut Health Protocol","Calm your gut, rebuild your microbiome","/guthealthprotocol"],
+    ["Blood Sugar Protocol","Steadier glucose, more energy","/thediabetesprotocol"],
+    ["GLP-1 Weight Loss Protocol","Lose fat, keep your muscle","/glp1-weightloss"],
+    ["The Healing Hub","Join the community, sound studio and daily plan","/social"]
+  ];
+  function linksPage(){
+    document.title="Mark Talks Health · Links";
+    var p=document.createElement("div"); p.id="mth-links";
+    var src=location.search||"";
+    p.innerHTML='<style>'+
+      '#mth-links{min-height:100vh;background:#f6f1ea;color:#2b2622;font-family:"DM Sans",system-ui,-apple-system,sans-serif;display:flex;justify-content:center;padding:calc(36px + env(safe-area-inset-top)) 18px 40px}'+
+      '#mth-links .w{width:100%;max-width:440px;text-align:center}'+
+      '#mth-links .av{width:104px;height:104px;border-radius:50%;margin:0 auto 14px;background:#2b2622 50% 16%/230% auto no-repeat;box-shadow:0 0 0 3px #f6f1ea,0 0 0 4px #b08a46}'+
+      '#mth-links h1{font:500 32px/1.05 "Cormorant Garamond",Georgia,serif;margin:0}#mth-links h1 i{color:#b8664a}'+
+      '#mth-links .tag{font:italic 400 17px/1.35 "Cormorant Garamond",Georgia,serif;color:#6e6259;margin:6px 0 4px}'+
+      '#mth-links .story{font-size:13px;color:#8a7d71;margin:0 0 22px}'+
+      '#mth-links a.b{display:block;text-decoration:none;color:#f6f1ea;background:#2b2622;border-radius:16px;padding:16px 46px 16px 18px;margin:0 0 12px;text-align:left;position:relative;transition:transform .15s}'+
+      '#mth-links a.b:active{transform:scale(.98)}'+
+      '#mth-links a.b b{display:block;font:500 21px/1.15 "Cormorant Garamond",Georgia,serif}'+
+      '#mth-links a.b span{display:block;font-size:12.5px;color:#d9cdbf;margin-top:3px}'+
+      '#mth-links a.b:after{content:"\\2192";position:absolute;right:18px;top:50%;transform:translateY(-50%);color:#e3b39d;font-size:20px}'+
+      '#mth-links a.b.lite{background:#fffcf7;color:#2b2622;border:1px solid #e3d8ca}#mth-links a.b.lite span{color:#8a7d71}'+
+      '#mth-links .mem{display:inline-block;margin-top:10px;font-size:13px;color:#2e5c45;font-weight:600;text-decoration:none}'+
+      '#mth-links .fine{font-size:11px;line-height:1.5;color:#a8998b;margin-top:26px}'+
+      '</style><div class="w"><div class="av" style="background-image:url('+BASE+'mark-kitchen.jpg)"></div>'+
+      '<h1>Mark <i>Talks</i> Health</h1><div class="tag">Natural health meets modern science</div>'+
+      '<div class="story">I lost 100 pounds with the same 7 steps I teach.</div>'+
+      LINKS.map(function(l,i){ return '<a class="b'+(i===3?' lite':'')+'" href="'+l[2]+src+'"><b>'+l[0]+'</b><span>'+l[1]+'</span></a>'; }).join("")+
+      '<a class="mem" href="/app">Already a member? Open your app</a>'+
+      '<div class="fine">Educational content, not medical advice. Talk to your doctor before fasting or changing medication.<br>&copy; '+new Date().getFullYear()+' Mark Talks Health</div></div>';
+    document.body.appendChild(p);
+    reveal();
+  }
+
   ready(function(){
     try{ fixLinks(); }catch(e){}
     try{ wordmark(); }catch(e){}
@@ -389,8 +433,9 @@
       else if(ROUTE==="social") social();
       else if(ROUTE==="courses") courses();
       else if(ROUTE==="app") appPage();
+      else if(ROUTE==="links") linksPage();
       else reveal();
-      if(ROUTE!=="social"&&ROUTE!=="app") footer();
+      if(ROUTE!=="social"&&ROUTE!=="app"&&ROUTE!=="links") footer();
     }catch(e){ console.warn("MTH site",e); reveal(); }
   });
   /* safety net: never leave a page hidden */
