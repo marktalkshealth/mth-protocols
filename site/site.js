@@ -249,6 +249,7 @@
   var APP_PROTOS=[["gut","Gut Health"],["sugar","Blood Sugar"],["glp1","GLP-1"]];
   function appPage(){
     var ROOT=BASE.replace(/site\/$/,"");
+    /* which protocol: a course's own link (/app?p=sugar) sets it and it's remembered; otherwise Gut Health */
     var pick=null; try{ pick=new URLSearchParams(location.search).get("p")||localStorage.getItem("mth_app_proto"); }catch(e){}
     if(!APP_PROTOS.some(function(x){return x[0]===pick;})) pick="gut";
     function name(k){ for(var i=0;i<APP_PROTOS.length;i++) if(APP_PROTOS[i][0]===k) return APP_PROTOS[i][1]; return ""; }
@@ -307,18 +308,17 @@
     var shell=document.createElement("div"); shell.id="mth-app-shell";
     shell.innerHTML='<div class="ab"><a class="home" href="/home" aria-label="Back to the Mark Talks Health site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a>'+
       '<div class="t"><div class="k">Mark Talks Health</div><div class="n"></div></div>'+
-      '<button type="button" class="ins" aria-label="Install the app on your phone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span>Install</span></button>'+'<select aria-label="Choose your protocol">'+APP_PROTOS.map(function(x){return '<option value="'+x[0]+'">'+x[1]+'</option>';}).join("")+'</select></div>'+
+      '<button type="button" class="ins" aria-label="Install the app on your phone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span>Install</span></button>'+'</div>'+
       '<div class="ld">Opening your protocol&hellip;</div><iframe title="Your protocol" allow="fullscreen; clipboard-write"></iframe>'+
       '<div class="sh" role="dialog" aria-modal="true" aria-label="Add the app to your home screen"><div class="c"><img class="ic" alt="" src="'+BASE+'app-icon-180.png"><h3>Add Mark Talks Health to your home screen</h3><p>It opens full screen, straight into your protocol, like any other app.</p><ol></ol><button type="button" class="ok">Got it</button></div></div>';
     document.body.appendChild(shell);
-    var fr=shell.querySelector("iframe"), sel=shell.querySelector("select"), nm=shell.querySelector(".n"), ld=shell.querySelector(".ld");
+    var fr=shell.querySelector("iframe"), nm=shell.querySelector(".n"), ld=shell.querySelector(".ld");
     function load(k){
-      pick=k; sel.value=k; nm.textContent=name(k)+" Protocol"; ld.style.display="";
+      pick=k; nm.textContent=name(k)+" Protocol"; ld.style.display="";
       try{ localStorage.setItem("mth_app_proto",k); }catch(e){}
       fr.src=ROOT+k+"/?mode=app";
     }
     fr.addEventListener("load",function(){ ld.style.display="none"; });
-    sel.addEventListener("change",function(){ load(sel.value); });
 
     /* Install button: phones and tablets only, hidden once installed */
     var ins=shell.querySelector(".ins"), sh=shell.querySelector(".sh"), ua=navigator.userAgent||"";
