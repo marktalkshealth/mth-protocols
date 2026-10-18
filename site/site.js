@@ -253,9 +253,18 @@
   var APP_PROTOS=[["gut","Gut Health"],["sugar","Blood Sugar"],["glp1","GLP-1"]];
   function appPage(){
     var ROOT=BASE.replace(/site\/$/,"");
-    /* which protocol: a course's own link (/app?p=sugar) sets it and it's remembered; otherwise Gut Health */
+    /* Which protocols this member owns. A LearnWorlds automation tags each member when they enrol:
+         Gut Health course   -> tag containing "gut"            (e.g. protocol-gut)
+         Blood Sugar course  -> tag containing "sugar" or "diabetes"  (e.g. protocol-sugar)
+         GLP-1 course        -> tag containing "glp"            (e.g. protocol-glp1)
+       Admins and instructors can open every protocol. */
+    var meObj=window.me||{}, tags=(meObj.tags||[]).map(function(t){ return String(t&&t.name||t||"").toLowerCase(); });
+    var staff=!!(meObj.isStaff||/admin|instructor|owner/i.test(String(meObj.userRole||"")));
+    var MATCH={gut:/gut/,sugar:/sugar|diabetes/,glp1:/glp/};
+    var owned=APP_PROTOS.filter(function(x){ return staff||tags.some(function(t){ return MATCH[x[0]].test(t); }); }).map(function(x){return x[0];});
+    /* a course's own link (/app?p=sugar) or the last one opened decides between several; otherwise the first owned */
     var pick=null; try{ pick=new URLSearchParams(location.search).get("p")||localStorage.getItem("mth_app_proto"); }catch(e){}
-    if(!APP_PROTOS.some(function(x){return x[0]===pick;})) pick="gut";
+    if(owned.indexOf(pick)<0) pick=owned[0]||null;
     function name(k){ for(var i=0;i<APP_PROTOS.length;i++) if(APP_PROTOS[i][0]===k) return APP_PROTOS[i][1]; return ""; }
 
     /* home-screen app details */
@@ -306,6 +315,11 @@
       "#mth-app-shell .sh li:before{content:counter(s);flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#2e5c45;color:#fff;font-size:13px;font-weight:700}"+
       "#mth-app-shell .sh li b{font-weight:700}"+
       "#mth-app-shell .sh button.ok{width:100%;min-height:50px;border:0;border-radius:14px;background:#2b2622;color:#fff;font:600 15px 'DM Sans',system-ui,sans-serif}"+
+      "#mth-app-shell .none{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:10px}"+
+      "#mth-app-shell .none h2{font:500 28px/1.1 'Cormorant Garamond',Georgia,serif;color:#2b2622;margin:0}"+
+      "#mth-app-shell .none p{font:400 15px/1.5 'DM Sans',system-ui,sans-serif;color:#8a7d71;max-width:340px;margin:0 0 8px}"+
+      "#mth-app-shell .none a{display:block;width:100%;max-width:320px;padding:14px;border-radius:14px;background:#2b2622;color:#fff;text-decoration:none;font:600 15px 'DM Sans',system-ui,sans-serif}"+
+      "#mth-app-shell .sw{flex:none;max-width:36%;padding:8px 10px;border-radius:999px;border:1px solid #ddd3c6;background:#fff;font:600 13px 'DM Sans',system-ui,sans-serif;color:#2b2622}"+
       "#mth-app-shell .ld{position:absolute;left:0;right:0;top:45%;text-align:center;font:400 22px 'Cormorant Garamond',Georgia,serif;color:#8a7d71;pointer-events:none}";
     document.head.appendChild(st);
 
@@ -341,7 +355,21 @@
       else steps(["Tap the <b>&#8942;</b> menu at the top right of your browser","Tap <b>Install app</b> or <b>Add to home screen</b>","Tap <b>Install</b> or <b>Add</b>"]);
     });
     sh.addEventListener("click",function(e){ if(e.target===sh||e.target.classList.contains("ok")) sh.classList.remove("on"); });
-    load(pick);
+    if(!pick){
+      fr.remove(); ld.style.display="none"; nm.textContent="Your protocol";
+      var none=document.createElement("div"); none.className="none";
+      none.innerHTML='<h2>Your protocol lives here</h2><p>Once you join a protocol, your personal plan, meals and workouts open on this page.</p>'+
+        '<a href="/guthealthprotocol">Gut Health Protocol</a><a href="/thediabetesprotocol">Blood Sugar Protocol</a><a href="/glp1-weightloss">GLP-1 Weight Loss Protocol</a>';
+      shell.appendChild(none);
+    } else {
+      if(owned.length>1){
+        var sw=document.createElement("select"); sw.className="sw"; sw.setAttribute("aria-label","Switch protocol");
+        sw.innerHTML=owned.map(function(k){ return '<option value="'+k+'">'+name(k)+'</option>'; }).join("");
+        sw.addEventListener("change",function(){ load(sw.value); });
+        shell.querySelector(".ab").appendChild(sw); sw.value=pick;
+      }
+      load(pick);
+    }
     reveal();
   }
 
