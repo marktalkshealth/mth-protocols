@@ -97,6 +97,8 @@ html.mth-r-social .social-app-page > :not(.lw-topbar):not(.mth-hub-frame):not(sc
 html.mth-r-social .lw-footer{display:none!important}
 html.mth-r-funnel body .js-learnworlds-section.mth-old{display:none!important}
 html.mth-r-funnel:not(.mth-ready) body .js-learnworlds-section:not(.lw-topbar){visibility:hidden}
+/* course pages: keep the old LearnWorlds layout hidden until our design is in place (no flash) */
+html.mth-r-course:not(.mth-ready) body .js-learnworlds-section:not(.lw-topbar){visibility:hidden}
 .mth-mount{display:block;width:100%}
 
 /* ---------- course pages (compact hero + module rail) ---------- */

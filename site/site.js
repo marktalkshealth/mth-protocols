@@ -357,5 +357,5 @@
     }catch(e){ console.warn("MTH site",e); reveal(); }
   });
   /* safety net: never leave a page hidden */
-  setTimeout(function(){ if(!H.classList.contains("mth-ready")){ H.classList.remove("mth-r-home","mth-r-funnel"); reveal(); } },9000);
+  setTimeout(function(){ if(!H.classList.contains("mth-ready")){ H.classList.remove("mth-r-home","mth-r-funnel","mth-r-course"); reveal(); } },9000);
 })();
