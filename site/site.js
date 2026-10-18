@@ -61,7 +61,8 @@
       '<nav><a href="/home">Home</a><a href="/courses">Protocols</a><a href="/social">Healing Hub</a></nav>'+
       '<div class="fine">Educational content only, not medical advice. Talk to your doctor before starting any fasting or cleansing protocol, especially if you take medication. © '+new Date().getFullYear()+' Mark Talks Health</div></div>';
     var lw=document.querySelector(".lw-footer");
-    if(lw&&lw.parentNode) lw.parentNode.insertBefore(f,lw.nextSibling); else document.body.appendChild(f);
+    /* only on normal site pages (they have a LearnWorlds footer); never inside the course player */
+    if(lw&&lw.parentNode) lw.parentNode.insertBefore(f,lw.nextSibling);
   }
 
   /* ---------------- homepage ---------------- */
