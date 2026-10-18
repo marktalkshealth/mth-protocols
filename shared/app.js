@@ -99,13 +99,12 @@ html.mth-app .hc-intake, html.mth-app .hc-mid, html.mth-app .hc-heal, html.mth-a
 html.mth-app #fastingArcContainer, html.mth-app .fx-outer, html.mth-app #fx, html.mth-app #fxOverview,
 html.mth-app .ca-outer, html.mth-app #main { display: none !important; }
 
-html.mth-app[data-mth-tab="today"] .fx-outer, html.mth-app[data-mth-tab="today"] #fx { display: block !important; }
-
-html.mth-app[data-mth-tab="plan"] .hc-heal { display: flex !important; }
-html.mth-app[data-mth-tab="plan"] #fastingArcContainer,
-html.mth-app[data-mth-tab="plan"] .fx-outer,
-html.mth-app[data-mth-tab="plan"] #fxOverview { display: block !important; }
-html.mth-app[data-mth-tab="plan"] #fastingArcContainer { margin-top: 10px; }
+/* Today, Meals and Exercise are the three parts of the daily plan */
+html.mth-app[data-mth-tab="today"] .fx-outer, html.mth-app[data-mth-tab="today"] #fx,
+html.mth-app[data-mth-tab="meals"] .fx-outer, html.mth-app[data-mth-tab="meals"] #fx,
+html.mth-app[data-mth-tab="move"] .fx-outer, html.mth-app[data-mth-tab="move"] #fx { display: block !important; }
+html.mth-app #fx > .fx-tabs { display: none !important; }
+html.mth-app:not([data-mth-tab="meals"]) #fx .fx-tools { display: none !important; }
 
 html.mth-app[data-mth-tab="progress"] .hc-intake { display: flex !important; }
 html.mth-app[data-mth-tab="progress"] .hc-intake .di-panel > :not(.di-metrics-section-title):not(.di-metrics-grid) { display: none !important; }
@@ -113,10 +112,14 @@ html.mth-app[data-mth-tab="progress"] .hc-intake .di-metrics-section-title { mar
 html.mth-app[data-mth-tab="progress"] .hc-below { display: block !important; }
 html.mth-app[data-mth-tab="progress"] .hc-below > * + * { margin-top: 10px; }
 html.mth-app[data-mth-tab="progress"] .ca-outer,
-html.mth-app[data-mth-tab="progress"] #main { display: block !important; }
+html.mth-app[data-mth-tab="progress"] #main,
+html.mth-app[data-mth-tab="progress"] #fastingArcContainer,
+html.mth-app[data-mth-tab="progress"] .fx-outer,
+html.mth-app[data-mth-tab="progress"] #fxOverview { display: block !important; }
+html.mth-app[data-mth-tab="progress"] #fxOverview { margin-top: 10px; }
 html.mth-app[data-mth-tab="progress"] .ca-outer { margin-top: 10px !important; }
 
-html.mth-app[data-mth-tab="me"] .hc-intake, html.mth-app[data-mth-tab="me"] .hc-mid { display: flex !important; }
+html.mth-app[data-mth-tab="me"] .hc-intake, html.mth-app[data-mth-tab="me"] .hc-mid, html.mth-app[data-mth-tab="me"]:not(.mth-setup) .hc-heal { display: flex !important; }
 html.mth-app[data-mth-tab="me"] .hc-intake .di-metrics-section-title,
 html.mth-app[data-mth-tab="me"] .hc-intake .di-metrics-grid { display: none !important; }
 
@@ -186,11 +189,13 @@ html.mth-app[data-mth-tab="me"]:not(.mth-setup) .mth-me-foot { display: block; t
 
   var ICONS = {
     today: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>',
-    plan: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',
+    meals: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v8M4.5 3v5a2.5 2.5 0 0 0 5 0V3M7 11v10"/><path d="M17 21V3c-2.2 1-3.5 3.6-3.5 7v3H17"/></svg>',
+    move: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>',
     progress: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5h16"/><path d="M6.5 16v-4M11 16V8M15.5 16v-6M20 16V5"/></svg>',
     me: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.5c1.2-3.7 4-5.6 7.5-5.6s6.3 1.9 7.5 5.6"/></svg>'
   };
-  var TABS = [['today', 'Today'], ['plan', 'Plan'], ['progress', 'Progress'], ['me', 'Me']];
+  var TABS = [['today', 'Today'], ['meals', 'Meals'], ['move', 'Exercise'], ['progress', 'Progress'], ['me', 'Me']];
+  var INNER = { today: 'prac', meals: 'eat', move: 'move' };   /* bottom tab -> daily plan section */
   var STEPS = [
     ['About you', 'A few basics so your plan fits your body.'],
     ['Your symptoms', 'Tap everything you have most weeks for a month or more.'],
@@ -207,6 +212,7 @@ html.mth-app[data-mth-tab="me"]:not(.mth-setup) .mth-me-foot { display: block; t
     function isSetUp() { return !genBtn.classList.contains('di-pending'); }
 
     /* --- tab bar --- */
+    var syncing = false;
     var bar = document.createElement('nav');
     bar.className = 'mth-bar'; bar.setAttribute('role', 'tablist'); bar.setAttribute('aria-label', 'Protocol sections');
     bar.innerHTML = TABS.map(function (t) {
@@ -262,7 +268,11 @@ html.mth-app[data-mth-tab="me"]:not(.mth-setup) .mth-me-foot { display: block; t
       root.setAttribute('data-mth-tab', tab);
       var bs = bar.querySelectorAll('button');
       for (var i = 0; i < bs.length; i++) bs[i].setAttribute('aria-selected', bs[i].dataset.tab === tab ? 'true' : 'false');
-      if (tab === 'plan') { var ov = document.getElementById('fxOverview'); if (ov) ov.open = true; }
+      if (tab === 'progress') { var ov = document.getElementById('fxOverview'); if (ov) ov.open = true; }
+      if (INNER[tab]) {
+        var ib = document.querySelector('#fx > .fx-tabs button[data-tab="' + INNER[tab] + '"]');
+        if (ib && ib.getAttribute('aria-selected') !== 'true') { syncing = true; ib.click(); syncing = false; }
+      }
       try { sessionStorage.setItem(TAB_KEY, tab); } catch (e) {}
       if (scroll) toTop();
       setTimeout(placeBar, 60);
@@ -286,6 +296,18 @@ html.mth-app[data-mth-tab="me"]:not(.mth-setup) .mth-me-foot { display: block; t
 
     document.body.appendChild(bar);
     placeBar();
+    var fxEl = document.getElementById('fx');
+    if (fxEl) try { new MutationObserver(function () {
+      if (syncing) return;
+      var cur = root.getAttribute('data-mth-tab'); if (!INNER[cur]) return;
+      var sb = fxEl.querySelector(':scope > .fx-tabs button[aria-selected="true"]'); if (!sb) return;
+      for (var k in INNER) if (INNER[k] === sb.dataset.tab && k !== cur) {
+        root.setAttribute('data-mth-tab', k);
+        var bs = bar.querySelectorAll('button');
+        for (var i = 0; i < bs.length; i++) bs[i].setAttribute('aria-selected', bs[i].dataset.tab === k ? 'true' : 'false');
+        try { sessionStorage.setItem(TAB_KEY, k); } catch (e) {}
+      }
+    }).observe(fxEl, { childList: true }); } catch (e) {}
     window.addEventListener('resize', function () { clearTimeout(placeBar.t); placeBar.t = setTimeout(placeBar, 200); });
 
     function startSetup() {
@@ -297,7 +319,7 @@ html.mth-app[data-mth-tab="me"]:not(.mth-setup) .mth-me-foot { display: block; t
     }
     if (isSetUp()) {
       var last = null; try { last = sessionStorage.getItem(TAB_KEY); } catch (e) {}
-      show(last && /^(today|plan|progress|me)$/.test(last) ? last : 'today', false);
+      show(last && /^(today|meals|move|progress|me)$/.test(last) ? last : 'today', false);
     } else {
       /* give a saved plan a moment to come back from the member's account before offering set-up */
       root.classList.add('mth-wait');
