@@ -20,6 +20,12 @@
            : path==="/social"?"social"
            : path==="/app"?"app" : "";
   if(ROUTE) H.classList.add("mth-r-"+ROUTE);
+  /* /app: keep the phone's "install app" offer so our Install button can show it */
+  var INSTALL=null;
+  if(ROUTE==="app"){
+    window.addEventListener("beforeinstallprompt",function(e){ e.preventDefault(); INSTALL=e; if(window.__mthInstallReady) window.__mthInstallReady(); });
+    window.addEventListener("appinstalled",function(){ INSTALL=null; if(window.__mthInstalled) window.__mthInstalled(); });
+  }
 
   /* visitors who aren't signed in see the sales page (funnel), not the bare course page */
   var SALES={"new-autoimmune":"/guthealthprotocol","autoimmune":"/thediabetesprotocol","total-body-healing":"/glp1-weightloss"};
@@ -278,14 +284,32 @@
       "#mth-app-shell .ab .n{font:500 20px/1.15 'Cormorant Garamond',Georgia,serif;color:#2b2622;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}"+
       "#mth-app-shell .ab select{flex:none;max-width:42%;padding:8px 28px 8px 12px;border-radius:999px;border:1px solid #ddd3c6;background:#fff url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%232b2622' stroke-width='1.5'/%3E%3C/svg%3E\") no-repeat right 11px center/10px;-webkit-appearance:none;appearance:none;font:600 13px 'DM Sans',system-ui,sans-serif;color:#2b2622}"+
       "#mth-app-shell iframe{flex:1;width:100%;border:0;display:block;background:#f6f1ea}"+
+      "#mth-app-shell .ins{flex:none;display:none;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:0;background:#2b2622;color:#fff;font:600 13px 'DM Sans',system-ui,sans-serif;cursor:pointer}"+
+      "#mth-app-shell .ins svg{width:15px;height:15px}"+
+      "#mth-app-shell.can-install .ins{display:inline-flex}"+
+      "#mth-app-shell.can-install select{max-width:38%}"+
+      "#mth-app-shell .ab .k{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}"+
+      "@media (max-width:440px){#mth-app-shell .ins{width:38px;height:38px;padding:0;justify-content:center}#mth-app-shell .ins span{display:none}#mth-app-shell .ins svg{width:18px;height:18px}}"+
+      "#mth-app-shell .sh{position:fixed;inset:0;z-index:5;display:none;align-items:flex-end;background:rgba(43,38,34,.45)}"+
+      "#mth-app-shell .sh.on{display:flex}"+
+      "#mth-app-shell .sh .c{width:100%;background:#f6f1ea;border-radius:22px 22px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(0,0,0,.2)}"+
+      "#mth-app-shell .sh .ic{width:56px;height:56px;border-radius:14px;display:block;margin-bottom:12px}"+
+      "#mth-app-shell .sh h3{margin:0 0 4px;font:500 24px/1.15 'Cormorant Garamond',Georgia,serif;color:#2b2622}"+
+      "#mth-app-shell .sh p{margin:0 0 14px;font:400 14px/1.45 'DM Sans',system-ui,sans-serif;color:#8a7d71}"+
+      "#mth-app-shell .sh ol{margin:0 0 18px;padding:0;list-style:none;counter-reset:s}"+
+      "#mth-app-shell .sh li{counter-increment:s;display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid #e7dfd4;font:500 15px/1.35 'DM Sans',system-ui,sans-serif;color:#2b2622}"+
+      "#mth-app-shell .sh li:before{content:counter(s);flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#2e5c45;color:#fff;font-size:13px;font-weight:700}"+
+      "#mth-app-shell .sh li b{font-weight:700}"+
+      "#mth-app-shell .sh button.ok{width:100%;min-height:50px;border:0;border-radius:14px;background:#2b2622;color:#fff;font:600 15px 'DM Sans',system-ui,sans-serif}"+
       "#mth-app-shell .ld{position:absolute;left:0;right:0;top:45%;text-align:center;font:400 22px 'Cormorant Garamond',Georgia,serif;color:#8a7d71;pointer-events:none}";
     document.head.appendChild(st);
 
     var shell=document.createElement("div"); shell.id="mth-app-shell";
     shell.innerHTML='<div class="ab"><a class="home" href="/home" aria-label="Back to the Mark Talks Health site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a>'+
       '<div class="t"><div class="k">Mark Talks Health</div><div class="n"></div></div>'+
-      '<select aria-label="Choose your protocol">'+APP_PROTOS.map(function(x){return '<option value="'+x[0]+'">'+x[1]+'</option>';}).join("")+'</select></div>'+
-      '<div class="ld">Opening your protocol…</div><iframe title="Your protocol" allow="fullscreen; clipboard-write"></iframe>';
+      '<button type="button" class="ins" aria-label="Install the app on your phone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span>Install</span></button>'+'<select aria-label="Choose your protocol">'+APP_PROTOS.map(function(x){return '<option value="'+x[0]+'">'+x[1]+'</option>';}).join("")+'</select></div>'+
+      '<div class="ld">Opening your protocol&hellip;</div><iframe title="Your protocol" allow="fullscreen; clipboard-write"></iframe>'+
+      '<div class="sh" role="dialog" aria-modal="true" aria-label="Add the app to your home screen"><div class="c"><img class="ic" alt="" src="'+BASE+'app-icon-180.png"><h3>Add Mark Talks Health to your home screen</h3><p>It opens full screen, straight into your protocol, like any other app.</p><ol></ol><button type="button" class="ok">Got it</button></div></div>';
     document.body.appendChild(shell);
     var fr=shell.querySelector("iframe"), sel=shell.querySelector("select"), nm=shell.querySelector(".n"), ld=shell.querySelector(".ld");
     function load(k){
@@ -295,6 +319,24 @@
     }
     fr.addEventListener("load",function(){ ld.style.display="none"; });
     sel.addEventListener("change",function(){ load(sel.value); });
+
+    /* Install button: phones and tablets only, hidden once installed */
+    var ins=shell.querySelector(".ins"), sh=shell.querySelector(".sh"), ua=navigator.userAgent||"";
+    var iOS=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+    var touch=window.matchMedia&&matchMedia("(pointer: coarse)").matches;
+    var installed=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
+    function offer(){ if(touch&&!installed) shell.classList.add("can-install"); }
+    window.__mthInstallReady=offer;
+    window.__mthInstalled=function(){ installed=true; shell.classList.remove("can-install"); sh.classList.remove("on"); };
+    if(iOS||INSTALL) offer();
+    else setTimeout(offer,2500);   /* Android without the browser's own offer: show the menu steps instead */
+    function steps(list){ sh.querySelector("ol").innerHTML=list.map(function(t){return "<li><span>"+t+"</span></li>";}).join(""); sh.classList.add("on"); }
+    ins.addEventListener("click",function(){
+      if(INSTALL){ var ev=INSTALL; INSTALL=null; ev.prompt(); (ev.userChoice||Promise.resolve({})).then(function(r){ if(r&&r.outcome==="accepted") window.__mthInstalled(); }); return; }
+      if(iOS) steps(["Tap the <b>Share</b> button (the square with an arrow) at the bottom of Safari","Scroll down and tap <b>Add to Home Screen</b>","Tap <b>Add</b>"]);
+      else steps(["Tap the <b>&#8942;</b> menu at the top right of your browser","Tap <b>Install app</b> or <b>Add to home screen</b>","Tap <b>Install</b> or <b>Add</b>"]);
+    });
+    sh.addEventListener("click",function(e){ if(e.target===sh||e.target.classList.contains("ok")) sh.classList.remove("on"); });
     load(pick);
     reveal();
   }
