@@ -103,6 +103,11 @@
 /* sound */
 #hub .rail{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 16px 6px;scroll-padding:0 16px;scrollbar-width:none}
 #hub .rail::-webkit-scrollbar,#hub .hist::-webkit-scrollbar{display:none}
+#hub .daily{position:relative;display:block;width:100%;text-align:left;border:0;border-radius:12px;padding:20px 64px 20px 18px;margin-top:10px;color:#fff;cursor:pointer;overflow:hidden}
+#hub .daily small{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;opacity:.85}
+#hub .daily b{display:block;font-family:var(--serif);font-weight:600;font-size:28px;line-height:1.05;margin-top:4px}
+#hub .daily .sub{display:block;font-size:13px;opacity:.9;margin-top:6px;line-height:1.4}
+#hub .daily .pl{position:absolute;top:50%;right:16px;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center}
 #hub .trk{flex:0 0 46%;max-width:200px;scroll-snap-align:start;text-align:left}
 #hub .trk .art{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:12px;color:#fff}
 #hub .trk .art b{font-family:var(--serif);font-weight:600;font-size:21px;line-height:1.02;position:relative}
@@ -282,7 +287,7 @@ var PILLARS = [
   tip:{gut:"Getting outdoors and around plants and soil adds variety to your everyday environment.",sugar:"Morning light and an outdoor walk both support healthier glucose rhythms.",weight:"Make it a long walk — 45 minutes outside counts double today.",total:"Look back at Day 1 — then decide whether to start another round."}}
 ];
 
-/* 7 sound tracks — one per day. Add your own MP3 link in "url" (Dropbox, LearnWorlds file, etc.).
+/* 7 sound tracks — one per day, then the daily ritual track (featured at the top of the Sound studio). Add your own MP3 link in "url" (Dropbox, LearnWorlds file, etc.).
    With no link, the Hub plays a generated ambient soundscape so it always works. */
 var TRACKS = [
  {title:"Spiritual Cleansing", kind:"Fasting calm",       url:"https://marktalkshealth.github.io/mth-protocols/hub/tracks/spiritual-cleansing.mp3", hue:["#7d8f7a","#3f4a3d"], root:110},
@@ -290,8 +295,9 @@ var TRACKS = [
  {title:"Healing Piano",      kind:"Relaxation",          url:"https://marktalkshealth.github.io/mth-protocols/hub/tracks/healing-piano.mp3", hue:["#b98a6a","#5b3e2f"], root:123.47},
  {title:"Manhattan JazzHop",  kind:"Movement flow",       url:"https://marktalkshealth.github.io/mth-protocols/hub/tracks/manhattan-jazzhop.mp3", hue:["#8a9aa8","#3c4650"], root:130.81},
  {title:"A Journey Within",   kind:"Music therapy",       url:"https://marktalkshealth.github.io/mth-protocols/hub/tracks/a-journey-within.mp3", hue:["#b4a06e","#54492f"], root:87.31},
- {title:"Deep Sleep",         kind:"Sleep",               url:"", hue:["#6f7690","#2c2f40"], root:73.42},
- {title:"Refresh",            kind:"Morning energy",      url:"https://marktalkshealth.github.io/mth-protocols/hub/tracks/refresh.mp3", hue:["#6f8a6a","#2f3d2c"], root:116.54}
+ {title:"Healing Piano",      kind:"Sleep",               url:"https://marktalkshealth.github.io/mth-protocols/hub/tracks/healing-piano.mp3", hue:["#6f7690","#2c2f40"], root:73.42},
+ {title:"Refresh",            kind:"Morning energy",      url:"https://marktalkshealth.github.io/mth-protocols/hub/tracks/refresh.mp3", hue:["#6f8a6a","#2f3d2c"], root:116.54},
+ {title:"Healing Piano",      kind:"Daily ritual",        url:"https://marktalkshealth.github.io/mth-protocols/hub/tracks/healing-piano.mp3", hue:["#b98a6a","#5b3e2f"], root:123.47, daily:true}
 ];
 
 /* Library — downloads can be tagged to a protocol (or "all"). */
@@ -449,8 +455,10 @@ function renderToday(){
   else h+=(S.checkins[selDay]?'<span class="tag ok" style="margin:0">Checked in ✓</span>':'<button class="btn" id="hCheck">Check in</button>');
   h+='<button class="btn ghost" id="hPlayDay">▶ Day '+selDay+' track</button></div></div></div>';
   h+='<div class="sec"><div class="h"><h2>Fasting clock</h2><span id="hFastSub"></span></div><div class="card" id="hFast"></div></div>';
-  h+='<div class="sec"><div class="h"><h2>Sound studio</h2><span>One track for each day</span></div></div><div class="rail">';
-  TRACKS.forEach(function(t,i){ h+='<button class="trk'+(live7&&i+1===d?' today':'')+'" data-k="'+i+'"><div class="art" style="background:linear-gradient(150deg,'+t.hue[0]+','+t.hue[1]+')"><span class="pl">'+(playing===i&&!paused?PAUSE:PLAY)+'</span><small>Day '+(i+1)+'</small><b>'+esc(t.title)+'</b></div><div class="cap">'+esc(t.kind)+'<small>'+(t.url?"Audio track":"Ambient soundscape")+'</small></div></button>'; });
+  h+='<div class="sec"><div class="h"><h2>Sound studio</h2><span>Your daily ritual, plus a track for each day</span></div>';
+  TRACKS.forEach(function(t,i){ if(!t.daily) return; h+='<button class="daily" data-k="'+i+'" style="background:linear-gradient(135deg,'+t.hue[0]+','+t.hue[1]+')"><span class="pl">'+(playing===i&&!paused?PAUSE:PLAY)+'</span><small>Your daily ritual</small><b>'+esc(t.title)+'</b><span class="sub">Play it every day. Let it become the sound of your healing.</span></button>'; });
+  h+='</div><div class="rail">';
+  TRACKS.forEach(function(t,i){ if(t.daily) return; h+='<button class="trk'+(live7&&i+1===d?' today':'')+'" data-k="'+i+'"><div class="art" style="background:linear-gradient(150deg,'+t.hue[0]+','+t.hue[1]+')"><span class="pl">'+(playing===i&&!paused?PAUSE:PLAY)+'</span><small>Day '+(i+1)+'</small><b>'+esc(t.title)+'</b></div><div class="cap">'+esc(t.kind)+'<small>'+(t.url?"Audio track":"Ambient soundscape")+'</small></div></button>'; });
   h+='</div>';
   $("vToday").innerHTML=h;
   var v=$("vToday");
@@ -534,7 +542,7 @@ function toggleTrack(i,forcePlay){
   if(playing===i&&forcePlay&&!paused) return;
   stopSound(); playing=i; paused=false; tAcc=0; tStart=Date.now(); var t=TRACKS[i];
   if(t.url){ audio=new Audio(t.url); audio.loop=true; audio.play().catch(function(){ toast("Tap play again to start audio"); }); } else { gen=ambient(t); if(ctx.state==="suspended")ctx.resume(); }
-  $("hPlayer").hidden=false; $("hNow").textContent="Day "+(i+1)+" · "+t.title; $("hNowSub").textContent=t.kind; updPlayer(); renderTodaySoft();
+  $("hPlayer").hidden=false; $("hNow").textContent=(t.daily?"Daily ritual":"Day "+(i+1))+" · "+t.title; $("hNowSub").textContent=t.kind; updPlayer(); renderTodaySoft();
   clearInterval(tick); tick=setInterval(updPlayer,1000);
 }
 function pause(){ paused=true; tAcc+=Date.now()-tStart; if(audio)audio.pause(); if(ctx)ctx.suspend(); updPlayer(); renderTodaySoft(); }
