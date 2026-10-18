@@ -233,7 +233,10 @@
       var a=e.target.closest&&e.target.closest("a"); if(!a) return;
       var h=(a.getAttribute("href")||"").replace(/^https?:\/\/[^/]+/,"").replace(/\/+$/,"").toLowerCase();
       var v=(a.getAttribute("data-interactive-link-var1")||"").toLowerCase();
-      var to=FIX[h]||FIX["/"+v]; if(!to) return;
+      var to=FIX[h]||FIX["/"+v];
+      /* logged-out visitors go straight from a course link to its sales page (no in-between page flash) */
+      if(!to&&!LOGGED_IN){ var m=h.match(/^\/course\/([^/?#]+)/); if(m&&SALES[m[1]]) to=SALES[m[1]]; }
+      if(!to) return;
       e.preventDefault(); e.stopImmediatePropagation(); location.href=to;
     },true);
     function relabel(){ [].forEach.call(document.querySelectorAll('a[href$="/totalbodyhealing"],a[data-interactive-link-var1="totalbodyhealing"]'),function(a){ a.setAttribute("href",FIX["/totalbodyhealing"]); }); }

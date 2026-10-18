@@ -97,6 +97,10 @@ html.mth-r-social .social-app-page > :not(.lw-topbar):not(.mth-hub-frame):not(sc
 html.mth-r-social .lw-footer{display:none!important}
 html.mth-r-funnel body .js-learnworlds-section.mth-old{display:none!important}
 html.mth-r-funnel:not(.mth-ready) body .js-learnworlds-section:not(.lw-topbar){visibility:hidden}
+/* every page: keep LearnWorlds' own layout hidden until our design is in place (no flash of the old look).
+   Fail-safe: if the design script ever fails to load, the page shows anyway after 3.5 seconds. */
+@keyframes mthFailsafe{to{visibility:visible}}
+html:not(.mth-ready) body .js-learnworlds-section:not(.lw-topbar){visibility:hidden;animation:mthFailsafe 0s linear 3.5s forwards}
 /* course pages: keep the old LearnWorlds layout hidden until our design is in place (no flash) */
 html.mth-r-course:not(.mth-ready) body .js-learnworlds-section:not(.lw-topbar){visibility:hidden}
 html.mth-r-courses:not(.mth-ready) body .js-learnworlds-section:not(.lw-topbar){visibility:hidden}
