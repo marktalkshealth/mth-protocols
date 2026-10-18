@@ -265,6 +265,7 @@
     /* Until enrolment tags are set up in LearnWorlds, nobody has one: open the app as before
        (Gut Health by default; /app?p=sugar or /app?p=glp1 from those courses). Set LOCK_BY_TAGS to true once the tags exist. */
     var LOCK_BY_TAGS=false;
+    var byTags=owned.length>0&&!staff;
     if(!LOCK_BY_TAGS&&!owned.length) owned=APP_PROTOS.map(function(x){return x[0];});
     /* a course's own link (/app?p=sugar) or the last one opened decides between several; otherwise the first owned */
     var pick=null; try{ pick=new URLSearchParams(location.search).get("p")||localStorage.getItem("mth_app_proto"); }catch(e){}
@@ -366,7 +367,7 @@
         '<a href="/guthealthprotocol">Gut Health Protocol</a><a href="/thediabetesprotocol">Blood Sugar Protocol</a><a href="/glp1-weightloss">GLP-1 Weight Loss Protocol</a>';
       shell.appendChild(none);
     } else {
-      if(owned.length>1){
+      if(owned.length>1&&(byTags||staff)){
         var sw=document.createElement("select"); sw.className="sw"; sw.setAttribute("aria-label","Switch protocol");
         sw.innerHTML=owned.map(function(k){ return '<option value="'+k+'">'+name(k)+'</option>'; }).join("");
         sw.addEventListener("change",function(){ load(sw.value); });
