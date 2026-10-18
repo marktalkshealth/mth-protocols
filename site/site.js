@@ -393,9 +393,9 @@
 
   /* ---------------- /links : link-in-bio page for Instagram, TikTok and YouTube ---------------- */
   var LINKS=[
-    ["Gut Health Protocol","Calm your gut, rebuild your microbiome","/guthealthprotocol"],
-    ["Diabetes Protocol","Steadier glucose, more energy","/thediabetesprotocol"],
-    ["GLP-1 Weight Loss Protocol","Lose fat, keep your muscle","/glp1-weightloss"]
+    ["Gut Health Protocol","Bloating, IBS or a gut that never feels right?","/guthealthprotocol"],
+    ["Diabetes Protocol","Want steadier glucose and more energy, naturally?","/thediabetesprotocol"],
+    ["GLP-1 Weight Loss Protocol","On a GLP-1 or losing weight? Keep your muscle.","/glp1-weightloss"]
   ];
   function linksPage(){
     document.title="Mark Talks Health · Links";
@@ -408,7 +408,8 @@
       '#mth-links h1{font:500 32px/1.05 "Cormorant Garamond",Georgia,serif;margin:0}#mth-links h1 i{color:#b8664a}'+
       '#mth-links .tag{font:italic 400 17px/1.35 "Cormorant Garamond",Georgia,serif;color:#6e6259;margin:6px 0 22px}'+
       '#mth-links .story{font-size:13px;color:#8a7d71;margin:0 0 22px}'+
-      '#mth-links a.b{display:block;text-decoration:none;color:#f6f1ea;background:#2b2622;border-radius:16px;padding:16px 46px 16px 18px;margin:0 0 12px;text-align:left;position:relative;transition:transform .15s}'+
+      '#mth-links .q{font:italic 400 17px/1.35 "Cormorant Garamond",Georgia,serif;color:#6e6259;margin:18px 4px 8px}'+
+      '#mth-links a.b{display:block;text-decoration:none;color:#f6f1ea;background:#2b2622;border-radius:16px;padding:17px 46px 17px 20px;margin:0;text-align:left;position:relative;transition:transform .15s}'+
       '#mth-links a.b:active{transform:scale(.98)}'+
       '#mth-links a.b b{display:block;font:500 21px/1.15 "Cormorant Garamond",Georgia,serif}'+
       '#mth-links a.b span{display:block;font-size:12.5px;color:#d9cdbf;margin-top:3px}'+
@@ -418,7 +419,7 @@
       '#mth-links .fine{font-size:11px;line-height:1.5;color:#a8998b;margin-top:26px}'+
       '</style><div class="w"><div class="av" style="background-image:url('+BASE+'mark-kitchen.jpg)"></div>'+
       '<h1>Mark <i>Talks</i> Health</h1><div class="tag">Natural health meets modern science</div>'+
-      LINKS.map(function(l,i){ return '<a class="b'+(i===3?' lite':'')+'" href="'+l[2]+src+'"><b>'+l[0]+'</b><span>'+l[1]+'</span></a>'; }).join("")+
+      LINKS.map(function(l){ return '<p class="q">'+l[1]+'</p><a class="b" href="'+l[2]+src+'"><b>'+l[0]+'</b></a>'; }).join("")+
       '<div class="fine">Educational content, not medical advice. Talk to your doctor before fasting or changing medication.<br>&copy; '+new Date().getFullYear()+' Mark Talks Health</div></div>';
     document.body.appendChild(p);
     reveal();
