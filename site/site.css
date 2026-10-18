@@ -81,14 +81,14 @@ html.mth-wm .lw-topbar .lw-logo{display:none!important}
 
 /* ---------- LearnWorlds footer replaced by ours ---------- */
 html.mth-ready .lw-footer{display:none!important}
-.mthf{background:var(--mth-dark);color:#e9dfd2;font-family:var(--mth-sans);padding:36px 20px 28px}
-.mthf .w{max-width:1080px;margin:0 auto;display:grid;gap:22px}
-.mthf .brand{font-family:var(--mth-serif);font-size:26px;color:#fff}
-.mthf .brand small{display:block;font-family:var(--mth-sans);font-size:13px;color:#b9ad9f;margin-top:6px;max-width:320px;line-height:1.5}
-.mthf nav{display:flex;flex-wrap:wrap;gap:8px}
-.mthf nav a{color:#fff!important;text-decoration:none;font-size:14px;font-weight:600;padding:8px 14px;border:1px solid rgba(255,255,255,.16);border-radius:999px}
+.mthf{background:var(--mth-dark);color:#e9dfd2;font-family:var(--mth-sans);padding:18px 16px calc(14px + env(safe-area-inset-bottom))}
+.mthf .w{max-width:1080px;margin:0 auto;display:grid;gap:10px}
+.mthf .brand{font-family:var(--mth-serif);font-size:19px;color:#fff}
+.mthf .brand small{display:none}
+.mthf nav{display:flex;flex-wrap:wrap;gap:6px}
+.mthf nav a{color:#fff!important;text-decoration:none;font-size:12.5px;font-weight:600;padding:5px 11px;border:1px solid rgba(255,255,255,.16);border-radius:999px}
 .mthf nav a:hover{background:rgba(255,255,255,.08)}
-.mthf .fine{font-size:11.5px;color:#9d9083;line-height:1.6;border-top:1px solid rgba(255,255,255,.1);padding-top:16px}
+.mthf .fine{font-size:10.5px;color:#9d9083;line-height:1.5;border-top:1px solid rgba(255,255,255,.1);padding-top:9px}
 @media(min-width:800px){.mthf .w{grid-template-columns:1fr auto;align-items:center}.mthf .fine{grid-column:1/-1}}
 
 /* ---------- page takeovers: hide LearnWorlds' sections until ours is in ---------- */

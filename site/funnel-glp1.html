@@ -136,12 +136,12 @@
 #g2 .final h2,#g2 .final .lead{margin-left:auto;margin-right:auto}
 #g2 .fine{font-size:11.5px;color:var(--faint);text-align:center;padding:0 20px 34px;max-width:760px;margin:0 auto}
 /* sticky */
-#g2 .sticky{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--card);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;transform:translateY(110%);transition:transform .25s;box-shadow:0 -8px 24px rgba(0,0,0,.06)}
+#g2 .sticky{position:fixed;left:0;right:0;bottom:0;top:auto!important;height:auto!important;z-index:50;background:rgba(255,252,247,.97);border-top:1px solid var(--line);padding:6px 12px calc(6px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:10px;transform:translateY(110%);transition:transform .25s;box-shadow:0 -6px 18px rgba(43,39,36,.08)}
 #g2 .sticky.on{transform:none}
 #g2 .sticky div{flex:1;min-width:0}
-#g2 .sticky b{display:block;font-size:14px}
-#g2 .sticky small{font-size:12px;color:var(--muted)}
-#g2 .sticky .btn{padding:12px 20px;font-size:15px}
+#g2 .sticky b{display:block;font-size:13px;line-height:1.2}
+#g2 .sticky small{font-size:11px;color:var(--muted)}
+#g2 .sticky .btn{padding:8px 16px;font-size:13.5px}
 @media(min-width:880px){
   #g2 section{padding:104px 0}
   #g2 .hero{padding:72px 0 96px}
@@ -339,7 +339,10 @@ if("IntersectionObserver" in window){
 
 /* ---- sticky buy bar on phones ---- */
 var st=$("g2Sticky");
-function onScroll(){ var y=window.scrollY||0, co=findCheckout(document), near=co&&co.getBoundingClientRect().top<window.innerHeight; st.classList.toggle("on",y>700&&!near); }
+var lastY=window.scrollY||0;
+/* shows while scrolling down the page, tucks away the moment you scroll back up, and stays out of the way at the checkout and footer */
+function onScroll(){ var y=window.scrollY||0, co=findCheckout(document), near=co&&co.getBoundingClientRect().top<window.innerHeight, ft=document.querySelector(".mthf"), atEnd=ft&&ft.getBoundingClientRect().top<window.innerHeight, down=y>lastY+2, up=y<lastY-2;
+  if(y<700||near||atEnd||up) st.classList.remove("on"); else if(down) st.classList.add("on"); lastY=y; }
 window.addEventListener("scroll",onScroll,{passive:true}); onScroll();
 })();
 </script>
