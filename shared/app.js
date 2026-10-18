@@ -20,9 +20,11 @@
   if (param === 'app' || param === 'desktop') { saved = param; try { localStorage.setItem(VIEW_KEY, param); } catch (e) {} }
 
   function isPhoneOrTablet() {
-    var coarse = window.matchMedia && matchMedia('(pointer: coarse)').matches;
+    var mm = function (q) { return !!(window.matchMedia && matchMedia(q).matches); };
+    var coarse = mm('(pointer: coarse)');
+    var hasMouse = mm('(any-pointer: fine)');   /* touchscreen laptops also have a trackpad or mouse: they get the desktop layout */
     var shortSide = Math.min(screen.width || 9999, screen.height || 9999);
-    return coarse && shortSide <= 1100;   /* phones and tablets, upright or sideways */
+    return coarse && !hasMouse && shortSide <= 1100;   /* phones and tablets, upright or sideways */
   }
   var touch = isPhoneOrTablet();
   var on = saved === 'app' ? true : saved === 'desktop' ? false : touch;
