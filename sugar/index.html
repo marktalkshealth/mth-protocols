@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blood Sugar &amp; Metabolic Repair — Mark Talks Health</title>
+<title>Diabetes Protocol — Mark Talks Health</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -1652,7 +1652,7 @@ input[type=range]::-webkit-slider-thumb:active {
 <div class="di-outer">
   <div class="hc-card">
     <div class="hc-head">
-      <div class="hc-title">Blood Sugar &amp; Metabolic Repair</div>
+      <div class="hc-title">Diabetes Protocol</div>
       <div class="hc-cap">Metabolic symptom intake, blood-sugar protocol and metabolic disease risk in one linked model</div>
     </div>
     <div class="hc-grid3">
@@ -1698,7 +1698,7 @@ input[type=range]::-webkit-slider-thumb:active {
         <label class="di-label" id="clLbl">Cleanse Level <span class="cl-hint">tap one · 1 easy → 3 hard</span></label>
         <div class="cl-stack" id="clList" role="radiogroup" aria-labelledby="clLbl"></div>
       </div>
-      <button class="di-btn-generate di-pending" id="diGenBtn" onclick="generateAll()">⚡ Generate Metabolic Protocol</button>
+      <button class="di-btn-generate di-pending" id="diGenBtn" onclick="generateAll()">⚡ Generate Diabetes Protocol</button>
       <div class="di-gen-hint show" id="diGenHint">Check your symptoms, add any test results, then press Generate.</div>
 
       <div class="di-metrics-section-title">Biologic Metrics</div>
@@ -2823,7 +2823,7 @@ function setFastingType(type) {
 // sw = weight toward protocol intensity (red flags never raise intensity; they trigger a see-a-clinician warning)
 // medRisk = medicines that can cause dangerous lows or ketoacidosis when combined with fasting or keto
 const GUT_SYM_GROUPS = [
-  { key: 'sugar', icon: '🍬', name: 'Blood Sugar Signals', items: [
+  { key: 'sugar', icon: '🍬', name: 'Diabetes Signals', items: [
     { id: 'crash',   name: 'Energy crash or sleepy after meals' },
     { id: 'crave',   name: 'Sugar or carb cravings' },
     { id: 'hangry',  name: 'Shaky, irritable or "hangry" when a meal is late' },
@@ -4101,7 +4101,7 @@ function renderWarning(disease, diseaseIdx) {
   return `<div class="warning-banner">
     <div class="warning-icon">⚕️</div>
     <div class="warning-text">
-      <strong>Blood Sugar &amp; Metabolic Repair · Leading pattern: ${disease.name}</strong>
+      <strong>Diabetes Protocol · Leading pattern: ${disease.name}</strong>
       ${medLine}${redLine}${disease.note} ${refs.summary}
       <span style="display:block;margin-top:5px;font-size:0.68rem;color:#8a6050;line-height:1.45;">
         <strong style="color:#6a3a28">Educational Use Only.</strong> The symptom checklist suggests patterns to investigate; it does not diagnose. Confirm with testing and consult your physician before changing any treatment.
@@ -4340,7 +4340,7 @@ function caDayText(d) {
     const hi = (intensityKey === 'high' || intensityKey === 'critical') ? 1 : 0;
     supp = SUPP_SLOTS.map(([k, name]) => { const l = GUT_SUPPS.filter(s => s.slots[hi].includes(k)); return l.length ? `${name.replace(/^\S+\s/, '')}: ${l.map(s => s.name + ' ' + s.dose[hi]).join(', ')}` : ''; }).filter(Boolean).join('\n');
   }
-  return { title: `Metabolic Protocol · Day ${d}: ${ph.name}`, body: `${ph.sub}\n\nToday's plan:\n${lines.join('\n')}${supp ? `\n\nSupplements:\n${supp}` : ''}\n\nMark Talks Health · Blood Sugar & Metabolic Repair. Educational use only.` };
+  return { title: `Diabetes Protocol · Day ${d}: ${ph.name}`, body: `${ph.sub}\n\nToday's plan:\n${lines.join('\n')}${supp ? `\n\nSupplements:\n${supp}` : ''}\n\nMark Talks Health · Diabetes Protocol. Educational use only.` };
 }
 const caStamp = (x, hm) => `${x.getFullYear()}${String(x.getMonth() + 1).padStart(2, '0')}${String(x.getDate()).padStart(2, '0')}T${hm.replace(':', '')}00`;
 function caEndHM(hm, add) { let [H, M] = hm.split(':').map(Number); M += add; H += Math.floor(M / 60); M %= 60; return `${String(Math.min(H, 23)).padStart(2, '0')}:${String(H > 23 ? 59 : M).padStart(2, '0')}`; }
@@ -4363,8 +4363,8 @@ function caFold(line) {   // RFC 5545: lines of at most 75 bytes, continuation l
 function caBuildIcs() {
   const hm = caTime(), now = new Date(), stamp = now.toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
   const name = (document.getElementById('diName') || {}).value || '';
-  const L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Mark Talks Health//Metabolic Repair Protocol//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
-    'X-WR-CALNAME:' + caIcsEsc('Metabolic Repair Protocol' + (name.trim() ? ' · ' + name.trim() : ''))];
+  const L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Mark Talks Health//Diabetes Protocol//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+    'X-WR-CALNAME:' + caIcsEsc('Diabetes Protocol' + (name.trim() ? ' · ' + name.trim() : ''))];
   for (let d = 1; d <= CA_DAYS; d++) {
     const x = caDate(d), tx = caDayText(d);
     L.push('BEGIN:VEVENT', `UID:mth-met-${caISO(caStart())}-d${d}@marktalkshealth.com`, 'DTSTAMP:' + stamp,
@@ -5210,7 +5210,7 @@ function renderSuppBox(diseaseIdx, intensityKey) {
     return list.length ? `<div class="supp-slot"><span class="supp-slot-name">${name}</span> ${list.map(s => s.emoji + ' ' + s.name.replace(' (buffered)', '').replace(' Powder', '').replace(' Peptides', '')).join(' · ')}</div>` : '';
   }).join('');
   return `<div class="supp-card">
-    <div class="tests-card-title supp-title">💊 Metabolic Repair Supplement Stack <span class="supp-sub">${lbl} intensity · run 8–12 weeks, then retest</span></div>
+    <div class="tests-card-title supp-title">💊 Diabetes Supplement Stack <span class="supp-sub">${lbl} intensity · run 8–12 weeks, then retest</span></div>
     <div class="supp-grid">${cards}</div>
     <div class="tests-note">★ = priority for your symptoms. Start one new supplement every 2–3 days. Berberine, psyllium and alpha-lipoic acid all lower blood sugar: if you take insulin, a sulfonylurea or other diabetes medicine, check with your doctor or pharmacist first, because stacking them can cause lows. Also check first if pregnant or with kidney or liver disease.</div>
   </div>`;

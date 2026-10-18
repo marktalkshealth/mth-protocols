@@ -1,6 +1,6 @@
 /* =================================================================
    MARK TALKS HEALTH — SHARED TRAINING ENGINE (Move & Strength)
-   One file used by the Gut Health, Blood Sugar and GLP-1 protocol apps.
+   One file used by the Gut Health, Diabetes and GLP-1 protocol apps.
    Each app keeps its own safety rules for which days are strength,
    cardio or rest; this engine turns those days into full workouts:
    exercise library with photos and looping demo videos, set-by-set

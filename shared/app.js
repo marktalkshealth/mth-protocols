@@ -1,6 +1,6 @@
 /* =================================================================
    MARK TALKS HEALTH — SHARED PHONE APP LAYOUT
-   Used by the Gut Health, Blood Sugar and GLP-1 protocol apps.
+   Used by the Gut Health, Diabetes and GLP-1 protocol apps.
    On phones and tablets the protocol turns into an app:
    bottom tabs (Today · Plan · Progress · Me), one screen at a time,
    a step-by-step first setup, and compact sizing.

@@ -37,7 +37,7 @@
       posts:[["🌸","Sarah","DAY 3","Bone broth in the morning is becoming my favourite ritual.",24],["🌊","James","DAY 5","First week in years without bloating after dinner. Small win!",41],["🍃","Priya","CLEANSE","The cacao ice cream is unreal. Who knew a cleanse could taste like dessert?",18]]
     },
     sugar:{
-      name:"Diabetes Protocol", short:"Blood Sugar", fastGoal:14, fastNote:"Overnight window · goal 14h",
+      name:"Diabetes Protocol", short:"Diabetes", fastGoal:14, fastNote:"Overnight window · goal 14h",
       steps:["Eating window & fasting","Meditation & journaling","Low-carb food order","Movement after meals","Music therapy & spirit","Sleep & clean air","Nature: light & walking"],
       days:[["14-hour overnight window","Protein-first breakfast","Log fasting reading"],["10-minute meditation","Walk after lunch","Log your reading"],
             ["Veg before carbs at lunch","10-minute walk after dinner","Log bedtime reading"],["Walk after every meal","15-minute strength","Log your reading"],

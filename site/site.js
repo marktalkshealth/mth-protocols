@@ -257,12 +257,12 @@
      app: our own slim header, then the protocol filling the rest of the screen.
      The protocol loads with ?mode=app, which switches on the phone app layout.
      Adds a home-screen icon so members can install it like an app. */
-  var APP_PROTOS=[["gut","Gut Health"],["sugar","Blood Sugar"],["glp1","GLP-1"]];
+  var APP_PROTOS=[["gut","Gut Health"],["sugar","Diabetes"],["glp1","GLP-1"]];
   function appPage(){
     var ROOT=BASE.replace(/site\/$/,"");
     /* Which protocols this member owns. A LearnWorlds automation tags each member when they enrol:
          Gut Health course   -> tag containing "gut"            (e.g. protocol-gut)
-         Blood Sugar course  -> tag containing "sugar" or "diabetes"  (e.g. protocol-sugar)
+         Diabetes course     -> tag containing "sugar" or "diabetes"  (e.g. protocol-sugar)
          GLP-1 course        -> tag containing "glp"            (e.g. protocol-glp1)
        Admins and instructors can open every protocol. */
     var meObj=window.me||{}, tags=(meObj.tags||[]).map(function(t){ return String(t&&t.name||t||"").toLowerCase(); });
@@ -371,7 +371,7 @@
       fr.remove(); ld.style.display="none"; nm.textContent="Your protocol";
       var none=document.createElement("div"); none.className="none";
       none.innerHTML='<h2>Your protocol lives here</h2><p>Once you join a protocol, your personal plan, meals and workouts open on this page.</p>'+
-        '<a href="/guthealthprotocol">Gut Health Protocol</a><a href="/thediabetesprotocol">Blood Sugar Protocol</a><a href="/glp1-weightloss">GLP-1 Weight Loss Protocol</a>';
+        '<a href="/guthealthprotocol">Gut Health Protocol</a><a href="/thediabetesprotocol">Diabetes Protocol</a><a href="/glp1-weightloss">GLP-1 Weight Loss Protocol</a>';
       shell.appendChild(none);
     } else {
       if(owned.length>1&&(byTags||staff)){
@@ -389,7 +389,7 @@
   /* ---------------- /links : link-in-bio page for Instagram, TikTok and YouTube ---------------- */
   var LINKS=[
     ["Gut Health Protocol","Calm your gut, rebuild your microbiome","/guthealthprotocol"],
-    ["Blood Sugar Protocol","Steadier glucose, more energy","/thediabetesprotocol"],
+    ["Diabetes Protocol","Steadier glucose, more energy","/thediabetesprotocol"],
     ["GLP-1 Weight Loss Protocol","Lose fat, keep your muscle","/glp1-weightloss"],
     ["The Healing Hub","Join the community, sound studio and daily plan","/social"]
   ];

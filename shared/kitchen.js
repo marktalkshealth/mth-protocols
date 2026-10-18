@@ -1,6 +1,6 @@
 /* =================================================================
    MARK TALKS HEALTH — SHARED KITCHEN ENGINE (meal planner)
-   Used by the Gut Health, Blood Sugar and GLP-1 protocol apps.
+   Used by the Gut Health, Diabetes and GLP-1 protocol apps.
    Adds: 7-day planner with photos, recipe library with search,
    filters and favourites, smarter swaps, batch-cook prep plan,
    servings scaling and short cooking clips on every recipe.
