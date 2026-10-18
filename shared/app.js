@@ -43,6 +43,7 @@
   window.MTHApp.on = true;
   var root = document.documentElement;
   root.classList.add('mth-app');
+  try { if (new URLSearchParams(location.search).get('mode') === 'app') root.classList.add('mth-standalone'); } catch (e) {}
 
   /* ---------- styles ---------- */
   var css = `
@@ -172,23 +173,9 @@ html.mth-app.mth-wait .di-outer, html.mth-app.mth-wait .ca-outer, html.mth-app.m
 html.mth-app.mth-wait body::after { content: 'Opening your plan…'; position: fixed; left: 0; right: 0; top: 40%; text-align: center;
   font: 400 1.35rem 'Cormorant Garamond', Georgia, serif; color: #8a7d71; }
 
-/* header: back to course + open as app */
-html.mth-app .hc-title { flex: 1 1 auto; }
-html.mth-app .gp-sync { min-width: 0; max-width: 46%; overflow: hidden; }
-html.mth-app .gp-sync span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.mth-back, .mth-expand { display: none; }
-html.mth-app.mth-full .mth-back { display: inline-flex; align-items: center; gap: 2px; flex: none; margin: 0 4px 0 -6px; padding: 6px 8px 6px 2px;
-  border: 0; background: none; color: #2e5c45; font: 600 .82rem/1 'DM Sans', system-ui, sans-serif; cursor: pointer; }
-.mth-back svg { width: 20px; height: 20px; }
-html.mth-app.mth-can-full:not(.mth-full) .mth-expand { display: inline-flex; align-items: center; gap: 6px; flex: none; padding: 7px 12px; border-radius: 999px;
-  border: 0; background: #1e2820; color: #fff; font: 600 .74rem/1 'DM Sans', system-ui, sans-serif; cursor: pointer; }
-.mth-expand svg { width: 14px; height: 14px; }
-html.mth-app.mth-can-full:not(.mth-full) .gp-sync { display: none !important; }
-html.mth-app.mth-full .hc-head { position: sticky; top: 0; z-index: 940; margin: -8px -8px 6px; padding: calc(10px + env(safe-area-inset-top)) 12px 10px !important;
-  background: rgba(246,241,234,.96); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid #e7dfd4; }
-html.mth-app.mth-full .hc-title { font-size: 1.2rem !important; }
-html.mth-app.mth-full .gp-sync { padding: 6px !important; border: 0 !important; background: none !important; }
-html.mth-app.mth-full .gp-sync span { display: none; }
+/* inside the /app page the site shows its own header with the protocol name */
+html.mth-app.mth-standalone .hc-head { display: none !important; }
+html.mth-app.mth-standalone .di-outer { padding-top: 10px !important; }
 
 .mth-me-foot { display: none; }
 html.mth-app[data-mth-tab="me"]:not(.mth-setup) .mth-me-foot { display: block; text-align: center; padding: 18px 0 8px; }
@@ -270,30 +257,6 @@ html.mth-app[data-mth-tab="me"]:not(.mth-setup) .mth-me-foot { display: block; t
     var justGenerated = false;
     genBtn.addEventListener('click', function () { justGenerated = true; setTimeout(planReady, 350); });
     try { new MutationObserver(function () { if (isSetUp()) planReady(); }).observe(genBtn, { attributes: true, attributeFilter: ['class'] }); } catch (e) {}
-
-    /* --- full screen inside the course (the LearnWorlds page lays this frame over the screen) --- */
-    var head = document.querySelector('.hc-head');
-    var back = document.createElement('button');
-    back.type = 'button'; back.className = 'mth-back'; back.setAttribute('aria-label', 'Back to the course');
-    back.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg><span>Course</span>';
-    if (head) head.insertBefore(back, head.firstChild);
-    var expand = document.createElement('button');
-    expand.type = 'button'; expand.className = 'mth-expand';
-    expand.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>Open as app';
-    if (head) head.appendChild(expand);
-    function askFull(onOff) {
-      if (window.top === window) return;
-      try { window.top.postMessage({ type: 'mth-app-full', on: onOff }, '*'); } catch (e) {}
-    }
-    window.addEventListener('message', function (e) {
-      var d = e.data; if (!d || d.type !== 'mth-app-full-ok') return;
-      root.classList.add('mth-can-full');
-      root.classList.toggle('mth-full', !!d.on);
-      setTimeout(placeBar, 120);
-    });
-    back.onclick = function () { askFull(false); };
-    expand.onclick = function () { askFull(true); };
-    askFull(true);
 
     function show(tab, scroll) {
       root.setAttribute('data-mth-tab', tab);

@@ -17,7 +17,8 @@
            : FUNNELS[path]?"funnel"
            : path==="/courses"?"courses"
            : path.indexOf("/course/")===0?"course"
-           : path==="/social"?"social" : "";
+           : path==="/social"?"social"
+           : path==="/app"?"app" : "";
   if(ROUTE) H.classList.add("mth-r-"+ROUTE);
 
   /* visitors who aren't signed in see the sales page (funnel), not the bare course page */
@@ -218,6 +219,71 @@
     relabel(); setTimeout(relabel,1500); setTimeout(relabel,4000);
   }
 
+
+  /* ---------------- /app : the member app, full screen ----------------
+     A LearnWorlds page at /app (logged-in members only) becomes the protocol
+     app: our own slim header, then the protocol filling the rest of the screen.
+     The protocol loads with ?mode=app, which switches on the phone app layout.
+     Adds a home-screen icon so members can install it like an app. */
+  var APP_PROTOS=[["gut","Gut Health"],["sugar","Blood Sugar"],["glp1","GLP-1"]];
+  function appPage(){
+    var ROOT=BASE.replace(/site\/$/,"");
+    var pick=null; try{ pick=new URLSearchParams(location.search).get("p")||localStorage.getItem("mth_app_proto"); }catch(e){}
+    if(!APP_PROTOS.some(function(x){return x[0]===pick;})) pick="gut";
+    function name(k){ for(var i=0;i<APP_PROTOS.length;i++) if(APP_PROTOS[i][0]===k) return APP_PROTOS[i][1]; return ""; }
+
+    /* home-screen app details */
+    try{
+      var abs=function(u){ return new URL(u,location.href).href; };
+      var man={ name:"Mark Talks Health", short_name:"Mark Talks Health", start_url:abs("/app"), scope:abs("/"), display:"standalone",
+        background_color:"#f6f1ea", theme_color:"#2b2622",
+        icons:[{src:BASE+"app-icon-192.png",sizes:"192x192",type:"image/png"},{src:BASE+"app-icon-512.png",sizes:"512x512",type:"image/png",purpose:"any maskable"}] };
+      [].forEach.call(document.querySelectorAll('link[rel="manifest"]'),function(l){ l.parentNode.removeChild(l); });
+      var add=function(tag,attrs){ var el=document.createElement(tag); for(var k in attrs) el.setAttribute(k,attrs[k]); document.head.appendChild(el); };
+      add("link",{rel:"manifest",href:"data:application/manifest+json,"+encodeURIComponent(JSON.stringify(man))});
+      add("link",{rel:"apple-touch-icon",href:BASE+"app-icon-180.png"});
+      add("meta",{name:"apple-mobile-web-app-capable",content:"yes"});
+      add("meta",{name:"mobile-web-app-capable",content:"yes"});
+      add("meta",{name:"apple-mobile-web-app-title",content:"Mark Talks Health"});
+      add("meta",{name:"apple-mobile-web-app-status-bar-style",content:"default"});
+      var tc=document.querySelector('meta[name="theme-color"]'); if(!tc) add("meta",{name:"theme-color",content:"#f6f1ea"}); else tc.setAttribute("content","#f6f1ea");
+      var vp=document.querySelector('meta[name="viewport"]'); if(vp) vp.setAttribute("content","width=device-width, initial-scale=1, viewport-fit=cover");
+    }catch(e){}
+
+    var st=document.createElement("style");
+    st.textContent=
+      "html.mth-r-app,html.mth-r-app body{height:100%;overflow:hidden!important;background:#f6f1ea!important;margin:0}"+
+      "html.mth-r-app body>*:not(#mth-app-shell){display:none!important}"+
+      "#mth-app-shell{position:fixed;inset:0;display:flex;flex-direction:column;background:#f6f1ea;z-index:2147483000;font-family:'DM Sans',system-ui,-apple-system,sans-serif}"+
+      "#mth-app-shell .ab{flex:none;display:flex;align-items:center;gap:10px;padding:calc(8px + env(safe-area-inset-top)) 12px 8px;border-bottom:1px solid #e7dfd4;background:#f6f1ea}"+
+      "#mth-app-shell .ab a.home{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;color:#2b2622;text-decoration:none;flex:none}"+
+      "#mth-app-shell .ab a.home svg{width:22px;height:22px}"+
+      "#mth-app-shell .ab .t{flex:1;min-width:0}"+
+      "#mth-app-shell .ab .k{font:700 10px/1 'DM Sans',system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#b8664a}"+
+      "#mth-app-shell .ab .n{font:500 20px/1.15 'Cormorant Garamond',Georgia,serif;color:#2b2622;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}"+
+      "#mth-app-shell .ab select{flex:none;max-width:42%;padding:8px 28px 8px 12px;border-radius:999px;border:1px solid #ddd3c6;background:#fff url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%232b2622' stroke-width='1.5'/%3E%3C/svg%3E\") no-repeat right 11px center/10px;-webkit-appearance:none;appearance:none;font:600 13px 'DM Sans',system-ui,sans-serif;color:#2b2622}"+
+      "#mth-app-shell iframe{flex:1;width:100%;border:0;display:block;background:#f6f1ea}"+
+      "#mth-app-shell .ld{position:absolute;left:0;right:0;top:45%;text-align:center;font:400 22px 'Cormorant Garamond',Georgia,serif;color:#8a7d71;pointer-events:none}";
+    document.head.appendChild(st);
+
+    var shell=document.createElement("div"); shell.id="mth-app-shell";
+    shell.innerHTML='<div class="ab"><a class="home" href="/home" aria-label="Back to the Mark Talks Health site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a>'+
+      '<div class="t"><div class="k">Mark Talks Health</div><div class="n"></div></div>'+
+      '<select aria-label="Choose your protocol">'+APP_PROTOS.map(function(x){return '<option value="'+x[0]+'">'+x[1]+'</option>';}).join("")+'</select></div>'+
+      '<div class="ld">Opening your protocol…</div><iframe title="Your protocol" allow="fullscreen; clipboard-write"></iframe>';
+    document.body.appendChild(shell);
+    var fr=shell.querySelector("iframe"), sel=shell.querySelector("select"), nm=shell.querySelector(".n"), ld=shell.querySelector(".ld");
+    function load(k){
+      pick=k; sel.value=k; nm.textContent=name(k)+" Protocol"; ld.style.display="";
+      try{ localStorage.setItem("mth_app_proto",k); }catch(e){}
+      fr.src=ROOT+k+"/?mode=app";
+    }
+    fr.addEventListener("load",function(){ ld.style.display="none"; });
+    sel.addEventListener("change",function(){ load(sel.value); });
+    load(pick);
+    reveal();
+  }
+
   ready(function(){
     try{ fixLinks(); }catch(e){}
     try{ wordmark(); }catch(e){}
@@ -228,8 +294,9 @@
       else if(ROUTE==="course") course();
       else if(ROUTE==="social") social();
       else if(ROUTE==="courses") courses();
+      else if(ROUTE==="app") appPage();
       else reveal();
-      if(ROUTE!=="social") footer();
+      if(ROUTE!=="social"&&ROUTE!=="app") footer();
     }catch(e){ console.warn("MTH site",e); reveal(); }
   });
   /* safety net: never leave a page hidden */
