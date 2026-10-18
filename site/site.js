@@ -395,8 +395,7 @@
   var LINKS=[
     ["Gut Health Protocol","Calm your gut, rebuild your microbiome","/guthealthprotocol"],
     ["Diabetes Protocol","Steadier glucose, more energy","/thediabetesprotocol"],
-    ["GLP-1 Weight Loss Protocol","Lose fat, keep your muscle","/glp1-weightloss"],
-    ["The Healing Hub","Join the community, sound studio and daily plan","/social"]
+    ["GLP-1 Weight Loss Protocol","Lose fat, keep your muscle","/glp1-weightloss"]
   ];
   function linksPage(){
     document.title="Mark Talks Health · Links";
@@ -420,7 +419,6 @@
       '</style><div class="w"><div class="av" style="background-image:url('+BASE+'mark-kitchen.jpg)"></div>'+
       '<h1>Mark <i>Talks</i> Health</h1><div class="tag">Natural health meets modern science</div>'+
       LINKS.map(function(l,i){ return '<a class="b'+(i===3?' lite':'')+'" href="'+l[2]+src+'"><b>'+l[0]+'</b><span>'+l[1]+'</span></a>'; }).join("")+
-      '<a class="mem" href="/app">Already a member? Open your app</a>'+
       '<div class="fine">Educational content, not medical advice. Talk to your doctor before fasting or changing medication.<br>&copy; '+new Date().getFullYear()+' Mark Talks Health</div></div>';
     document.body.appendChild(p);
     reveal();
