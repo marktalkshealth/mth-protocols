@@ -26,6 +26,9 @@
            : path==="/app"?"app"
            : path==="/links"?"links" : "";
   if(ROUTE) H.classList.add("mth-r-"+ROUTE);
+  /* sales pages: start downloading the page design straight away, while LearnWorlds is still loading */
+  var PRE={};
+  if(ROUTE==="funnel") PRE[FUNNELS[path]]=fetch(BASE+FUNNELS[path]).then(function(r){ if(!r.ok) throw new Error(r.status); return r.text(); });
   if(ROUTE==="links"){ var lst=document.createElement("style"); lst.textContent="html.mth-r-links body>*:not(#mth-links){display:none!important}html.mth-r-links,html.mth-r-links body{background:#f6f1ea!important}"; (document.head||H).appendChild(lst); }
   /* /app: keep the phone's "install app" offer so our Install button can show it */
   var INSTALL=null;
@@ -57,7 +60,7 @@
     if(document.getElementById("mthp-js")) return;
     var s=document.createElement("script"); s.id="mthp-js"; s.src=BASE+"phone.js?v=3"; document.head.appendChild(s);
   }
-  function load(file){ return fetch(BASE+file,{cache:"no-cache"}).then(function(r){ if(!r.ok) throw new Error(file+" "+r.status); return r.text(); }); }
+  function load(file){ if(PRE[file]){ var pr=PRE[file]; delete PRE[file]; return pr; } return fetch(BASE+file).then(function(r){ if(!r.ok) throw new Error(file+" "+r.status); return r.text(); }); }
   function topbar(){ return document.querySelector(".lw-topbar"); }
 
   /* ---------------- footer ---------------- */
@@ -91,7 +94,9 @@
       secs.forEach(function(s){ if(s.classList.contains("lw-topbar")||s.classList.contains("lw-footer")) return; if(!checkout&&isCheckout(s)) checkout=s; else if(!isCheckout(s)) s.classList.add("mth-old"); });
       load(file).then(function(html){
         var first=secs.filter(function(s){return !s.classList.contains("lw-topbar");})[0]||document.body.firstChild;
-        mount(html,first,true); reveal();
+        mount(html,first,true);
+        /* show the page once, when the checkout is in place too (or after 2.5s), instead of in several jumps */
+        var t0=Date.now(); (function ready2(){ var co=secs.filter(function(x){return isCheckout(x);})[0]; if(co||Date.now()-t0>2500){ if(co) co.classList.remove("mth-old"); reveal(); } else setTimeout(ready2,100); })();
         /* checkout header */
         (function head(n){ var co=document.querySelector(".payment-section"); if(!co){ if(n<20) setTimeout(function(){head(n+1);},500); return; } if(co.querySelector(".mth-co-head")) return;
           var h=document.createElement("div"); h.className="mth-co-head"; h.innerHTML='<div class="k">Secure checkout</div><h2>Complete your order</h2><p>Instant access to your course, your personalised software and the Healing Hub.</p><div class="trust"><span>Lifetime access</span><span>30-day guarantee</span><span>Encrypted payment</span></div>';
