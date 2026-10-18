@@ -8,38 +8,6 @@
 ================================================================= */
 (function(){
   if(window.__MTH_SITE) return; window.__MTH_SITE=1;
-
-  /* ---------------- protocol app full screen on phones ----------------
-     The protocol app (shared/app.js) asks for this when it opens on a phone.
-     We find its frame (and any frame around it) and lay it over the whole
-     screen, hiding the course player around it; "Back to course" undoes it. */
-  if(window===window.top) window.addEventListener("message",function(e){
-    var d=e.data; if(!d||d.type!=="mth-app-full"||!e.source) return;
-    var chain=[],w=e.source;
-    try{
-      while(w&&w!==window){
-        var p=w.parent,fr=p.document.getElementsByTagName("iframe"),hit=null;
-        for(var i=0;i<fr.length;i++) if(fr[i].contentWindow===w){hit=fr[i];break;}
-        if(!hit) return; chain.unshift(hit); w=p;
-      }
-    }catch(err){ return; }
-    if(!chain.length) return;
-    var FULL="position:fixed!important;top:0!important;left:0!important;right:auto!important;bottom:auto!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;transform:none!important;z-index:2147483000!important;background:#f6f1ea!important;";
-    chain.forEach(function(f){
-      var doc=f.ownerDocument;
-      if(d.on){
-        if(f.getAttribute("data-mth-full")==null) f.setAttribute("data-mth-full",f.style.cssText||"");
-        f.style.cssText=(f.getAttribute("data-mth-full")||"")+";"+FULL;
-        doc.documentElement.style.setProperty("overflow","hidden","important");
-        if(doc.body) doc.body.style.setProperty("overflow","hidden","important");
-      }else if(f.getAttribute("data-mth-full")!=null){
-        f.style.cssText=f.getAttribute("data-mth-full"); f.removeAttribute("data-mth-full");
-        doc.documentElement.style.removeProperty("overflow");
-        if(doc.body) doc.body.style.removeProperty("overflow");
-      }
-    });
-    try{ e.source.postMessage({type:"mth-app-full-ok",on:!!d.on},"*"); }catch(err){}
-  });
   var BASE=(document.currentScript&&document.currentScript.src||"").replace(/site\.js.*$/,"") || "https://marktalkshealth.github.io/mth-protocols/site/";
   var HUB=BASE.replace(/site\/$/,"hub/");
   var H=document.documentElement;

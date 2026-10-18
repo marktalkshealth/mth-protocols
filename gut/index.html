@@ -6175,6 +6175,5 @@ fxRender(); fxLoadLive();
 </script>
 
 <script>/* mth-embed-resize: tells the course page how tall the app is */(function(){if(window.parent===window)return;var last=0;function send(){var h=Math.max(document.documentElement.scrollHeight,document.body?document.body.scrollHeight:0);if(h!==last){last=h;try{parent.postMessage({type:"mth-height",h:h},"*")}catch(e){}}}if(window.ResizeObserver)new ResizeObserver(send).observe(document.documentElement);window.addEventListener("load",send);setInterval(send,1500);send();})();</script>
-<script src="https://marktalkshealth.github.io/mth-protocols/shared/app.js?v=2"></script>
 </body>
 </html>
