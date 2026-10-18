@@ -198,6 +198,21 @@
         else if(t==="sign up"||t==="register"||t==="join") li.classList.add("mth-auth","mth-signup");
         else if(t==="sign out"||t==="log out") li.classList.add("mth-out");
       });
+      /* members get "App" at the top of the phone menu (LearnWorlds' header button is desktop only) */
+      if(LOGGED_IN){
+        var ul=document.querySelector(".lw-topbar-hamburger-menu .mobile-nav-menu");
+        if(ul&&!ul.querySelector('a.mobile-nav-menu-link[href$="/app"],.mth-appitem')){
+          var src=null;
+          [].forEach.call(ul.children,function(li){ if(!src&&li.classList.contains("mobile-nav-menu-item")&&!li.classList.contains("has-subMenu")&&!li.classList.contains("mth-auth")&&!li.classList.contains("mth-out")&&li.querySelector(":scope > .mobile-nav-menu-link")) src=li; });
+          if(src){
+            var li=src.cloneNode(true); li.classList.add("mth-appitem"); li.classList.remove("active","selected");
+            [].forEach.call(li.querySelectorAll(".mobile-nav-subMenu"),function(x){ x.parentNode.removeChild(x); });
+            var a=li.querySelector(":scope > .mobile-nav-menu-link");
+            a.setAttribute("href","/app"); a.removeAttribute("target"); a.innerHTML="<span>App</span>";
+            ul.insertBefore(li,ul.firstChild);
+          }
+        }
+      }
       H.classList.toggle("mth-menu-open",!!document.querySelector(".lw-topbar .hamburger-open .lw-topbar-hamburger-menu"));
     }
     tag();
