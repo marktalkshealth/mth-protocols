@@ -402,7 +402,7 @@
       '#mth-links .w{width:100%;max-width:440px;text-align:center}'+
       '#mth-links .av{width:104px;height:104px;border-radius:50%;margin:0 auto 14px;background:#2b2622 50% 16%/230% auto no-repeat;box-shadow:0 0 0 3px #f6f1ea,0 0 0 4px #b08a46}'+
       '#mth-links h1{font:500 32px/1.05 "Cormorant Garamond",Georgia,serif;margin:0}#mth-links h1 i{color:#b8664a}'+
-      '#mth-links .tag{font:italic 400 17px/1.35 "Cormorant Garamond",Georgia,serif;color:#6e6259;margin:6px 0 4px}'+
+      '#mth-links .tag{font:italic 400 17px/1.35 "Cormorant Garamond",Georgia,serif;color:#6e6259;margin:6px 0 22px}'+
       '#mth-links .story{font-size:13px;color:#8a7d71;margin:0 0 22px}'+
       '#mth-links a.b{display:block;text-decoration:none;color:#f6f1ea;background:#2b2622;border-radius:16px;padding:16px 46px 16px 18px;margin:0 0 12px;text-align:left;position:relative;transition:transform .15s}'+
       '#mth-links a.b:active{transform:scale(.98)}'+
@@ -414,7 +414,6 @@
       '#mth-links .fine{font-size:11px;line-height:1.5;color:#a8998b;margin-top:26px}'+
       '</style><div class="w"><div class="av" style="background-image:url('+BASE+'mark-kitchen.jpg)"></div>'+
       '<h1>Mark <i>Talks</i> Health</h1><div class="tag">Natural health meets modern science</div>'+
-      '<div class="story">I lost 100 pounds with the same 7 steps I teach.</div>'+
       LINKS.map(function(l,i){ return '<a class="b'+(i===3?' lite':'')+'" href="'+l[2]+src+'"><b>'+l[0]+'</b><span>'+l[1]+'</span></a>'; }).join("")+
       '<a class="mem" href="/app">Already a member? Open your app</a>'+
       '<div class="fine">Educational content, not medical advice. Talk to your doctor before fasting or changing medication.<br>&copy; '+new Date().getFullYear()+' Mark Talks Health</div></div>';
