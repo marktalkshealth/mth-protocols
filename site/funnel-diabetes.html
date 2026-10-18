@@ -339,11 +339,11 @@ if("IntersectionObserver" in window){
 
 /* ---- sticky buy bar on phones ---- */
 var st=$("g2Sticky");
-var lastY=window.scrollY||0;
+var SW=document.getElementById("sectionsWrapper"), Y=function(){ return Math.max(window.scrollY||0, SW?SW.scrollTop:0); }, lastY=Y();
 /* shows while scrolling down the page, tucks away the moment you scroll back up, and stays out of the way at the checkout and footer */
-function onScroll(){ var y=window.scrollY||0, co=findCheckout(document), near=co&&co.getBoundingClientRect().top<window.innerHeight, ft=document.querySelector(".mthf"), atEnd=ft&&ft.getBoundingClientRect().top<window.innerHeight, down=y>lastY+2, up=y<lastY-2;
+function onScroll(){ var y=Y(), co=findCheckout(document), near=co&&co.getBoundingClientRect().top<window.innerHeight, ft=document.querySelector(".mthf"), atEnd=ft&&ft.getBoundingClientRect().top<window.innerHeight, down=y>lastY+2, up=y<lastY-2;
   if(y<700||near||atEnd||up) st.classList.remove("on"); else if(down) st.classList.add("on"); lastY=y; }
-window.addEventListener("scroll",onScroll,{passive:true}); onScroll();
+window.addEventListener("scroll",onScroll,{passive:true}); if(SW) SW.addEventListener("scroll",onScroll,{passive:true}); onScroll();
 })();
 </script>
 </div>
