@@ -94,6 +94,20 @@ html.mth-app .di-panel { padding: 16px 14px !important; border-radius: 18px !imp
 html.mth-app .hc-intake .di-title, html.mth-app .hc-intake .di-metrics-section-title, html.mth-app .hc-intake .di-metrics-grid,
 html.mth-app #diGenBtn, html.mth-app #diGenHint, html.mth-app .gs-panel > .gs-head, html.mth-app .lab-panel > .gs-head, html.mth-app #diMasterNote { display: none !important; }
 
+
+/* Arc tab order: intake first, then the arc chart (swipe sideways), then day by day */
+html.mth-app .hc-card { display: flex !important; flex-direction: column; }
+html.mth-app .mp-archead { order: 1; } html.mth-app[data-mth-tab="arc"] .hc-grid3 { order: 2; } html.mth-app .mp-arcfoot2 { order: 3; }
+html.mth-app .mp-archint { order: 4; } html.mth-app #fastingArcContainer { order: 5; } html.mth-app .mp-arcsum { order: 6; } html.mth-app .mp-arcfoot { order: 7; }
+html.mth-app[data-mth-tab="arc"]:not(.mth-setup) #fastingArcContainer { display: block !important; margin: 0 0 10px !important; padding: 0 !important; }
+html.mth-app #fastingArcContainer .chart-card { margin: 0 !important; padding: 14px !important; border-radius: 18px !important; border: 1px solid #e7dccb !important; background: #fff !important; box-shadow: none !important;
+  overflow-x: auto !important; -webkit-overflow-scrolling: touch; scrollbar-width: thin; opacity: 1 !important; transform: none !important; }
+html.mth-app #fastingArcContainer .chart-title { font-size: 1.35rem !important; line-height: 1.15 !important; position: sticky; left: 0; }
+html.mth-app #fastingArcContainer .chart-sub { font-size: .82rem !important; line-height: 1.45 !important; position: sticky; left: 0; max-width: calc(100vw - 60px); }
+html.mth-app #fastingArcContainer .chart-legend { position: sticky; left: 0; max-width: calc(100vw - 60px); }
+html.mth-app #fastingArcContainer .slope-chart { min-width: 760px !important; }
+html.mth-app.mth-setup .mp-archint { display: none !important; }
+
 /* ---- the demo look, at phone size ---- */
 .mp { font-family: Inter, 'DM Sans', system-ui, -apple-system, sans-serif; color: #2b2724; -webkit-font-smoothing: antialiased; }
 .mp *, .mp *::before { box-sizing: border-box; }
@@ -316,10 +330,11 @@ html.mth-app.mth-wait body::after { content: 'Opening your plan…'; position: f
 
     function pane(cls) { var el = document.createElement('div'); el.className = 'mp mp-pane ' + cls; return el; }
     var P = { today: pane('mp-today'), food: pane('mp-food'), move: pane('mp-move'), act: pane('mp-act') };
-    var arcSum = pane('mp-arc mp-arcsum'), arcHead = pane('mp-arc mp-archead'), arcFoot = pane('mp-arc mp-arcfoot2'), arcEnd = pane('mp-arc mp-arcfoot');
+    var arcSum = pane('mp-arc mp-arcsum'), arcHead = pane('mp-arc mp-archead'), arcFoot = pane('mp-arc mp-arcfoot2'), arcEnd = pane('mp-arc mp-arcfoot'), arcHint = pane('mp-arc mp-archint');
+    arcHint.innerHTML = '<div class="sec"><div class="k">Your healing arc</div><div class="h" style="font-size:28px">The <em>' + 'arc</em></div><div class="s" style="padding:0 2px 10px">Swipe the chart sideways to see every day.</div></div>';
     ['today', 'food', 'move', 'act'].forEach(function (k) { card.insertBefore(P[k], grid); });
     card.insertBefore(arcSum, grid); card.insertBefore(arcHead, grid);
-    grid.parentNode.insertBefore(arcFoot, grid.nextSibling); arcFoot.parentNode.insertBefore(arcEnd, arcFoot.nextSibling);
+    grid.parentNode.insertBefore(arcFoot, grid.nextSibling); arcFoot.parentNode.insertBefore(arcEnd, arcFoot.nextSibling); arcFoot.parentNode.insertBefore(arcHint, arcFoot.nextSibling);
 
     var bar = document.createElement('nav');
     bar.className = 'mth-bar'; bar.setAttribute('role', 'tablist'); bar.setAttribute('aria-label', 'Sections');
@@ -403,7 +418,7 @@ html.mth-app.mth-wait body::after { content: 'Opening your plan…'; position: f
       var A = arc(), full = 0;
       for (var d = 1; d <= A.n; d++) { var C = counts(A, d); if (C.done >= C.total) full++; }
       var cur = Math.max(0, Math.min(A.n, A.today));
-      var h = '<div class="k">' + esc(A.C.emoji || '') + ' ' + esc(A.C.name) + '</div><div class="h">Your healing <em>arc</em></div>';
+      var h = '<div class="sec"><div class="k">' + esc(A.C.emoji || '') + ' ' + esc(A.C.name) + '</div><div class="h" style="font-size:28px">Day by <em>day</em></div></div>';
       h += '<div class="c"><div class="row"><div class="ring big">' + ringSvg(full / A.n, '#7a8f6e') + '<b>' + full + '<small>of ' + A.n + ' days</small></b></div><div style="flex:1">' +
         '<div class="t">' + (A.today < 1 ? 'Starts ' + esc(shortDate(A.start)) : A.today > A.n ? 'Arc finished' : 'You are on day ' + cur) + '</div>' +
         '<div class="s">' + A.cd + ' cleanse day' + (A.cd === 1 ? '' : 's') + (A.rd ? ', ' + A.rd + ' refeed day' + (A.rd === 1 ? '' : 's') : '') + (A.n - A.cd - A.rd > 0 ? ', then healing days' : '') + '.</div></div></div>' +
@@ -423,7 +438,7 @@ html.mth-app.mth-wait body::after { content: 'Opening your plan…'; position: f
     var page = 0;
     function rDetails() {
       var set = isSetUp();
-      arcHead.innerHTML = (set ? '<div class="sec"><div class="k">Your details</div><div class="h" style="font-size:28px">Intake</div></div>'
+      arcHead.innerHTML = (set ? '<div class="k">Your details</div><div class="h">Diagnostic <em>intake</em></div>'
                                : '<div class="k">Set up · 1 minute</div><div class="h">Let\'s build your <em>plan</em></div>') +
         '<div class="seg">' + PAGES.map(function (p, i) { return '<button type="button" data-page="' + i + '" class="' + (i === page ? 'on' : '') + '">' + (i + 1) + '. ' + p[0] + '</button>'; }).join('') + '</div>' +
         '<div class="s" style="padding:0 4px 10px">' + esc(PAGES[page][1]) + '</div>';
