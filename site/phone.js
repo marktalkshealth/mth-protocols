@@ -238,7 +238,7 @@
       '<div class="rest"><b class="rt">0:45</b><div class="bar"><i style="width:100%"></i></div><button class="skip">Skip rest</button></div>'+
       '<div class="mthp-tabs" role="tablist">'+TABS.map(function(t,i){ return '<button role="tab" aria-selected="'+(i===0)+'" class="'+(i===0?'on':'')+'" data-t="'+i+'">'+ICON[t[0]]+t[1]+(t[0]==="hub"?'<span class="dot"></span>':'')+'</button>'; }).join("")+'</div>'+
       '<div class="mthp-sheet"><div style="position:relative"></div></div><div class="mthp-toast"></div></div></div>'+
-      '<div class="mthp-hint"><i>👆</i>Tap the tabs or swipe to test-drive the app</div></div>';
+      (root.getAttribute("data-hint")==="off"?'':'<div class="mthp-hint"><i>👆</i>Tap the tabs or swipe to test-drive the app</div>')+'</div>';
     var scr=sh.querySelector(".mthp-scr"), panes=[].slice.call(sh.querySelectorAll(".mthp-pane")), tabs=[].slice.call(sh.querySelectorAll(".mthp-tabs button"));
     var sheet=sh.querySelector(".mthp-sheet"), toastEl=sh.querySelector(".mthp-toast"), restEl=sh.querySelector(".rest");
 

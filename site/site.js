@@ -58,7 +58,7 @@
   function phone(){
     if(window.MTHPhone){ window.MTHPhone.scan(); return; }
     if(document.getElementById("mthp-js")) return;
-    var s=document.createElement("script"); s.id="mthp-js"; s.src=BASE+"phone.js?v=3"; document.head.appendChild(s);
+    var s=document.createElement("script"); s.id="mthp-js"; s.src=BASE+"phone.js?v=4"; document.head.appendChild(s);
   }
   function load(file){ if(PRE[file]){ var pr=PRE[file]; delete PRE[file]; return pr; } return fetch(BASE+file).then(function(r){ if(!r.ok) throw new Error(file+" "+r.status); return r.text(); }); }
   function topbar(){ return document.querySelector(".lw-topbar"); }
