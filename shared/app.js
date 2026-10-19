@@ -31,6 +31,55 @@
 
   function ready(fn) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); }
 
+  /* ---------- Meal Planner / Exercise Planner apps (?app=meals | ?app=train) ----------
+     Opens just the protocol's own daily planner section, on phones and computers alike. */
+  var PLAN = null; try { PLAN = new URLSearchParams(location.search).get('app'); } catch (e) {}
+  if (PLAN === 'meals' || PLAN === 'train') {
+    var R0 = document.documentElement; R0.classList.add('mth-planner'); if (on || touch) R0.classList.add('mth-phone');
+    var pst = document.createElement('style');
+    pst.textContent =
+      'html.mth-planner body{background:#fffcf7!important}' +
+      'html.mth-planner .hc-head,html.mth-planner .hc-grid3,html.mth-planner .hc-below,html.mth-planner #fastingArcContainer,html.mth-planner #planSlot,' +
+      'html.mth-planner #fxOverview,html.mth-planner .ca-outer,html.mth-planner #main,html.mth-planner .fx-fab,html.mth-planner .hc-cap,html.mth-planner .hero,' +
+      'html.mth-planner #fx>.fx-tabs,html.mth-planner .fx-lede{display:none!important}' +
+      'html.mth-planner .fx-outer,html.mth-planner #fx{display:block!important}' +
+      'html.mth-planner .di-outer,html.mth-planner .fx-outer{max-width:none!important}' +
+      'html.mth-planner .hc-card{padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}' +
+      'html.mth-planner.mth-phone .di-outer{padding:8px 8px 24px!important}' +
+      'html.mth-planner.mth-phone .fx-outer{padding:0!important;margin:0!important}' +
+      'html.mth-planner.mth-phone .fx-card{padding:14px 12px!important;border-radius:16px!important}' +
+      'html.mth-planner.mth-phone .fx-title{font-size:1.5rem!important;line-height:1.15!important}' +
+      'html.mth-planner .mth-pwait{padding:40vh 20px 0;text-align:center;font:400 1.35rem "Cormorant Garamond",Georgia,serif;color:#8a7d71}' +
+      'html.mth-planner.mth-pwaiting .di-outer{visibility:hidden}' +
+      '.mth-pneed{max-width:420px;margin:18vh auto 0;padding:24px 20px;text-align:center;font-family:Inter,"DM Sans",system-ui,sans-serif;color:#2b2724}' +
+      '.mth-pneed h2{font:500 2rem/1.1 "Cormorant Garamond",Georgia,serif;margin:0 0 8px}.mth-pneed p{font-size:.95rem;color:#6e6259;line-height:1.5;margin:0 0 18px}' +
+      '.mth-pneed a{display:block;padding:14px;border-radius:999px;background:#c0623f;color:#fff;text-decoration:none;font-weight:700}';
+    (document.head || R0).appendChild(pst);
+    R0.classList.add('mth-pwaiting');
+    ready(function () {
+      var gen = document.getElementById('diGenBtn');
+      function setUp() { return gen && !gen.classList.contains('di-pending'); }
+      function open() {
+        R0.classList.remove('mth-pwaiting');
+        var b = document.querySelector('#fx > .fx-tabs button[data-tab="' + (PLAN === 'meals' ? 'eat' : 'move') + '"]');
+        if (b && b.getAttribute('aria-selected') !== 'true') b.click();
+        try { window.dispatchEvent(new Event('resize')); } catch (e) {}
+      }
+      function need() {
+        R0.classList.remove('mth-pwaiting');
+        var home = 'https://marktalkshealth.learnworlds.com'; try { if (document.referrer) home = new URL(document.referrer).origin; } catch (e) {}
+        var d = document.createElement('div'); d.className = 'mth-pneed';
+        d.innerHTML = '<h2>Build your plan first</h2><p>Your ' + (PLAN === 'meals' ? 'meal planner' : 'exercise planner') + ' is made from your healing plan. Set it up in the Healing App (it takes about a minute), then come back here.</p><a href="' + home + '/app" target="_top">Open the Healing App</a>';
+        var o = document.querySelector('.di-outer'); if (o) o.style.display = 'none';
+        document.body.appendChild(d);
+      }
+      if (setUp()) return open();
+      var t0 = Date.now();
+      (function wait() { if (setUp()) return open(); if (Date.now() - t0 > 4000) return need(); setTimeout(wait, 150); })();
+    });
+    return;
+  }
+
   /* On the members' /app page on a computer: use the whole screen width */
   if (!on) {
     try { if (new URLSearchParams(location.search).get('mode') === 'app') {

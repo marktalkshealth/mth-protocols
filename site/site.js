@@ -157,21 +157,51 @@
   /* the header "App" button. Mark's own LearnWorlds button wins; ours fills in only if there isn't one.
      LearnWorlds rearranges its header while loading, so we put ours back whenever it gets dropped. */
   var APPSEL="a, .lw-topbar-option-link, .mobile-nav-menu-link";
-  function isAppLink(a){ if(!a||!a.getAttribute||a.closest(".mth-appnav,.mth-appitem")) return false; var t=(a.textContent||"").trim().toLowerCase(), h=(a.getAttribute("href")||"").toLowerCase();
+  function isAppLink(a){ if(!a||!a.getAttribute||a.closest(".mth-appnav,.mth-appitem,.mth-apps,.mth-apps-m")) return false; var t=(a.textContent||"").trim().toLowerCase(), h=(a.getAttribute("href")||"").toLowerCase();
     return t==="app"||t==="my app"||/\/app(\?|$)/.test(h.replace(/^https?:\/\/[^/]+/,""))||/mth-protocols\/(gut|sugar|glp1)\b/.test(h); }
   function hasOwnApp(scope){ var own=[].filter.call((scope||document).querySelectorAll(APPSEL),isAppLink);
     own.forEach(function(el){ var li=el.closest("li"); if(li) li.classList.add("mth-appown"); el.setAttribute("role","link"); if(!el.hasAttribute("tabindex")&&el.tagName!=="A") el.setAttribute("tabindex","0"); });
     return own.length>0; }
   function appNav(){
+    /* "Apps" sits next to "Courses": a dropdown in the desktop header and a group in the phone menu.
+       It is copied from LearnWorlds' own Courses item so it looks and behaves the same. */
+    var APPS=[["Healing App","/app"],["Meal Planner","/app?a=meals"],["Exercise Planner","/app?a=train"],["Community","/social"]];
+    function strip(el){ [el].concat([].slice.call(el.querySelectorAll("*"))).forEach(function(x){ x.removeAttribute("id"); ["data-interactive-link-type","data-interactive-link-var1","data-interactive-link-var2","data-interactive-link-window"].forEach(function(k){ x.removeAttribute(k); }); x.classList.remove("js-linked-node","active","selected"); }); return el; }
+    function label(a,t){ var sp=a.querySelector(".lw-topbar-option-link-lbl,span:not(.chevron)"); if(sp) sp.textContent=t; else a.textContent=t; }
+    function hideOwn(scope){ [].forEach.call(scope.querySelectorAll(APPSEL),function(el){ if(!isAppLink(el)) return; var li=el.closest("li"); if(li&&!li.closest(".mth-apps,.mth-apps-m")) li.classList.add("mth-apphide"); }); }
     function ensure(){
       var tb=document.querySelector(".lw-topbar"), ul=tb&&tb.querySelector(".lw-topbar-options"); if(!ul) return;
-      var mine=tb.querySelector(".mth-appnav");
-      if(hasOwnApp(tb)){ if(mine) mine.parentNode.removeChild(mine); return; }
-      if(mine||!signedIn()) return;
-      var first=null; [].forEach.call(ul.children,function(li){ if(!first&&li.classList.contains("lw-topbar-option")&&li.querySelector(":scope > a.lw-topbar-option-link")) first=li; });
-      var li=document.createElement("li"); li.className="lw-topbar-option mth-appnav"+(ROUTE==="app"?" mth-on":"");
-      li.innerHTML='<a href="/app" class="lw-topbar-option-link learnworlds-main-text-normal lw-brand-text text-only"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10.5 18.5h3"/></svg><span class="lw-topbar-option-link-lbl nowrap">App</span></a>';
-      if(first) ul.insertBefore(li,first); else ul.appendChild(li);
+      /* desktop header */
+      if(!ul.querySelector(".mth-apps")){
+        var cs=[].filter.call(ul.children,function(li){ var a=li.querySelector(":scope > a.lw-topbar-option-link"); return a&&/^\s*courses\s*$/i.test(a.textContent)&&li.querySelector(":scope > .lw-topbar-submenu li"); })[0];
+        if(cs){
+          var li=strip(cs.cloneNode(true)); li.classList.add("mth-apps");
+          var top=li.querySelector(":scope > a"); top.setAttribute("href","/app"); label(top,"Apps");
+          var ic=top.querySelector("i"); if(ic) ic.className="fas fa-mobile-alt menu-icon mr-5";
+          var sub=li.querySelector(":scope > .lw-topbar-submenu"), tpl=sub.querySelector("li");
+          sub.innerHTML=""; APPS.forEach(function(x){ var it=tpl.cloneNode(true), a=it.querySelector("a"); a.setAttribute("href",x[1]); a.removeAttribute("target"); label(a,x[0]); sub.appendChild(it); });
+          ul.insertBefore(li,cs.nextSibling);
+          var old=tb.querySelector(".mth-appnav"); if(old) old.parentNode.removeChild(old);
+        } else if(!tb.querySelector(".mth-appnav")&&!hasOwnApp(tb)){
+          var li2=document.createElement("li"); li2.className="lw-topbar-option mth-appnav";
+          li2.innerHTML='<a href="/app" class="lw-topbar-option-link learnworlds-main-text-normal lw-brand-text text-only"><span class="lw-topbar-option-link-lbl nowrap">Apps</span></a>';
+          ul.insertBefore(li2,ul.firstChild);
+        }
+      }
+      /* phone menu */
+      var mm=tb.querySelector(".lw-topbar-hamburger-menu .mobile-nav-menu");
+      if(mm&&!mm.querySelector(".mth-apps-m")){
+        var cm=[].filter.call(mm.children,function(li){ var a=li.querySelector(":scope > .mobile-nav-menu-link"); return li.classList.contains("has-subMenu")&&a&&/^\s*courses/i.test(a.textContent)&&li.querySelector(".mobile-nav-subMenu li"); })[0];
+        if(cm){
+          var m=strip(cm.cloneNode(true)); m.classList.add("mth-apps-m");
+          var tg=m.querySelector(":scope > .mobile-nav-menu-link"); tg.innerHTML='Apps <span class="chevron"></span>';
+          var su=m.querySelector(".mobile-nav-subMenu"), t2=su.querySelector("li");
+          su.innerHTML=""; APPS.forEach(function(x){ var it=t2.cloneNode(true), a=it.querySelector("a"); a.setAttribute("href",x[1]); a.removeAttribute("target"); var sp=a.querySelector("span"); if(sp) sp.textContent=x[0]; else a.textContent=x[0]; su.appendChild(it); });
+          mm.insertBefore(m,cm.nextSibling);
+          [].forEach.call(mm.querySelectorAll(".mth-appitem"),function(x){ x.parentNode.removeChild(x); });
+        }
+      }
+      if(tb.querySelector(".mth-apps,.mth-apps-m")) hideOwn(tb);
     }
     waitFor(function(){ return document.querySelector(".lw-topbar .lw-topbar-options"); },function(ul){
       if(!ul) return; ensure();
@@ -368,7 +398,7 @@
       /* members get "App" at the top of the phone menu (LearnWorlds' header button is desktop only) */
       if(signedIn()){
         var ul=document.querySelector(".lw-topbar-hamburger-menu .mobile-nav-menu");
-        if(ul&&!ul.querySelector('.mth-appitem')&&!hasOwnApp(ul)){
+        if(ul&&!ul.querySelector('.mth-appitem,.mth-apps-m')&&!hasOwnApp(ul)){
           var src=null;
           [].forEach.call(ul.children,function(li){ if(!src&&li.classList.contains("mobile-nav-menu-item")&&!li.classList.contains("has-subMenu")&&!li.classList.contains("mth-auth")&&!li.classList.contains("mth-out")&&li.querySelector(":scope > .mobile-nav-menu-link")) src=li; });
           if(src){
@@ -493,6 +523,9 @@
        Phones (and the installed home-screen app) keep the full-screen app. */
     var standalone=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
     var DESK=!standalone&&window.matchMedia&&matchMedia("(min-width: 900px)").matches;
+    /* which app: the Healing App (default), or the Meal Planner / Exercise Planner */
+    var AMODE=null; try{ AMODE=new URLSearchParams(location.search).get("a"); }catch(e){} if(AMODE!=="meals"&&AMODE!=="train") AMODE=null;
+    var ANAME=AMODE==="meals"?["Meal","planner"]:AMODE==="train"?["Exercise","planner"]:["Your","app"];
     if(DESK){
       H.classList.add("mth-app-desk");
       var dst=document.createElement("style");
@@ -526,9 +559,9 @@
     var fr=shell.querySelector("iframe"), nm=shell.querySelector(".n"), ld=shell.querySelector(".ld");
     if(DESK){ var fw=document.createElement("div"); fw.className="frame"; fr.parentNode.insertBefore(fw,fr); fw.appendChild(ld); fw.appendChild(fr); }
     function load(k){
-      pick=k; if(DESK){ nm.innerHTML="Your <em>app</em>"; shell.querySelector(".k").textContent=name(k)+" Protocol"; } else nm.textContent=name(k)+" Protocol"; ld.style.display="";
+      pick=k; if(DESK){ nm.innerHTML=ANAME[0]+" <em>"+ANAME[1]+"</em>"; shell.querySelector(".k").textContent=name(k)+" Protocol"; } else nm.textContent=AMODE?(ANAME[0]+" Planner · "+name(k)):name(k)+" Protocol"; ld.style.display="";
       try{ localStorage.setItem("mth_app_proto",k); }catch(e){}
-      fr.src=ROOT+k+"/?mode=app"+(DESK?"":"&view=app");
+      fr.src=ROOT+k+"/?mode=app"+(DESK?"":"&view=app")+(AMODE?"&app="+AMODE:"");
     }
     fr.addEventListener("load",function(){ ld.style.display="none"; });
 

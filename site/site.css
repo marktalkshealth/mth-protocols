@@ -331,3 +331,4 @@ html.mth-course .mth-hide{display:none!important}
 /* Mark's own App menu item: same look as a link */
 .lw-topbar .mth-appown > .lw-topbar-option-link,.lw-topbar .mth-appown .mobile-nav-menu-link{cursor:pointer;color:var(--mth-terra,#c0623f)!important;font-weight:700!important}
 .lw-topbar .mth-appown > .lw-topbar-option-link *{color:var(--mth-terra,#c0623f)!important}
+.lw-topbar .mth-apphide{display:none!important}
