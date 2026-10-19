@@ -156,7 +156,7 @@
   }
   /* members: an "App" button in the desktop header, next to Courses (phones get it in the menu) */
   function appNav(){
-    if(!LOGGED_IN) return;
+    if(!signedIn()) return;
     waitFor(function(){ return document.querySelector(".lw-topbar .lw-topbar-options"); },function(ul){
       if(!ul||ul.querySelector(".mth-appnav")) return;
       var first=null; [].forEach.call(ul.children,function(li){ if(!first&&li.classList.contains("lw-topbar-option")&&li.querySelector(":scope > a.lw-topbar-option-link")) first=li; });
@@ -165,6 +165,8 @@
       if(first) ul.insertBefore(li,first); else ul.appendChild(li);
     },8000);
   }
+  /* signed in? checked when needed: LearnWorlds fills in the member after this script starts */
+  function signedIn(){ try{ var u=window.MTH_USER; if(u&&u.id&&String(u.id).indexOf("{{")<0) return true; var m=window.me; return !!(m&&m.id); }catch(e){ return false; } }
   function load(file){ if(PRE[file]){ var pr=PRE[file]; delete PRE[file]; return pr; } return fetch(BASE+file).then(function(r){ if(!r.ok) throw new Error(file+" "+r.status); return r.text(); }); }
   function topbar(){ return document.querySelector(".lw-topbar"); }
 
@@ -342,7 +344,7 @@
         else if(t==="sign out"||t==="log out") li.classList.add("mth-out");
       });
       /* members get "App" at the top of the phone menu (LearnWorlds' header button is desktop only) */
-      if(LOGGED_IN){
+      if(signedIn()){
         var ul=document.querySelector(".lw-topbar-hamburger-menu .mobile-nav-menu");
         if(ul&&!ul.querySelector('a.mobile-nav-menu-link[href$="/app"],.mth-appitem')){
           var src=null;
