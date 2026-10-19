@@ -318,14 +318,7 @@ var LIBRARY = {
    {title:"The Diabetes Protocol", sub:"The diabetes version of the 7-step protocol", url:"https://marktalkshealth.learnworlds.com/thediabetesprotocol", icon:"🩸"},
    {title:"Total Body Healing", sub:"The full 7-step course", url:"https://marktalkshealth.learnworlds.com/totalbodyhealing", icon:"✨"},
    {title:"Restore Kitchen", sub:"Keto recipes and weekly meal prep", url:"#", icon:"🥑"}
-  ],
-  supplements:[
-   {title:"L-Glutamine", sub:"Commonly used to support the gut lining", url:"#", protocol:"gut"},
-   {title:"Collagen Peptides", sub:"Protein for gut, skin and joints", url:"#", protocol:"all"},
-   {title:"Electrolytes", sub:"Minerals for fasting days", url:"#", protocol:"all"},
-   {title:"Magnesium Glycinate", sub:"Popular for sleep and relaxation", url:"#", protocol:"all"}
-  ],
-  supplementNote:"Supplements are optional. Some links may be affiliate links. Check with your doctor before starting any supplement, especially if you take medication."
+  ]
 };
 /* ========================== END YOUR CONTENT ========================== */
 
@@ -653,9 +646,7 @@ function renderLibrary(){
   LIBRARY.downloads.filter(mine).forEach(function(d){ h+='<a class="card lib" href="'+esc(d.url)+'" target="_blank" rel="noopener"><span class="ic">📄</span><div><b>'+esc(d.title)+'</b><small>'+esc(d.sub)+'</small></div><em>PDF</em></a>'; });
   h+='</div><div class="sec"><div class="h"><h2>Your tools</h2></div>';
   LIBRARY.tools.forEach(function(d){ h+='<a class="card lib" href="'+esc(d.url)+'" target="_top"><span class="ic">'+esc(d.icon)+'</span><div><b>'+esc(d.title)+'</b><small>'+esc(d.sub)+'</small></div><em>Open</em></a>'; });
-  h+='</div><div class="sec"><div class="h"><h2>Supplements</h2></div>';
-  LIBRARY.supplements.filter(mine).forEach(function(d){ h+='<a class="card lib" href="'+esc(d.url)+'" target="_blank" rel="noopener sponsored"><span class="ic">💊</span><div><b>'+esc(d.title)+'</b><small>'+esc(d.sub)+'</small></div><em>View</em></a>'; });
-  h+='</div><p class="fine">'+esc(LIBRARY.supplementNote)+'</p>';
+  h+='</div>';
   $("vLibrary").innerHTML=h;
 }
 
