@@ -211,3 +211,25 @@ html.mth-course .mth-hide{display:none!important}
 .payment-section .order-summary strong{font-size:18px!important}
 .payment-section .order-summary .flex>div:last-child strong{font-family:var(--mth-serif)!important;font-size:32px!important;font-weight:600!important}
 @media(max-width:767px){.payment-section .checkout-coupon input,.payment-section .checkout-coupon button{border-radius:999px!important}.payment-section .checkout-coupon button{margin-top:8px}}
+/* ===== compact checkout (Oct 2026): shorter and squarer ===== */
+.payment-section{padding:0 0 32px!important}
+.payment-section .learnworlds-section-content{max-width:860px!important}
+.mth-co-head{padding:30px 20px 14px}
+.mth-co-head h2{font-size:clamp(28px,6vw,38px)!important;margin:6px 0 6px!important}
+.mth-co-head p{font-size:14px}
+.mth-co-head .trust{margin-top:10px}
+.mth-co-head .trust span{padding:4px 10px;font-size:12px}
+.payment-section .lw-cols.a-i-fs>.col{padding:20px 20px!important}
+@media(max-width:767px){.payment-section .lw-cols.a-i-fs>.col{padding:16px 14px!important}}
+.payment-section .pt-25{padding-top:0!important}.payment-section .pb-25{padding-bottom:6px!important}
+.payment-section h3.learnworlds-heading3{font-size:22px!important;margin-bottom:8px!important}
+.payment-section .single-product-view a.learnworlds-heading3{font-size:21px!important}
+.payment-section .learnworlds-image{max-height:130px!important;height:130px!important;background-size:cover!important;background-position:center!important;margin-bottom:10px!important}
+.payment-section .learnworlds-image img{height:130px!important;width:100%!important;object-fit:cover!important}
+@media(max-width:767px){.payment-section .learnworlds-image{max-height:96px!important;height:96px!important}.payment-section .learnworlds-image img{height:96px!important}}
+.payment-section .learnworlds-input,.payment-section input.learnworlds-input,.payment-section input[type=text],.payment-section input[type=email],.payment-section input[type=password]{min-height:44px!important}
+.payment-section .learnworlds-main-text,.payment-section .learnworlds-main-text-small{font-size:13.5px!important;line-height:1.45!important}
+.payment-section .mb-25,.payment-section .mb-20{margin-bottom:10px!important}
+.payment-section .mt-2rem{margin-top:1rem!important}
+.payment-section button.learnworlds-button-large{min-height:52px!important;font-size:16px!important}
+.payment-section .order-summary .flex>div:last-child strong{font-size:26px!important}
