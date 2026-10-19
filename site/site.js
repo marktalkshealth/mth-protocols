@@ -156,8 +156,7 @@
   }
   /* members: an "App" button in the desktop header, next to Courses (phones get it in the menu) */
   function appNav(){
-    if(!signedIn()) return;
-    waitFor(function(){ return document.querySelector(".lw-topbar .lw-topbar-options"); },function(ul){
+    waitFor(function(){ return signedIn()&&document.querySelector(".lw-topbar .lw-topbar-options"); },function(ul){
       if(!ul||ul.querySelector(".mth-appnav")) return;
       var first=null; [].forEach.call(ul.children,function(li){ if(!first&&li.classList.contains("lw-topbar-option")&&li.querySelector(":scope > a.lw-topbar-option-link")) first=li; });
       var li=document.createElement("li"); li.className="lw-topbar-option mth-appnav"+(ROUTE==="app"?" mth-on":"");
