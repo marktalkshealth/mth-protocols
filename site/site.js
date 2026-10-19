@@ -448,7 +448,7 @@
       else if(ROUTE==="app") appPage();
       else if(ROUTE==="links") linksPage();
       else reveal();
-      if(ROUTE!=="app") footer();
+      if(ROUTE!=="app"&&ROUTE!=="links") footer();
     }catch(e){ console.warn("MTH site",e); reveal(); }
   });
   /* safety net: never leave a page hidden */
