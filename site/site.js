@@ -143,6 +143,17 @@
       r.addEventListener("dragstart",function(e){ e.preventDefault(); });
     });
   }
+  /* login & sign-up window: our wording (the look lives in auth.css) */
+  function authPolish(){
+    function fix(){ var m=document.getElementById("animatedModal"); if(!m) return;
+      [].forEach.call(m.querySelectorAll(".landing-form-title"),function(t){ if(/^\s*sign up to mark talks health!?\s*$/i.test(t.textContent)) t.textContent="Join Mark Talks Health"; });
+      [].forEach.call(m.querySelectorAll(".login-form-title .js-login-full"),function(t){ if(/login or sign up to start learning/i.test(t.textContent)) t.textContent="Welcome back"; });
+      [].forEach.call(m.querySelectorAll(".login-form-title .js-login-no-reg"),function(t){ if(/login to start learning/i.test(t.textContent)) t.textContent="Welcome back"; });
+    }
+    if(!("MutationObserver" in window)) return;
+    new MutationObserver(function(){ fix(); }).observe(document.body,{childList:true,subtree:false});
+    document.addEventListener("click",function(){ setTimeout(fix,30); setTimeout(fix,400); },true);
+  }
   function load(file){ if(PRE[file]){ var pr=PRE[file]; delete PRE[file]; return pr; } return fetch(BASE+file).then(function(r){ if(!r.ok) throw new Error(file+" "+r.status); return r.text(); }); }
   function topbar(){ return document.querySelector(".lw-topbar"); }
 
@@ -533,6 +544,7 @@
   ready(function(){
     try{ fixLinks(); }catch(e){}
     try{ wordmark(); }catch(e){}
+    try{ authPolish(); }catch(e){}
     try{ mobileMenu(); }catch(e){}
     try{
       if(ROUTE==="home") home();

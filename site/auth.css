@@ -7,7 +7,7 @@
 #animatedModal .login-form,#animatedModal #signUpForm,#animatedModal .landing-form{position:relative;width:100%;max-width:430px!important;margin:0 auto!important;background:var(--mth-card,#fffcf7)!important;border:1px solid var(--mth-line,#e7dccb)!important;border-radius:26px!important;box-shadow:0 30px 70px rgba(43,39,36,.16)!important;padding:34px 26px 26px!important;overflow:hidden}
 /* brand band across the top of the card */
 #animatedModal .login-form:before,#animatedModal #signUpForm:before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:linear-gradient(90deg,#c0623f,#b8924a 55%,#7a8f6e)}
-#animatedModal .login-form-inputs:before,#animatedModal #signUpForm>*:first-child:before{content:"MARK TALKS HEALTH";display:block;text-align:center;font-family:var(--mth-sans);font-size:10.5px;font-weight:700;letter-spacing:.24em;color:var(--mth-terra,#c0623f);margin-bottom:12px}
+#animatedModal .login-form-inputs:before,#animatedModal .landing-form-title-social:before{content:"MARK TALKS HEALTH";display:block;text-align:center;font-family:var(--mth-sans);font-size:10.5px;font-weight:700;letter-spacing:.24em;color:var(--mth-terra,#c0623f);margin-bottom:12px}
 /* heading */
 #animatedModal .login-form-title,#animatedModal .learnworlds-heading3,#animatedModal [class*="-form-title"]{font-family:var(--mth-serif)!important;font-weight:500!important;font-size:30px!important;line-height:1.1!important;letter-spacing:-.01em;color:var(--mth-ink,#2b2724)!important;text-align:center;margin-bottom:22px!important}
 /* close button */
@@ -44,3 +44,11 @@
 #animatedModal .learnworlds-main-text-very-small:not(a),#animatedModal p{color:var(--mth-muted,#6e6259)}
 #animatedModal .error-wrapper{border-radius:12px!important}
 @media(min-width:768px){#animatedModal .login-form,#animatedModal #signUpForm{padding:40px 36px 30px!important}}
+#animatedModal .-twit-form-button .sign-but-icon{filter:invert(1) brightness(.35)}
+#animatedModal .-form-social-buttons .sign-but-icon{color:var(--mth-ink,#2b2724)!important;font-size:17px!important;margin:0!important}
+#animatedModal .-form-social-register-buttons{gap:8px;margin:-6px 0 16px!important;flex-wrap:wrap}
+#animatedModal .-form-social-register-buttons .confirm-icon{width:38px!important;height:38px!important;border-radius:50%!important;background:#fff!important;border:1px solid var(--mth-line,#e7dccb)!important;color:var(--mth-ink,#2b2724)!important;padding:0!important;margin:0!important;box-shadow:none!important}
+#animatedModal .-form-social-register-buttons .confirm-icon *{color:var(--mth-ink,#2b2724)!important}
+#animatedModal .-form-social-register-buttons svg{max-height:16px;width:auto}
+#animatedModal #socIconTwit .sign-but-icon,#animatedModal #socIconLW{filter:invert(1) brightness(.35)}
+#animatedModal .landing-form-title-social{margin-bottom:18px!important}
