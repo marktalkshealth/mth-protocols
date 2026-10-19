@@ -22,10 +22,16 @@
 #mh .hero .w{display:grid;gap:22px;align-items:center}
 #mh .hero h1{font-size:clamp(44px,11vw,76px);margin:12px 0 14px}
 #mh .hero .cta.under{justify-content:center;margin-top:18px}
-#mh .hero .tryit{display:flex;align-items:flex-start;justify-content:center;gap:12px;margin:0 0 10px;padding-right:24px}
-#mh .hero .tryit svg{width:58px;height:50px;flex:none;margin-top:14px;transform:scaleY(-1)}
-#mh .hero .tryit span{font-family:'Cormorant Garamond',Georgia,serif;font-size:32px;font-weight:500;line-height:1;color:#2b2724}
-#mh .hero .tryit em{font-style:italic;color:#c0623f}
+#mh .hero .w{grid-template-areas:"top" "vid" "bot";gap:0}
+#mh .hero .htop{grid-area:top}#mh .hero .hbot{grid-area:bot}
+#mh .hero .hvid{grid-area:vid;margin:6px 0 24px}
+#mh .hero h1{margin-bottom:6px}
+#mh .tryapp{display:flex;flex-direction:column;align-items:center}
+#mh .tryapp .tryit{display:flex;align-items:flex-start;justify-content:center;gap:8px;margin:0 0 12px;padding-right:72px}
+#mh .tryapp .tryit svg{width:24px;height:28px;flex:none;margin-top:12px}
+#mh .tryapp .tryit span{font-family:'Cormorant Garamond',Georgia,serif;font-size:30px;font-weight:500;line-height:1;color:#2b2724}
+#mh .tryapp .tryit em{font-style:italic;color:#c0623f}
+@media(min-width:860px){#mh .hero .w{grid-template-columns:1.1fr .9fr;grid-template-areas:"top vid" "bot vid";column-gap:56px;align-items:start}#mh .hero .htop{align-self:end}#mh .hero .hvid{margin:0;align-self:center}#mh .hero h1{margin-bottom:18px}}
 #mh .hero .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
 #mh .stats{display:flex;gap:22px;margin-top:26px;flex-wrap:wrap}
 #mh .stats b{display:block;font-family:'Cormorant Garamond',Georgia,serif;font-size:34px;font-weight:600;line-height:1;color:#c0623f}
@@ -119,7 +125,6 @@
 @media(min-width:860px){
   #mh section{padding:88px 0}
   #mh .hero{padding:72px 0 88px}
-  #mh .hero .w{grid-template-columns:1.15fr .85fr}
   #mh .rail{margin:0;padding:6px 2px 14px}
   #mh .pcard{flex-basis:calc(33.333% - 10px)}
   #mh .step{flex-basis:calc(14.285% - 12px);min-width:130px}
@@ -132,18 +137,14 @@
 </style>
 
 <section class="hero"><div class="w">
-  <div>
-    <h1>Natural Healing Meets <em>Modern Science</em></h1>
-    <p class="lead">A science-backed healing protocol with a personalised daily plan you can begin immediately, based on our seven-step natural healing method.</p>
-  </div>
-  <div><div class="tryit" aria-hidden="true"><svg viewBox="0 0 64 56" fill="none" stroke="#c0623f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M60 44H22a10 10 0 0 1-10-10V8"/><path d="M3 16l9-10 9 10"/></svg><span>Test <em>your</em> app</span></div><div class="mthp" data-proto="all" data-hint="off"></div></div>
+  <div class="htop"><h1>Natural Healing Meets <em>Modern Science</em></h1></div>
+  <div class="hvid"><div class="mthv" data-wistia="c6bmdm7xd7" data-title="Watch my story" data-len=""></div></div>
+  <div class="hbot"><p class="lead">A science-backed healing protocol with a personalised daily plan you can begin immediately, based on our seven-step natural healing method.</p></div>
 </div></section>
 
-<section class="story" style="padding-top:8px"><div class="w founder">
-  <div class="rv"><div class="mthv" data-wistia="c6bmdm7xd7" data-title="Watch my story" data-len=""></div></div>
-  <div class="rv"><h2>My <em>story</em></h2>
-    <p>I spent years struggling with my own health, specifically trying to lose weight and fix my gut. Eventually I had to try a natural approach, and once I did I was shocked to find dozens of peer-reviewed studies showing things like fasting and meditation have a profound healing effect on a variety of serious health problems.</p>
-    <p>After my recovery I've been dedicated to teaching other people how to fix their own health problems and take their power back.</p><div class="sig">&ndash; Mark</div></div>
+<section style="padding-top:8px"><div class="w rv tryapp">
+  <div class="tryit" aria-hidden="true"><svg viewBox="0 0 32 36" fill="none" stroke="#c0623f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M28 5C17 5 10 11 9 27"/><path d="M4.5 22.5L9 28l4.5-5.5"/></svg><span>Test <em>your</em> app</span></div>
+  <div class="mthp" data-proto="all" data-hint="off"></div>
 </div></section>
 
 <section class="dark"><div class="w">
@@ -202,6 +203,14 @@
 </div></section>
 
 
+
+
+<section style="padding-top:0"><div class="w founder">
+  <div class="portrait rv" role="img" aria-label="Mark in his kitchen with a board of whole foods" style="background-image:url('https://marktalkshealth.github.io/mth-protocols/site/mark-kitchen.jpg');background-position:center 35%"></div>
+  <div class="rv"><h2>My <em>story</em></h2>
+    <p>I spent years struggling with my own health, specifically trying to lose weight and fix my gut. Eventually I had to try a natural approach, and once I did I was shocked to find dozens of peer-reviewed studies showing things like fasting and meditation have a profound healing effect on a variety of serious health problems.</p>
+    <p>After my recovery I've been dedicated to teaching other people how to fix their own health problems and take their power back.</p><div class="sig">&ndash; Mark</div></div>
+</div></section>
 
 <script>
 (function(){
