@@ -287,7 +287,8 @@ var R=document.getElementById("g2"), $=function(id){return document.getElementBy
 var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});};
 
 /* ---- buy buttons scroll to LearnWorlds checkout ---- */
-function findCheckout(doc){ try{ var n=doc.querySelectorAll("h1,h2,h3,h4,div,span,p"); for(var i=0;i<n.length;i++){ var t=(n[i].textContent||"").trim().toLowerCase(); if((t==="sign up"||t==="order summary"||t==="payment method")&&n[i].children.length===0) return n[i].closest("section")||n[i]; } }catch(e){} return null; }
+function findCheckout(doc){ try{ var p=doc.querySelector(".payment-section"); if(p) return p;
+  var n=doc.querySelectorAll("h1,h2,h3,h4,div,span,p"); for(var i=0;i<n.length;i++){ if(n[i].closest(".lw-topbar,header,nav,.lw-topbar-hamburger-menu,#g2")) continue; var t=(n[i].textContent||"").trim().toLowerCase(); if((t==="sign up"||t==="order summary"||t==="payment method")&&n[i].children.length===0) return n[i].closest("section")||n[i]; } }catch(e){} return null; }
 function buy(){ var el=findCheckout(document); if(!el){ try{ el=findCheckout(window.top.document); }catch(e){} }
   if(el) el.scrollIntoView({behavior:"smooth",block:"start"}); else { try{ window.top.scrollTo({top:window.top.document.body.scrollHeight,behavior:"smooth"}); }catch(e){} } }
 R.querySelectorAll(".g2-buy").forEach(function(b){ b.addEventListener("click",buy); });
