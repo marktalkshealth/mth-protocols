@@ -320,9 +320,5 @@ html.mth-course .mth-hide{display:none!important}
 @media(min-width:768px){#animatedModal .login-form,#animatedModal #signUpForm{padding:40px 36px 30px!important}}
 #animatedModal .-twit-form-button .sign-but-icon{filter:invert(1) brightness(.35)}
 #animatedModal .-form-social-buttons .sign-but-icon{color:var(--mth-ink,#2b2724)!important;font-size:17px!important;margin:0!important}
-#animatedModal .-form-social-register-buttons{gap:8px;margin:-6px 0 16px!important;flex-wrap:wrap}
-#animatedModal .-form-social-register-buttons .confirm-icon{width:38px!important;height:38px!important;border-radius:50%!important;background:#fff!important;border:1px solid var(--mth-line,#e7dccb)!important;color:var(--mth-ink,#2b2724)!important;padding:0!important;margin:0!important;box-shadow:none!important}
-#animatedModal .-form-social-register-buttons .confirm-icon *{color:var(--mth-ink,#2b2724)!important}
-#animatedModal .-form-social-register-buttons svg{max-height:16px;width:auto}
-#animatedModal #socIconTwit .sign-but-icon,#animatedModal #socIconLW{filter:invert(1) brightness(.35)}
+#animatedModal .-form-social-register-buttons{display:none!important}
 #animatedModal .landing-form-title-social{margin-bottom:18px!important}
