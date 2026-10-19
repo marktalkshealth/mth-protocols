@@ -72,16 +72,16 @@
 #mh .fc h3{font-size:17px;font-weight:700;margin-bottom:5px}
 #mh .fc p{font-size:14.5px;color:#6e6259;line-height:1.5}
 /* inside every protocol: swipe cards */
-#mh .sys{display:flex;align-items:flex-start;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:22px -20px 0;padding:6px 20px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+#mh .sys{display:flex;align-items:stretch;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:22px -20px 0;padding:6px 20px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 #mh .sys::-webkit-scrollbar{display:none}
 #mh .sc{flex:0 0 84%;max-width:340px;scroll-snap-align:center;background:linear-gradient(160deg,#efe5d6,#e3d3bd);border-radius:24px;padding:12px;display:flex;flex-direction:column;box-shadow:0 18px 40px rgba(43,39,36,.07)}
 #mh .sw{flex:1;display:flex;flex-direction:column;background:#fffcf7;border-radius:18px;overflow:hidden;box-shadow:0 10px 26px rgba(43,39,36,.10)}
 #mh .sv{flex:none;position:relative;padding:0 12px 12px;overflow:hidden}
 #mh .sv .ex{position:absolute;right:22px;top:12px;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8a7b6e;background:rgba(255,252,247,.85);border-radius:999px;padding:3px 8px}
-#mh .scr2{background:#fffcf7;border:1px solid #ece2d3;border-radius:14px;box-shadow:0 8px 20px rgba(43,39,36,.08);padding:12px;font-size:11px;color:#2b2724;overflow:hidden}
+#mh .scr2{height:212px;box-sizing:border-box;background:#fffcf7;border:1px solid #ece2d3;border-radius:14px;box-shadow:0 8px 20px rgba(43,39,36,.08);padding:12px;font-size:11px;color:#2b2724;overflow:hidden}
 #mh .sk{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#c0623f;font-weight:700}
 #mh .sh{font-family:'Cormorant Garamond',Georgia,serif;font-size:18px;line-height:1;margin:2px 0 8px}
-#mh .st{padding:16px 16px 12px}
+#mh .st{padding:16px 16px 12px;flex:1}
 #mh .st .n{font-size:11px;font-weight:700;letter-spacing:.14em;color:#c0623f}
 #mh .st h3{font-size:17px;font-weight:700;margin:4px 0 5px;color:#2b2724}
 #mh .st p{font-size:13.5px;line-height:1.5;color:#6e6259}
@@ -91,6 +91,7 @@
 #mh .br{display:grid;grid-template-columns:1fr 2fr auto;gap:6px;align-items:center;font-size:10px;margin:5px 0}
 #mh .br i{display:block;height:6px;border-radius:6px;background:#ece0cf;overflow:hidden}#mh .br i b{display:block;height:100%;background:#c0623f;border-radius:6px}
 #mh .dots14{display:flex;gap:3px;margin-top:9px}#mh .dots14 i{flex:1;height:6px;border-radius:3px;background:#ece0cf}#mh .dots14 i.d{background:#7a8f6e}#mh .dots14 i.t{background:#c0623f}
+#mh .mp{display:block;width:100%;border-radius:10px;border:1px solid #f0e8dc}
 #mh .mg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 #mh .mg b{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#8a7b6e;margin-bottom:3px}
 #mh .mg img{width:100%;height:54px;object-fit:cover;border-radius:7px;display:block;margin-bottom:4px;background:#efe5d6}
@@ -134,6 +135,19 @@
 }
 #mh .step.ph{flex:0 0 68%;max-width:290px}
 @media(min-width:860px){#mh .step.ph{flex:0 0 250px;min-width:250px;max-width:none}}
+/* checkout */
+#mh .buy{display:grid;gap:12px;margin-top:22px}
+#mh .bo{display:flex;align-items:center;gap:14px;background:#fffcf7;border:1px solid #e7dccb;border-radius:18px;padding:12px;box-shadow:0 10px 26px rgba(43,39,36,.06)}
+#mh .bo .im{width:84px;height:84px;border-radius:12px;background:#efe5d6 center/cover no-repeat;flex:none}
+#mh .bo .tx{flex:1;min-width:0}
+#mh .bo h3{font-size:16px;font-weight:700;color:#2b2724;line-height:1.25}
+#mh .bo p{font-size:12.5px;color:#6e6259;margin-top:2px}
+#mh .bo .r{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}
+#mh .bo .r b{font-family:'Cormorant Garamond',Georgia,serif;font-size:26px;font-weight:600;line-height:1;color:#c0623f}
+#mh .bo .btn{font-size:13px;padding:9px 14px;white-space:nowrap}
+#mh .trust{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:16px;font-size:13px;color:#6e6259}
+#mh .trust span::before{content:"✓";color:#7a8f6e;font-weight:700;margin-right:6px}
+@media(min-width:860px){#mh .buy{grid-template-columns:repeat(3,1fr)}#mh .bo{flex-direction:column;align-items:stretch;padding:14px}#mh .bo .im{width:100%;height:150px}}
 </style>
 
 <section class="hero"><div class="w">
@@ -167,12 +181,8 @@
       <div class="br"><span>Blood sugar</span><i><b style="width:58%;background:#b8924a"></b></i><span>Med</span></div>
       <div class="br"><span>Sleep</span><i><b style="width:34%;background:#7a8f6e"></b></i><span>Low</span></div>
       <div class="dots14"><i class="d"></i><i class="d"></i><i class="t"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div></div></div>
-    <div class="sc"><div class="sw"><div class="st"><div class="n">02 · FOOD</div><h3>A full meal planner</h3><p>A full catalogue of recipes with photos, videos and step-by-step instructions. Swap any meal with a tap, save favourites, scale for your household and get an automated shopping list.</p></div><div class="sv"><div class="scr2"><div class="sk">This week</div><div class="sh">Your meal plan</div>
-      <div class="mg">
-        <div><b>Mon</b><img loading="lazy" alt="" src="https://images.unsplash.com/photo-1582169505937-b9992bd01ed9?auto=format&fit=crop&w=300&q=70"><img loading="lazy" alt="" src="https://images.unsplash.com/photo-1761315600943-d8a5bb0c499f?auto=format&fit=crop&w=300&q=70"><img loading="lazy" alt="" src="https://images.unsplash.com/photo-1610057099431-d73a1c9d2f2f?auto=format&fit=crop&w=300&q=70"><em>1,640 kcal</em></div>
-        <div><b>Tue</b><img loading="lazy" alt="" src="https://images.unsplash.com/photo-1530259152377-3a014e1092e0?auto=format&fit=crop&w=300&q=70"><img loading="lazy" alt="" src="https://images.unsplash.com/photo-1560717845-968823efbee1?auto=format&fit=crop&w=300&q=70"><img loading="lazy" alt="" src="https://images.unsplash.com/photo-1582169505937-b9992bd01ed9?auto=format&fit=crop&w=300&q=70"><em>1,610 kcal</em></div>
-        <div><b>Wed</b><img loading="lazy" alt="" src="https://images.unsplash.com/photo-1778449270586-856e4bc39bbd?auto=format&fit=crop&w=300&q=70"><img loading="lazy" alt="" src="https://images.unsplash.com/photo-1610057099431-d73a1c9d2f2f?auto=format&fit=crop&w=300&q=70"><img loading="lazy" alt="" src="https://images.unsplash.com/photo-1560717845-968823efbee1?auto=format&fit=crop&w=300&q=70"><em>1,655 kcal</em></div>
-      </div></div></div></div></div>
+    <div class="sc"><div class="sw"><div class="st"><div class="n">02 · FOOD</div><h3>A full meal planner</h3><p>A full catalogue of recipes with photos, videos and step-by-step instructions. Swap any meal with a tap, save favourites, scale for your household and get an automated shopping list.</p></div><div class="sv"><div class="scr2"><div class="sk">Today</div><div class="sh">Your meal plan</div>
+      <img class="mp" loading="lazy" alt="The meal planner: breakfast, lunch and dinner with calories, macros, swap and log buttons" src="https://marktalkshealth.github.io/mth-protocols/site/meal-planner.jpg"></div></div></div></div>
     <div class="sc"><div class="sw"><div class="st"><div class="n">03 · MOVEMENT</div><h3>Workouts that progress with you</h3><p>Strength and cardio matched to your level and equipment, with how-to videos for every move. Log each set and the weights go up automatically when you're ready.</p></div><div class="sv"><div class="scr2"><div class="sk">Strength A · Build</div><div class="sh">Today's workout</div>
       <div class="xr"><img loading="lazy" alt="" src="https://images.pexels.com/videos/5547221/kettlebell-kettlebell-lifting-kettlebell-training-overhead-squat-5547221.jpeg?auto=compress&cs=tinysrgb&w=160"><div><div class="t">Goblet squat</div><div class="s">3 × 10 @ 15 lb</div></div><div class="set"><u class="on">✓</u><u class="on">✓</u><u>3</u></div></div>
       <div class="xr"><img loading="lazy" alt="" src="https://images.pexels.com/videos/4867634/pexels-photo-4867634.jpeg?auto=compress&cs=tinysrgb&w=160"><div><div class="t">Dumbbell row</div><div class="s">3 × 10 @ 12.5 lb</div></div><div class="set"><u class="on">✓</u><u>2</u><u>3</u></div></div>
@@ -212,6 +222,13 @@
     <p>After my recovery I've been dedicated to teaching other people how to fix their own health problems and take their power back.</p><div class="sig">&ndash; Mark</div></div>
 </div></section>
 
+
+<section id="mh-buy"><div class="w">
+  <div class="rv"><div class="k">Get started</div><h2>Start your protocol <em>today</em></h2><p class="lead">One payment. Lifetime access to the course, your personalised software and the Healing Hub.</p></div>
+  <div class="buy rv" id="mhBuy"></div>
+  <div class="trust rv"><span>30-day money-back guarantee</span><span>Secure checkout</span><span>Card, Apple Pay &amp; Google Pay</span></div>
+</div></section>
+
 <script>
 (function(){
   var ROOT=document.getElementById("mh");
@@ -227,6 +244,11 @@
     var href=loggedIn?c.course:c.funnel;
     return '<a class="pcard" href="'+href+'"><div class="im" style="background-image:url(\''+IMG.replace("{id}",c.img)+'\')"></div><div class="tx"><h3>'+esc(c.t)+'</h3><p>'+esc(c.d)+'</p><div class="ft"><span class="pr2">'+(loggedIn?'':esc(c.price))+'</span><span class="go">'+(loggedIn?'Open':'Learn more')+'</span></div></div></a>';
   }).join("")+'<div class="pcard soon" aria-hidden="true"><div class="im" style="background:linear-gradient(150deg,#d8c4ad,#a8998b)"><span class="tag">COMING SOON</span></div><div class="tx"><h3>More protocols</h3><p>New protocols for more conditions are on the way. Members hear first.</p><div class="ft"><span></span><span class="go">Soon</span></div></div></div>';
+  /* checkout: each option opens that course's sales page right at its checkout */
+  (function(){ var box=document.getElementById("mhBuy"); if(!box) return;
+    box.innerHTML=COURSES.map(function(c){ var href=loggedIn?c.course:c.funnel+"#checkout";
+      return '<div class="bo"><div class="im" style="background-image:url(\''+IMG.replace("{id}",c.img)+'\')"></div><div class="tx"><h3>'+esc(c.t)+'</h3><p>Course, software &amp; community</p><div class="r">'+(loggedIn?'<span></span>':'<b>'+esc(c.price)+'</b>')+'<a class="btn" href="'+href+'">'+(loggedIn?'Open':'Get instant access')+'</a></div></div></div>'; }).join("");
+  })();
   var SIMG=["1-fasting","2-meditation","3-keto","4-cardio","5-music","6-sleep","7-nature"];
   var STEPS=[["Fasting & cleanse","Rest digestion"],["Meditation & journaling","Calm the nervous system"],["Keto & broths","Feed repair"],["Cardio & strength","Move to heal"],["Music & spirit","Sound as medicine"],["Sleep & clean air","Repair at night"],["Nature & sun","Reset outdoors"]];
   var TILE=[["#c0623f","#7e3b25"],["#7a8f6e","#3f4b38"],["#b8924a","#6e5427"],["#8a7b6e","#463b33"],["#a8735a","#5a3a2b"],["#6f7a8c","#363c48"],["#7a8f6e","#2f3d2c"]];

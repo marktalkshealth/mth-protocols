@@ -259,3 +259,15 @@ html.mth-course .mth-hide{display:none!important}
 .mthv.is-sound .mthv-mute{display:grid}
 @media (prefers-reduced-motion:reduce){.mthv-ring{animation:none;display:none}}
 .mthv.is-frame .mthv-cta,.mthv.is-frame .mthv-mute,.mthv.is-frame .mthv-bar,.mthv.is-frame .mthv-shade{display:none!important}
+
+/* ---------- swipe rows: mouse drag + arrows ---------- */
+.mthr-on{cursor:grab}
+.mthr-on.mthr-drag{cursor:grabbing;scroll-snap-type:none!important;scroll-behavior:auto!important;user-select:none;-webkit-user-select:none}
+.mthr-on.mthr-drag *{pointer-events:none}
+.mthr-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:12px}
+.mthr-nav[hidden]{display:none}
+.mthr-nav .sys-dots{margin:0!important}
+.mthr-b{width:40px!important;height:40px!important;border-radius:50%!important;border:1px solid currentColor!important;background:transparent!important;color:inherit;display:grid;place-items:center;cursor:pointer;opacity:.7;transition:opacity .15s,background .15s,transform .15s;padding:0;font:inherit}
+.mthr-b:hover{opacity:1;transform:translateY(-1px)}
+.mthr-b:disabled{opacity:.22;cursor:default;transform:none}
+.mthr-b svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}

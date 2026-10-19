@@ -106,6 +106,12 @@
 #g2 .td b{font-family:var(--serif);font-size:26px;font-weight:500}
 #g2 .td.on{background:var(--terra);border-color:var(--terra)}
 #g2 .td.on small{color:#fbe3d6}
+#g2 .tl{gap:14px;margin:28px -20px 0;padding:6px 20px 14px;scroll-snap-type:x mandatory}
+#g2 .td.ph{flex:0 0 68%;max-width:290px;min-width:0;aspect-ratio:1/1;border-radius:18px;padding:10px;background:#3a332d center/cover no-repeat;border:3px solid transparent;display:flex;justify-content:flex-end;align-items:flex-start;scroll-snap-align:start;box-shadow:0 10px 26px rgba(0,0,0,.25);cursor:pointer}
+#g2 .td.ph b{font-family:Inter,sans-serif;font-size:12px;font-weight:700;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:rgba(43,39,36,.6);color:#fff;line-height:1}
+#g2 .td.ph.on{border-color:var(--terra);background-color:#3a332d}
+#g2 .td.ph.on b{background:var(--terra)}
+@media(min-width:860px){#g2 .tl{margin:28px 0 0;padding:6px 2px 14px}#g2 .td.ph{flex:0 0 250px;max-width:none}}
 #g2 .tdetail{margin-top:14px;border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:22px;display:grid;gap:14px}
 #g2 .tdetail h3{font-family:var(--serif);font-size:30px;font-weight:500;line-height:1}
 #g2 .tdetail p{color:var(--darkMuted);font-size:15px}
@@ -238,7 +244,7 @@
 
 <!-- 7 DAYS -->
 <section class="dark"><div class="w">
-  <div class="rv"><div class="k">The 7-step method</div><h2>Seven days, <em>seven healing steps</em></h2><p class="lead">Medication is only part of keeping weight off. Sleep, stress and muscle matter too. Tap a day.</p></div>
+  <div class="rv"><div class="k">The 7-step method</div><h2>Seven days, <em>seven healing steps</em></h2><p class="lead">Medication is only part of keeping weight off. Sleep, stress and muscle matter too. Swipe through the steps and tap one to see that day.</p></div>
   <div class="tl rv" id="g2TL"></div>
   <div class="tdetail rv"><div><div class="k" id="g2DK"></div><h3 id="g2DT" style="margin-top:8px"></h3><p id="g2DD" style="margin-top:10px"></p></div><ul id="g2DL"></ul></div>
 </div></section>
@@ -309,6 +315,7 @@ function findCheckout(doc){ try{ var p=doc.querySelector(".payment-section"); if
 function buy(){ var pay=[].slice.call(document.querySelectorAll(".payment-section")).filter(function(x){return x.offsetHeight>0;})[0]; if(!pay){ location.href="/course/total-body-healing"; return; } var el=pay||findCheckout(document); if(!el){ try{ el=findCheckout(window.top.document); }catch(e){} }
   if(el) el.scrollIntoView({behavior:"smooth",block:"start"}); else { try{ window.top.scrollTo({top:window.top.document.body.scrollHeight,behavior:"smooth"}); }catch(e){} } }
 R.querySelectorAll(".g2-buy").forEach(function(b){ b.addEventListener("click",buy); });
+if(location.hash==="#checkout"){ var tries=0; (function go(){ var el=findCheckout(document); if(el&&el.offsetHeight) setTimeout(function(){ el.scrollIntoView({behavior:"smooth",block:"start"}); },300); else if(++tries<40) setTimeout(go,250); })(); }
 
 /* ---- symptom picker ---- */
 var SYM=[["Nausea or reflux",2,[2,5]],["Constipation",2,[2,6]],["Low energy",2,[2,3]],["Losing muscle or strength",3,[3,2]],["Hair thinning",2,[2,5]],["Weight-loss plateau",3,[3,0]],["Cravings coming back",3,[2,1]],["Worried about regain",3,[3,2]],["Poor sleep",2,[5,1]],["Stress eating",2,[1,4]],["Low activity",2,[3,6]],["Skipping meals",2,[2,0]]];
@@ -350,7 +357,8 @@ var DAYS=[
  ["Sleep protects your progress","Short sleep raises hunger hormones and cravings. Set up your night for deep rest.",["Screens off an hour before bed","Cool, dark bedroom","Same bedtime tonight and tomorrow"]],
  ["Reset outdoors","Morning light and outdoor walks support steady energy and appetite rhythms.",["Sunlight within an hour of waking","A 30-minute walk outside","Compare your Day 1 and Day 7 check-ins"]]
 ];
-$("g2TL").innerHTML=DAYS.map(function(d,i){ return '<button class="td" data-d="'+i+'"><small>DAY</small><b>'+(i+1)+'</b></button>'; }).join("");
+var SIMG=["1-fasting","2-meditation","3-keto","4-cardio","5-music","6-sleep","7-nature"];
+$("g2TL").innerHTML=DAYS.map(function(d,i){ return '<button class="td ph" data-d="'+i+'" aria-label="Day '+(i+1)+': '+esc(STEP[i])+'" style="background-image:url(https://marktalkshealth.github.io/mth-protocols/site/steps/'+SIMG[i]+'.jpg)"><b>'+(i+1)+'</b></button>'; }).join("");
 function day(i){ R.querySelectorAll(".td").forEach(function(b,j){b.classList.toggle("on",j===i);});
   $("g2DK").textContent="Day "+(i+1)+" · "+STEP[i]; $("g2DT").textContent=DAYS[i][0]; $("g2DD").textContent=DAYS[i][1];
   $("g2DL").innerHTML=DAYS[i][2].map(function(t){return "<li>"+esc(t)+"</li>";}).join(""); }
