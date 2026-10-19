@@ -72,3 +72,10 @@
 </script>
 ```
 
+
+## Oct 2026: the app lives at /app, not in the lessons
+
+These embed codes no longer show the protocol inside the lesson. They show an "Open my app" card
+that sends the member to /app?p=gut (or sugar / glp1). /app shows the phone app on phones and the
+full desktop version on computers. To bring the old in-lesson version back, add `?inline=1` to the
+`src` address in the embed code.
