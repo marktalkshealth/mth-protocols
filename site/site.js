@@ -69,7 +69,7 @@
     var f=document.createElement("footer"); f.className="mthf";
     f.innerHTML='<div class="w"><div class="brand">Mark Talks Health<small>Natural healing meets modern science. Personalised protocols, guided day by day.</small></div>'+
       '<nav><a href="/home">Home</a><a href="/courses">Protocols</a><a href="/social">Healing Hub</a></nav>'+
-      '<div class="fine">Educational content only, not medical advice. Talk to your doctor before starting any fasting or cleansing protocol, especially if you take medication. © '+new Date().getFullYear()+' Mark Talks Health</div></div>';
+      '</div>';
     var lw=document.querySelector(".lw-footer");
     /* only on normal site pages (they have a LearnWorlds footer); never inside the course player */
     if(lw&&lw.parentNode) lw.parentNode.insertBefore(f,lw.nextSibling);
@@ -407,7 +407,8 @@
       '#mth-links .av{width:104px;height:104px;border-radius:50%;margin:0 auto 14px;background:#2b2622 50% 16%/230% auto no-repeat;box-shadow:0 0 0 3px #f6f1ea,0 0 0 4px #b08a46}'+
       '#mth-links h1{font:500 32px/1.05 "Cormorant Garamond",Georgia,serif;margin:0}#mth-links h1 i{color:#b8664a}'+
       '#mth-links .tag{font:italic 400 17px/1.35 "Cormorant Garamond",Georgia,serif;color:#6e6259;margin:6px 0 6px}'+
-      '#mth-links .story{font-size:14px;line-height:1.45;color:#8a7d71;margin:0 0 26px}'+
+      '#mth-links .story{font-size:14px;line-height:1.45;color:#8a7d71;margin:0 0 4px}'+
+      '#mth-links .what{font-size:12.5px;letter-spacing:.02em;color:#b8664a;font-weight:600;margin:0 0 26px}'+
       '#mth-links .q{font:italic 400 17px/1.35 "Cormorant Garamond",Georgia,serif;color:#6e6259;margin:18px 4px 8px}'+
       '#mth-links a.b{display:block;text-decoration:none;color:#f6f1ea;background:#2b2622;border-radius:16px;padding:18px 46px 18px 20px;margin:0 0 12px;text-align:left;position:relative;transition:transform .15s}'+
       '#mth-links a.b:active{transform:scale(.98)}'+
@@ -420,8 +421,9 @@
       '</style><div class="w"><div class="av" style="background-image:url('+BASE+'mark-kitchen.jpg)"></div>'+
       '<h1>Mark <i>Talks</i> Health</h1><div class="tag">Natural health meets modern science</div>'+
       '<div class="story">Real solutions for real people with real problems.</div>'+
+      '<div class="what">Video courses + your own personalized healing app</div>'+
       LINKS.map(function(l){ return '<a class="b" href="'+l[2]+src+'"><b>'+l[0]+'</b></a>'; }).join("")+
-      '<div class="fine">Educational content, not medical advice. Talk to your doctor before fasting or changing medication.<br>&copy; '+new Date().getFullYear()+' Mark Talks Health</div></div>';
+      '</div>';
     document.body.appendChild(p);
     reveal();
   }
