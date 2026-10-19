@@ -70,9 +70,16 @@
     f.innerHTML='<div class="w"><div class="brand">Mark Talks Health<small>Natural healing meets modern science. Personalised protocols, guided day by day.</small></div>'+
       '<nav><a href="/home">Home</a><a href="/courses">Protocols</a><a href="/social">Healing Hub</a></nav>'+
       '</div>';
-    var lw=document.querySelector(".lw-footer");
-    /* only on normal site pages (they have a LearnWorlds footer); never inside the course player */
-    if(lw&&lw.parentNode) lw.parentNode.insertBefore(f,lw.nextSibling);
+    /* never inside the course player */
+    if(/player|unit/i.test(location.pathname)) return;
+    /* LearnWorlds sometimes draws its own footer late: wait for it, then sit right after it.
+       Pages without one get ours at the very end, before the "made with" badge. */
+    waitFor(function(){ return document.querySelector(".lw-footer"); },function(lw){
+      if(document.querySelector(".mthf")) return;
+      if(lw&&lw.parentNode){ lw.parentNode.insertBefore(f,lw.nextSibling); return; }
+      var badge=null; [].forEach.call(document.querySelectorAll('body > a[href*="learnworlds"], body > div a[href*="learnworlds.com"]'),function(a){ if(!badge) badge=a.closest("body > *"); });
+      if(badge&&badge.parentNode===document.body) document.body.insertBefore(f,badge); else document.body.appendChild(f);
+    },6000);
   }
 
   /* ---------------- homepage ---------------- */
@@ -441,7 +448,7 @@
       else if(ROUTE==="app") appPage();
       else if(ROUTE==="links") linksPage();
       else reveal();
-      if(ROUTE!=="social"&&ROUTE!=="app"&&ROUTE!=="links") footer();
+      if(ROUTE!=="app") footer();
     }catch(e){ console.warn("MTH site",e); reveal(); }
   });
   /* safety net: never leave a page hidden */
