@@ -35,6 +35,21 @@
 #g2 .hero h1{font-size:clamp(46px,12vw,76px);margin:12px 0 16px}
 #g2 .ticks{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:16px;font-size:13.5px;color:var(--muted)}
 #g2 .ticks span::before{content:"✓";color:var(--sage);font-weight:700;margin-right:6px}
+#g2 .hero .w{grid-template-areas:"top" "vid" "bot";gap:0}
+#g2 .hero .htop{grid-area:top}#g2 .hero .hbot{grid-area:bot}
+#g2 .hero .hvid{grid-area:vid;margin:6px 0 26px}
+#g2 .hero h1{margin-bottom:6px}
+#g2 .tryapp{display:flex;flex-direction:column;align-items:center}
+#g2 .tryapp .tryit{display:flex;align-items:flex-start;justify-content:center;gap:12px;margin:0 0 10px;padding-right:24px}
+#g2 .tryapp .tryit svg{width:58px;height:50px;flex:none;margin-top:14px;transform:scaleY(-1)}
+#g2 .tryapp .tryit span{font-family:'Cormorant Garamond',Georgia,serif;font-size:32px;font-weight:500;line-height:1;color:var(--ink,#2b2724)}
+#g2 .tryapp .tryit em{font-style:italic;color:var(--terra)}
+@media(min-width:860px){
+  #g2 .hero .w{grid-template-columns:1.1fr .9fr;grid-template-areas:"top vid" "bot vid";column-gap:56px;align-items:start}
+  #g2 .hero .htop{align-self:end}
+  #g2 .hero .hvid{margin:0;align-self:center}
+  #g2 .hero h1{margin-bottom:18px}
+}
 /* video */
 #g2 .vid{position:relative;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#141210;box-shadow:0 24px 60px rgba(43,39,36,.18)}
 #g2 .vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
@@ -150,7 +165,6 @@
 @media(min-width:880px){
   #g2 section{padding:104px 0}
   #g2 .hero{padding:72px 0 96px}
-  #g2 .hero .w{grid-template-columns:1.1fr .9fr}
   #g2 .pick{grid-template-columns:1fr 1fr;align-items:start}
   #g2 .trio{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:30px 0 0;padding:0;overflow:visible}
   #g2 .trio>.card{flex:none}
@@ -170,19 +184,22 @@
 
 <!-- HERO -->
 <section class="hero"><div class="w">
-  <div>
+  <div class="htop">
     <div class="k">The Diabetes Protocol</div>
     <h1>Take back control of your blood sugar, with a plan <em>built for your body</em></h1>
+  </div>
+  <div class="hvid"><div class="mthv" data-wistia="c6bmdm7xd7" data-title="Watch my story" data-len=""></div></div>
+  <div class="hbot">
     <p class="lead">Enter your readings and symptoms into the app. It builds your day-by-day protocol: what to eat and when, how to move after meals, low-carb recipes, and the 7 healing steps that will balance your blood sugar.</p>
     <div style="margin-top:24px"><button class="btn g2-buy">Start my protocol <small>· $97</small></button></div>
     <div class="ticks"><span>80+ published studies</span><span>Personalised plan</span><span>30-day guarantee</span></div>
   </div>
-  <div class="mthp" data-proto="sugar"></div>
 </div></section>
 
-<!-- VIDEO -->
-<section style="padding-top:0"><div class="w rv">
-  <div class="vid"><iframe src="https://fast.wistia.net/embed/iframe/c6bmdm7xd7?playbar=true&playButton=true&smallPlayButton=true&videoFoam=false&fullscreenButton=true&playerColor=c0623f" allow="autoplay; fullscreen" allowfullscreen title="Diabetes Protocol overview"></iframe></div>
+<!-- TEST THE APP -->
+<section style="padding-top:0"><div class="w rv tryapp">
+  <div class="tryit" aria-hidden="true"><svg viewBox="0 0 64 56" fill="none" stroke="#c0623f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M60 44H22a10 10 0 0 1-10-10V8"/><path d="M3 16l9-10 9 10"/></svg><span>Test <em>your</em> app</span></div>
+  <div class="mthp" data-proto="sugar"></div>
 </div></section>
 
 <!-- SYMPTOM PICKER -->

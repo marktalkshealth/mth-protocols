@@ -52,6 +52,7 @@
     if(before) target.parentNode.insertBefore(box,target); else target.appendChild(box);
     scripts.forEach(function(old){ var s=document.createElement("script"); if(old.src) s.src=old.src; else s.textContent=old.textContent; old.parentNode.replaceChild(s,old); });
     if(box.querySelector(".mthp[data-proto]")) phone();
+    if(box.querySelector(".mthv")) videos(box);
     return box;
   }
   /* the five-tab "test drive" phone (home + sales pages) */
@@ -59,6 +60,55 @@
     if(window.MTHPhone){ window.MTHPhone.scan(); return; }
     if(document.getElementById("mthp-js")) return;
     var s=document.createElement("script"); s.id="mthp-js"; s.src=BASE+"phone.js?v=4"; document.head.appendChild(s);
+  }
+  /* the story video card: plays silently like a living photo; one tap restarts it from the top with sound.
+     <div class="mthv" data-wistia="MEDIA_ID" data-title="Watch my story" data-len="1:30" data-poster="image url"></div> */
+  function wistiaJs(){ if(document.getElementById("wistia-js")) return; var s=document.createElement("script"); s.id="wistia-js"; s.async=true; s.src="https://fast.wistia.com/assets/external/E-v1.js"; document.head.appendChild(s); }
+  function videos(root){
+    [].forEach.call(root.querySelectorAll(".mthv:not([data-ready])"),function(el){
+      el.setAttribute("data-ready","1");
+      var id=(el.getAttribute("data-wistia")||"").trim(), title=el.getAttribute("data-title")||"Watch my story", len=el.getAttribute("data-len")||"";
+      var poster=el.getAttribute("data-poster")||BASE+"mark-kitchen.jpg";
+      var hint=function(t){ return (len?len+" · ":"")+t; };
+      el.setAttribute("role","button"); el.setAttribute("tabindex","0"); el.setAttribute("aria-label",title+", video");
+      el.innerHTML='<div class="mthv-player"></div><div class="mthv-poster" style="background-image:url(\''+poster+'\')"></div><div class="mthv-shade"></div>'+
+        '<div class="mthv-cta"><span class="mthv-play"><span class="mthv-ring"></span></span><span class="mthv-txt"><b></b><small></small></span></div>'+
+        '<div class="mthv-bar"><i></i></div><button type="button" class="mthv-mute" aria-label="Mute">🔊</button>';
+      var slot=el.querySelector(".mthv-player"), bar=el.querySelector(".mthv-bar i"), B=el.querySelector(".mthv-txt b"), S=el.querySelector(".mthv-txt small"), M=el.querySelector(".mthv-mute");
+      B.textContent=title; S.textContent=hint("Tap for sound");
+      if(!id){ S.textContent=len||"Video coming soon"; el.style.cursor="default"; return; }
+      var calm=false; try{ calm=matchMedia("(prefers-reduced-motion: reduce)").matches||!!(navigator.connection&&navigator.connection.saveData); }catch(e){}
+      var V=null, mode="preview";
+      slot.innerHTML='<div class="wistia_embed wistia_async_'+id+' muted=true autoPlay='+(calm?"false":"true")+' endVideoBehavior=loop playbar=false playButton=false smallPlayButton=false bigPlayButton=false fullscreenButton=false volumeControl=false settingsControl=false playbackRateControl=false qualityControl=false controlsVisibleOnLoad=false fitStrategy=cover videoFoam=false silentAutoPlay=allow playsinline=true copyLinkAndThumbnailEnabled=false"></div>';
+      wistiaJs();
+      window._wq=window._wq||[];
+      window._wq.push({id:id,onReady:function(v){
+        V=v;
+        v.bind("play",function(){ el.classList.add("is-live"); el.classList.remove("is-paused"); });
+        v.bind("pause",function(){ if(mode==="sound") el.classList.add("is-paused"); });
+        v.bind("timechange",function(t){ if(mode==="sound"){ var d=v.duration()||1; bar.style.width=Math.min(100,100*t/d)+"%"; } });
+        /* after the full watch, drift back to the silent loop */
+        v.bind("end",function(){ if(mode!=="sound") return; mode="preview"; v.mute(); el.classList.remove("is-sound","is-paused"); B.textContent="Watch again"; S.textContent=hint("Tap for sound"); bar.style.width="0"; });
+      }});
+      function frame(){ /* the player script didn't load: fall back to Wistia's normal player */
+        slot.innerHTML='<iframe src="https://fast.wistia.net/embed/iframe/'+id+'?autoPlay=true&playbar=true&fitStrategy=cover&videoFoam=false&playerColor=c0623f" allow="autoplay; fullscreen" allowfullscreen title="'+title.replace(/"/g,"")+'"></iframe>';
+        el.classList.add("is-live","is-sound","is-frame"); el.style.cursor="default"; }
+      function sound(){
+        if(!V) return frame();
+        mode="sound"; el.classList.add("is-sound","is-live"); el.classList.remove("is-paused");
+        B.textContent=title; S.textContent=hint("Tap to pause"); M.textContent="🔊";
+        V.unmute(); V.volume(1); V.time(0); V.play();
+      }
+      el.addEventListener("click",function(e){
+        if(el.classList.contains("is-frame")) return;
+        if(e.target.closest(".mthv-mute")){ e.stopPropagation(); if(V){ if(V.isMuted()){ V.unmute(); M.textContent="🔊"; } else { V.mute(); M.textContent="🔇"; } } return; }
+        if(mode!=="sound") return sound();
+        if(V.state()==="playing") V.pause(); else V.play();
+      });
+      el.addEventListener("keydown",function(e){ if((e.key==="Enter"||e.key===" ")&&e.target===el){ e.preventDefault(); el.click(); } });
+      /* stop talking when it scrolls away */
+      if("IntersectionObserver" in window) new IntersectionObserver(function(es){ es.forEach(function(x){ if(!x.isIntersecting&&mode==="sound"&&V&&V.state()==="playing") V.pause(); }); },{threshold:.15}).observe(el);
+    });
   }
   function load(file){ if(PRE[file]){ var pr=PRE[file]; delete PRE[file]; return pr; } return fetch(BASE+file).then(function(r){ if(!r.ok) throw new Error(file+" "+r.status); return r.text(); }); }
   function topbar(){ return document.querySelector(".lw-topbar"); }

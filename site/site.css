@@ -233,3 +233,29 @@ html.mth-course .mth-hide{display:none!important}
 .payment-section .mt-2rem{margin-top:1rem!important}
 .payment-section button.learnworlds-button-large{min-height:52px!important;font-size:16px!important}
 .payment-section .order-summary .flex>div:last-child strong{font-size:26px!important}
+
+/* ---------- story video card (home + sales pages) ---------- */
+.mthv{position:relative;width:100%;max-width:420px;margin:0 auto;aspect-ratio:4/5;border-radius:22px;overflow:hidden;background:#1d1a17;box-shadow:0 26px 60px rgba(43,39,36,.22);cursor:pointer;-webkit-tap-highlight-color:transparent;isolation:isolate;font-family:var(--mth-sans)}
+.mthv-player,.mthv-player .wistia_embed,.mthv-player iframe{position:absolute!important;inset:0;width:100%!important;height:100%!important;border:0}
+.mthv-poster{position:absolute;inset:0;background:#2b2724 center 30%/cover no-repeat;transition:opacity .6s ease;z-index:1}
+.mthv.is-live .mthv-poster{opacity:0;pointer-events:none}
+.mthv-shade{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(20,17,15,0) 45%,rgba(20,17,15,.72) 100%);transition:opacity .4s}
+.mthv.is-sound .mthv-shade{opacity:0}
+.mthv-cta{position:absolute;left:18px;right:18px;bottom:18px;z-index:3;display:flex;align-items:center;gap:14px;color:#fff;transition:opacity .3s,transform .3s}
+.mthv-play{flex:none;width:58px;height:58px;border-radius:50%;background:rgba(255,252,247,.94);display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.25);transition:transform .2s}
+.mthv:hover .mthv-play{transform:scale(1.06)}
+.mthv-play:before{content:"";border-left:16px solid var(--mth-terra);border-top:10px solid transparent;border-bottom:10px solid transparent;margin-left:4px}
+.mthv-txt b{display:block;font-family:var(--mth-serif);font-size:24px;font-weight:500;line-height:1.1;letter-spacing:-.01em}
+.mthv-txt small{display:block;margin-top:4px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+.mthv-ring{position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(255,252,247,.55);animation:mthvPulse 2.4s ease-out infinite}
+.mthv-play{position:relative}
+@keyframes mthvPulse{0%{transform:scale(.92);opacity:.9}100%{transform:scale(1.25);opacity:0}}
+.mthv.is-sound .mthv-cta{opacity:0;transform:translateY(8px);pointer-events:none}
+.mthv.is-sound.is-paused .mthv-cta,.mthv.is-sound.is-ended .mthv-cta{opacity:1;transform:none}
+.mthv-bar{position:absolute;left:0;right:0;bottom:0;height:3px;z-index:4;background:rgba(255,255,255,.18);opacity:0;transition:opacity .3s}
+.mthv-bar i{display:block;height:100%;width:0;background:var(--mth-terra)}
+.mthv.is-sound .mthv-bar{opacity:1}
+.mthv-mute{position:absolute;top:14px;right:14px;z-index:4;width:38px;height:38px;border-radius:50%;border:0;background:rgba(20,17,15,.45);color:#fff;font-size:16px;display:none;place-items:center;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.mthv.is-sound .mthv-mute{display:grid}
+@media (prefers-reduced-motion:reduce){.mthv-ring{animation:none;display:none}}
+.mthv.is-frame .mthv-cta,.mthv.is-frame .mthv-mute,.mthv.is-frame .mthv-bar,.mthv.is-frame .mthv-shade{display:none!important}
