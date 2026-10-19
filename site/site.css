@@ -322,3 +322,4 @@ html.mth-course .mth-hide{display:none!important}
 #animatedModal .-form-social-buttons .sign-but-icon{color:var(--mth-ink,#2b2724)!important;font-size:17px!important;margin:0!important}
 #animatedModal .-form-social-register-buttons{display:none!important}
 #animatedModal .landing-form-title-social{margin-bottom:18px!important}
+#animatedModal .close-animatedModal:before,#animatedModal .close-animatedModal:after{content:none!important;display:none!important}
