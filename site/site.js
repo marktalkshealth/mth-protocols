@@ -154,6 +154,17 @@
     new MutationObserver(function(){ fix(); }).observe(document.body,{childList:true,subtree:false});
     document.addEventListener("click",function(){ setTimeout(fix,30); setTimeout(fix,400); },true);
   }
+  /* members: an "App" button in the desktop header, next to Courses (phones get it in the menu) */
+  function appNav(){
+    if(!LOGGED_IN) return;
+    waitFor(function(){ return document.querySelector(".lw-topbar .lw-topbar-options"); },function(ul){
+      if(!ul||ul.querySelector(".mth-appnav")) return;
+      var first=null; [].forEach.call(ul.children,function(li){ if(!first&&li.classList.contains("lw-topbar-option")&&li.querySelector(":scope > a.lw-topbar-option-link")) first=li; });
+      var li=document.createElement("li"); li.className="lw-topbar-option mth-appnav"+(ROUTE==="app"?" mth-on":"");
+      li.innerHTML='<a href="/app" class="lw-topbar-option-link learnworlds-main-text-normal lw-brand-text text-only"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10.5 18.5h3"/></svg><span class="lw-topbar-option-link-lbl nowrap">App</span></a>';
+      if(first) ul.insertBefore(li,first); else ul.appendChild(li);
+    },8000);
+  }
   function load(file){ if(PRE[file]){ var pr=PRE[file]; delete PRE[file]; return pr; } return fetch(BASE+file).then(function(r){ if(!r.ok) throw new Error(file+" "+r.status); return r.text(); }); }
   function topbar(){ return document.querySelector(".lw-topbar"); }
 
@@ -417,8 +428,8 @@
 
     var st=document.createElement("style");
     st.textContent=
-      "html.mth-r-app,html.mth-r-app body{height:100%;overflow:hidden!important;background:#f6f1ea!important;margin:0}"+
-      "html.mth-r-app body>*:not(#mth-app-shell){display:none!important}"+
+      "html.mth-r-app:not(.mth-app-desk),html.mth-r-app:not(.mth-app-desk) body{height:100%;overflow:hidden!important;background:#f6f1ea!important;margin:0}"+
+      "html.mth-r-app:not(.mth-app-desk) body>*:not(#mth-app-shell){display:none!important}"+
       "#mth-app-shell{position:fixed;inset:0;display:flex;flex-direction:column;background:#f6f1ea;z-index:2147483000;font-family:'DM Sans',system-ui,-apple-system,sans-serif}"+
       "#mth-app-shell .ab{flex:none;display:flex;align-items:center;gap:10px;padding:calc(8px + env(safe-area-inset-top)) 12px 8px;border-bottom:1px solid #e7dfd4;background:#f6f1ea}"+
       "#mth-app-shell .ab a.home{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;color:#2b2622;text-decoration:none;flex:none}"+
@@ -451,6 +462,30 @@
       "#mth-app-shell .none a{display:block;width:100%;max-width:320px;padding:14px;border-radius:14px;background:#2b2622;color:#fff;text-decoration:none;font:600 15px 'DM Sans',system-ui,sans-serif}"+
       "#mth-app-shell .sw{flex:none;max-width:36%;padding:8px 10px;border-radius:999px;border:1px solid #ddd3c6;background:#fff;font:600 13px 'DM Sans',system-ui,sans-serif;color:#2b2622}"+
       "#mth-app-shell .ld{position:absolute;left:0;right:0;top:45%;text-align:center;font:400 22px 'Cormorant Garamond',Georgia,serif;color:#8a7d71;pointer-events:none}";
+    /* Desktop: keep the site header, then an "App" section with the full-width software underneath.
+       Phones (and the installed home-screen app) keep the full-screen app. */
+    var standalone=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
+    var DESK=!standalone&&window.matchMedia&&matchMedia("(min-width: 900px)").matches;
+    if(DESK){
+      H.classList.add("mth-app-desk");
+      var dst=document.createElement("style");
+      dst.textContent=
+        "html.mth-app-desk body{background:#f6f1ea!important}"+
+        "html.mth-app-desk .js-learnworlds-section:not(.lw-topbar){display:none!important}"+
+        "html.mth-app-desk #mth-app-shell{position:relative;inset:auto;z-index:1;display:block;background:transparent;padding:30px 32px 40px;max-width:1680px;margin:0 auto}"+
+        "html.mth-app-desk #mth-app-shell .ab{position:static;border:0;background:transparent;padding:0 0 18px;gap:16px;align-items:flex-end}"+
+        "html.mth-app-desk #mth-app-shell .ab a.home{display:none}"+
+        "html.mth-app-desk #mth-app-shell .ab .k{font-size:11px;letter-spacing:.2em;color:#c0623f;margin-bottom:8px}"+
+        "html.mth-app-desk #mth-app-shell .ab .n{font-size:42px;line-height:1.02;letter-spacing:-.01em}"+
+        "html.mth-app-desk #mth-app-shell .ab .n em{font-style:italic;color:#c0623f}"+
+        "html.mth-app-desk #mth-app-shell .sw{max-width:none;padding:11px 38px 11px 16px;font-size:14px;margin-bottom:4px}"+
+        "html.mth-app-desk #mth-app-shell .ins{display:none!important}"+
+        "html.mth-app-desk #mth-app-shell .frame{position:relative;background:#fffcf7;border:1px solid #e7dccb;border-radius:22px;overflow:hidden;box-shadow:0 24px 60px rgba(43,39,36,.10)}"+
+        "html.mth-app-desk #mth-app-shell iframe{height:calc(100vh - 210px);min-height:720px;background:#fffcf7}"+
+        "html.mth-app-desk #mth-app-shell .ld{top:220px}"+
+        "html.mth-app-desk #mth-app-shell .none{min-height:60vh}";
+      document.head.appendChild(dst);
+    }
     document.head.appendChild(st);
 
     var shell=document.createElement("div"); shell.id="mth-app-shell";
@@ -459,10 +494,12 @@
       '<button type="button" class="ins" aria-label="Install the app on your phone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span>Install</span></button>'+'</div>'+
       '<div class="ld">Opening your protocol&hellip;</div><iframe title="Your protocol" allow="fullscreen; clipboard-write"></iframe>'+
       '<div class="sh" role="dialog" aria-modal="true" aria-label="Add the app to your home screen"><div class="c"><img class="ic" alt="" src="'+BASE+'app-icon-180.png"><h3>Add Mark Talks Health to your home screen</h3><p>It opens full screen, straight into your protocol, like any other app.</p><ol></ol><button type="button" class="ok">Got it</button></div></div>';
-    document.body.appendChild(shell);
+    var tbar=topbar();
+    if(DESK&&tbar&&tbar.parentNode) tbar.parentNode.insertBefore(shell,tbar.nextSibling); else document.body.appendChild(shell);
     var fr=shell.querySelector("iframe"), nm=shell.querySelector(".n"), ld=shell.querySelector(".ld");
+    if(DESK){ var fw=document.createElement("div"); fw.className="frame"; fr.parentNode.insertBefore(fw,fr); fw.appendChild(ld); fw.appendChild(fr); }
     function load(k){
-      pick=k; nm.textContent=name(k)+" Protocol"; ld.style.display="";
+      pick=k; if(DESK){ nm.innerHTML="Your <em>app</em>"; shell.querySelector(".k").textContent=name(k)+" Protocol"; } else nm.textContent=name(k)+" Protocol"; ld.style.display="";
       try{ localStorage.setItem("mth_app_proto",k); }catch(e){}
       fr.src=ROOT+k+"/?mode=app";
     }
@@ -545,6 +582,7 @@
     try{ fixLinks(); }catch(e){}
     try{ wordmark(); }catch(e){}
     try{ authPolish(); }catch(e){}
+    try{ appNav(); }catch(e){}
     try{ mobileMenu(); }catch(e){}
     try{
       if(ROUTE==="home") home();

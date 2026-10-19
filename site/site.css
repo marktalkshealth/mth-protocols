@@ -323,3 +323,8 @@ html.mth-course .mth-hide{display:none!important}
 #animatedModal .-form-social-register-buttons{display:none!important}
 #animatedModal .landing-form-title-social{margin-bottom:18px!important}
 #animatedModal .close-animatedModal:before,#animatedModal .close-animatedModal:after{content:none!important;display:none!important}
+
+/* desktop header: App button for members */
+.lw-topbar .mth-appnav > a{display:inline-flex!important;align-items:center;gap:6px;color:var(--mth-terra,#c0623f)!important;font-weight:700!important}
+.lw-topbar .mth-appnav svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lw-topbar .mth-appnav.mth-on > a,.lw-topbar .mth-appnav > a:hover{text-decoration:underline;text-underline-offset:6px}
