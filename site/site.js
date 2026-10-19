@@ -156,27 +156,31 @@
   }
   /* the header "App" button. Mark's own LearnWorlds button wins; ours fills in only if there isn't one.
      LearnWorlds rearranges its header while loading, so we put ours back whenever it gets dropped. */
-  function isAppLink(a){ if(!a||a.closest(".mth-appnav,.mth-appitem")) return false; var t=(a.textContent||"").trim().toLowerCase(), h=(a.getAttribute("href")||"").toLowerCase();
+  var APPSEL="a, .lw-topbar-option-link, .mobile-nav-menu-link";
+  function isAppLink(a){ if(!a||!a.getAttribute||a.closest(".mth-appnav,.mth-appitem")) return false; var t=(a.textContent||"").trim().toLowerCase(), h=(a.getAttribute("href")||"").toLowerCase();
     return t==="app"||t==="my app"||/\/app(\?|$)/.test(h.replace(/^https?:\/\/[^/]+/,""))||/mth-protocols\/(gut|sugar|glp1)\b/.test(h); }
-  function hasOwnApp(scope){ return [].some.call((scope||document).querySelectorAll("a"),isAppLink); }
+  function hasOwnApp(scope){ var own=[].filter.call((scope||document).querySelectorAll(APPSEL),isAppLink);
+    own.forEach(function(el){ var li=el.closest("li"); if(li) li.classList.add("mth-appown"); el.setAttribute("role","link"); if(!el.hasAttribute("tabindex")&&el.tagName!=="A") el.setAttribute("tabindex","0"); });
+    return own.length>0; }
   function appNav(){
     function ensure(){
       var tb=document.querySelector(".lw-topbar"), ul=tb&&tb.querySelector(".lw-topbar-options"); if(!ul) return;
       var mine=tb.querySelector(".mth-appnav");
-      if(hasOwnApp(tb.querySelector(".lw-topbar-menu")||tb)){ if(mine) mine.parentNode.removeChild(mine); return; }
-      if(mine) return;
+      if(hasOwnApp(tb)){ if(mine) mine.parentNode.removeChild(mine); return; }
+      if(mine||!signedIn()) return;
       var first=null; [].forEach.call(ul.children,function(li){ if(!first&&li.classList.contains("lw-topbar-option")&&li.querySelector(":scope > a.lw-topbar-option-link")) first=li; });
       var li=document.createElement("li"); li.className="lw-topbar-option mth-appnav"+(ROUTE==="app"?" mth-on":"");
       li.innerHTML='<a href="/app" class="lw-topbar-option-link learnworlds-main-text-normal lw-brand-text text-only"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10.5 18.5h3"/></svg><span class="lw-topbar-option-link-lbl nowrap">App</span></a>';
       if(first) ul.insertBefore(li,first); else ul.appendChild(li);
     }
-    waitFor(function(){ return signedIn()&&document.querySelector(".lw-topbar .lw-topbar-options"); },function(ul){
+    waitFor(function(){ return document.querySelector(".lw-topbar .lw-topbar-options"); },function(ul){
       if(!ul) return; ensure();
       var q=0; try{ new MutationObserver(function(){ if(q) return; q=1; requestAnimationFrame(function(){ q=0; ensure(); }); }).observe(document.querySelector(".lw-topbar"),{subtree:true,childList:true}); }catch(e){}
     },10000);
     /* any App link (Mark's header button, or an old link straight to the software) opens the members' App page */
+    document.addEventListener("keydown",function(e){ if(e.key==="Enter"&&e.target.classList&&e.target.classList.contains("lw-topbar-option-link")&&isAppLink(e.target)) e.target.click(); });
     document.addEventListener("click",function(e){
-      var a=e.target.closest&&e.target.closest("a"); if(!a||!isAppLink(a)) return;
+      var a=e.target.closest&&e.target.closest(APPSEL); if(!a||!isAppLink(a)) return;
       var h=(a.getAttribute("href")||""), m=h.match(/mth-protocols\/(gut|sugar|glp1)\b/i);
       var to="/app"+(m?"?p="+m[1].toLowerCase():"");
       if(h.replace(/^https?:\/\/[^/]+/,"")===to) return;
