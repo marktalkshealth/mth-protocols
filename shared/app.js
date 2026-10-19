@@ -1,9 +1,9 @@
 /* =================================================================
    MARK TALKS HEALTH — SHARED PHONE APP LAYOUT
    Used by the Gut Health, Diabetes and GLP-1 protocol apps.
-   On phones and tablets the protocol turns into an app:
-   bottom tabs (Today · Plan · Progress · Me), one screen at a time,
-   a step-by-step first setup, and compact sizing.
+   On phones and tablets the protocol turns into a simple healing app:
+   bottom tabs (Today · My Arc · Me) built around the 7-day healing arc,
+   a three-page swipe setup, and nothing else on screen.
    On desktop nothing changes.
    Test any device:  add ?view=app  or  ?view=desktop  to the address.
    This file only shows and hides the existing parts of each app;
@@ -55,283 +55,441 @@
   root.classList.add('mth-app');
   try { if (new URLSearchParams(location.search).get('mode') === 'app') root.classList.add('mth-standalone'); } catch (e) {}
 
-  /* ---------- styles ---------- */
+
+  /* =================================================================
+     SIMPLE PHONE HEALING APP
+     Three tabs: Today · My Arc · Me.
+     Today  = this day of the healing arc: food, movement, healing habits, each one tick.
+     My Arc = how far through the arc you are, day by day.
+     Me     = intake, symptoms and tests as three swipe pages, then the 7-day plan.
+     Everything is read from the protocol itself (cleanse level, start date, cleanse and
+     refeed days, its own wording for each day), so the desktop software is unchanged.
+  ================================================================= */
   var css = `
 html.mth-app { -webkit-text-size-adjust: 100%; }
-html.mth-app body { padding-bottom: calc(92px + env(safe-area-inset-bottom)) !important; }
-html.mth-app.mth-bar-inline body { padding-bottom: 24px !important; }
-html.mth-app .fx-fab, html.mth-app .hc-cap { display: none !important; }
+html.mth-app body { padding-bottom: calc(86px + env(safe-area-inset-bottom)) !important; background: #f6f1ea !important; }
+html.mth-app .di-outer { padding: 10px 12px 0 !important; max-width: 640px !important; margin: 0 auto !important; }
+html.mth-app .hc-card { padding: 0 !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
 
-/* compact sizing: undo the desktop-sized headings */
-html.mth-app .di-outer { padding: 8px 8px 0 !important; max-width: 720px !important; margin: 0 auto !important; }
-html.mth-app .ca-outer, html.mth-app #main { max-width: 704px !important; margin-left: auto !important; margin-right: auto !important; }
-html.mth-app .hc-grid3, html.mth-app .hc-below { grid-template-columns: 1fr !important; }
-html.mth-app .hc-card { padding: 8px !important; border-radius: 16px !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
-html.mth-app .hc-head { padding: 2px 4px 10px !important; align-items: center !important; }
-html.mth-app .hc-title { font-size: 1.45rem !important; }
-html.mth-app .di-panel { padding: 14px !important; border-radius: 14px !important; }
-html.mth-app .di-title { font-size: 1.3rem !important; margin-bottom: 10px !important; }
-html.mth-app .fx-outer { padding: 0 !important; margin: 0 !important; max-width: none !important; }
-html.mth-app .ca-outer { padding: 0 8px !important; }
-html.mth-app #main { padding-left: 8px !important; padding-right: 8px !important; }
-html.mth-app .fx-card { padding: 14px 12px !important; border-radius: 14px !important; }
-html.mth-app .fx-title { font-size: 1.55rem !important; }
-html.mth-app .chart-card { padding: 16px 14px !important; margin-bottom: 12px !important; border-radius: 14px !important; }
-html.mth-app .synth-card { padding: 16px 14px !important; }
-html.mth-app .hero h1 { font-size: 1.6rem !important; }
-html.mth-app .cal-section-title, html.mth-app .ca-title { font-size: 1.45rem !important; }
-html.mth-app .chart-title, html.mth-app .synth-title { font-size: 1.3rem !important; }
-html.mth-app .ca-day-title { font-size: 1.35rem !important; }
-html.mth-app .ca-phase-name, html.mth-app .card-title, html.mth-app .pp-part-name { font-size: 1.2rem !important; }
-html.mth-app .tests-card-title, html.mth-app .supp-title { font-size: 1.15rem !important; }
-html.mth-app .juice-day-title, html.mth-app .meal-day-title, html.mth-app .ex-day-name { font-size: 1.15rem !important; }
-html.mth-app .hc-below { margin-top: 0 !important; gap: 10px !important; }
-html.mth-app .hc-head { flex-wrap: nowrap !important; justify-content: space-between !important; }
-html.mth-app .hc-title { font-size: 1.3rem !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-html.mth-app .gp-sync { font-size: .68rem !important; padding: 3px 9px !important; flex: none; }
+/* the full software stays on the page but out of sight */
+html.mth-app .hc-head, html.mth-app .hc-below, html.mth-app #fastingArcContainer, html.mth-app #planSlot,
+html.mth-app .fx-outer, html.mth-app #fx, html.mth-app #fxOverview, html.mth-app .ca-outer, html.mth-app #main,
+html.mth-app .fx-fab, html.mth-app .hc-cap, html.mth-app .hc-heal { display: none !important; }
+html.mth-app .hc-grid3, html.mth-app .ms-today, html.mth-app .ms-arc, html.mth-app .ms-me { display: none !important; }
+html.mth-app[data-mth-tab="today"] .ms-today, html.mth-app[data-mth-tab="arc"] .ms-arc, html.mth-app[data-mth-tab="me"] .ms-me { display: block !important; }
 
-/* Today: straight to the day */
-html.mth-app #fx > div:first-child .fx-kicker, html.mth-app .fx-lede { display: none !important; }
-html.mth-app .fx-title { font-size: 1.4rem !important; line-height: 1.15 !important; margin-top: 0 !important; }
-html.mth-app .fx-tools { margin-top: 8px; }
-html.mth-app .fx-strip { padding-top: 8px !important; }
-html.mth-app .fx-tabs { gap: 4px !important; padding: 4px !important; border-radius: 14px !important; margin: 4px 0 12px !important; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)) !important; }
-html.mth-app .fx-tabs button { display: flex !important; flex-direction: column; align-items: center; text-align: center; gap: 3px; padding: 8px 4px !important;
-  font-family: 'DM Sans', system-ui, sans-serif !important; font-size: .8rem !important; font-weight: 600; line-height: 1.15 !important; border-radius: 11px !important; }
-html.mth-app .fx-tabs button .n { width: 22px !important; height: 22px !important; font-size: .85rem !important; }
-html.mth-app .fx-tabs button small { font-size: .62rem !important; font-weight: 400; }
-
-/* Plan: skip the long explainer under the healing dial */
+/* Me: three swipe pages (about you · symptoms · tests) */
+html.mth-app[data-mth-tab="me"] .hc-grid3 { display: flex !important; gap: 12px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; align-items: flex-start; transition: height .2s ease;
+  grid-template-columns: none !important; scrollbar-width: none; -webkit-overflow-scrolling: touch; margin: 0 -12px; padding: 2px 12px 6px; }
+html.mth-app .hc-grid3::-webkit-scrollbar { display: none; }
+html.mth-app .hc-mid { display: contents !important; }
+html.mth-app .hc-intake, html.mth-app .gs-panel, html.mth-app .lab-panel { flex: 0 0 100% !important; min-width: 0; max-width: 100%; scroll-snap-align: center; scroll-snap-stop: always; }
+html.mth-app .hc-intake { display: block !important; }
+html.mth-app .di-panel { padding: 16px 14px !important; border-radius: 18px !important; margin: 0 !important; }
+html.mth-app .hc-intake .di-title, html.mth-app .hc-intake .di-metrics-section-title, html.mth-app .hc-intake .di-metrics-grid,
+html.mth-app #diGenBtn, html.mth-app #diGenHint, html.mth-app .gs-panel > .gs-head, html.mth-app .lab-panel > .gs-head { display: none !important; }
 html.mth-app #diMasterNote { display: none !important; }
+html.mth-app .gs-cols { columns: 1 !important; }
 
-/* one screen at a time */
-html.mth-app .hc-intake, html.mth-app .hc-mid, html.mth-app .hc-heal, html.mth-app .hc-below,
-html.mth-app #fastingArcContainer, html.mth-app .fx-outer, html.mth-app #fx, html.mth-app #fxOverview,
-html.mth-app .ca-outer, html.mth-app #main { display: none !important; }
+/* simple screens */
+.ms { font-family: 'DM Sans', system-ui, -apple-system, sans-serif; color: #2b2622; }
+.ms-k { font: 700 .66rem/1.2 'DM Sans', system-ui, sans-serif; letter-spacing: .16em; text-transform: uppercase; color: #b8664a; }
+.ms-h { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 2.1rem; line-height: 1.05; margin: 4px 0 2px; color: #2b2622; }
+.ms-h em { font-style: italic; color: #b8664a; }
+.ms-sub { font-size: .88rem; color: #8a7d71; line-height: 1.45; }
+.ms-top { padding: 8px 4px 14px; }
+.ms-dots { display: flex; gap: 6px; margin-top: 14px; }
+.ms-dots i { flex: 1; height: 6px; border-radius: 6px; background: #e7dfd4; }
+.ms-dots i.c { background: #c0623f; } .ms-dots i.r { background: #b8924a; } .ms-dots i.h { background: #7a8f6e; }
+.ms-dots i.fut { opacity: .28; }
+.ms-dots i.now { box-shadow: 0 0 0 2px #f6f1ea, 0 0 0 3.5px #2b2622; }
+.ms-card { background: #fffcf7; border: 1px solid #e7dfd4; border-radius: 20px; padding: 16px 16px 8px; margin-bottom: 12px; box-shadow: 0 10px 26px rgba(43,38,34,.05); }
+.ms-ch { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.ms-ch .ic { width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; font-size: 1.15rem; flex: none; }
+.ms-ch .t { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.45rem; line-height: 1; flex: 1; }
+.ms-ch .n { font-size: .78rem; font-weight: 700; color: #8a7d71; }
+.ms-it { display: flex; gap: 12px; align-items: flex-start; width: 100%; text-align: left; background: none; border: 0; border-top: 1px solid #efe8de; padding: 12px 0; font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.ms-ch + .ms-it { border-top: 0; }
+.ms-it .bx { flex: none; width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid #cfc3b4; display: grid; place-items: center; margin-top: 1px; transition: background .15s, border-color .15s; }
+.ms-it .bx svg { width: 14px; height: 14px; opacity: 0; }
+.ms-it.on .bx { background: #2e5c45; border-color: #2e5c45; }
+.ms-it.on .bx svg { opacity: 1; }
+.ms-it .tx { flex: 1; font-size: .98rem; line-height: 1.4; }
+.ms-it .tx b { display: block; font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: #8a7d71; margin-bottom: 2px; font-weight: 700; }
+.ms-it.on .tx { color: #8a7d71; }
+.ms-it[disabled] { cursor: default; }
+.ms-tip { font-size: .82rem; color: #8a7d71; padding: 2px 0 10px 38px; line-height: 1.4; }
+.ms-next { text-align: center; font-size: .82rem; color: #8a7d71; padding: 6px 0 14px; }
+.ms-banner { background: #2b2622; color: #f6f1ea; border-radius: 20px; padding: 18px 16px; margin-bottom: 12px; }
+.ms-banner .ms-h { color: #fff; font-size: 1.7rem; }
+.ms-banner p { font-size: .9rem; color: #d9cfc3; margin: 6px 0 12px; line-height: 1.45; }
+.ms-btn { display: block; width: 100%; min-height: 50px; border: 0; border-radius: 14px; background: #2b2622; color: #fff; font: 600 .98rem 'DM Sans', system-ui, sans-serif; cursor: pointer; }
+.ms-banner .ms-btn { background: #c0623f; }
+.ms-btn.ghost { background: transparent; border: 1px solid #ddd3c6; color: #2b2622; }
+.ms-done { text-align: center; padding: 6px 0 2px; font-size: .9rem; color: #2e5c45; font-weight: 600; }
 
-/* Today, Meals and Exercise are the three parts of the daily plan */
-html.mth-app[data-mth-tab="today"] .fx-outer, html.mth-app[data-mth-tab="today"] #fx,
-html.mth-app[data-mth-tab="meals"] .fx-outer, html.mth-app[data-mth-tab="meals"] #fx,
-html.mth-app[data-mth-tab="move"] .fx-outer, html.mth-app[data-mth-tab="move"] #fx { display: block !important; }
-html.mth-app #fx > .fx-tabs { display: none !important; }
-html.mth-app:not([data-mth-tab="meals"]) #fx .fx-tools { display: none !important; }
+/* arc */
+.ms-ring { display: flex; align-items: center; gap: 16px; }
+.ms-ring svg { width: 92px; height: 92px; flex: none; transform: rotate(-90deg); }
+.ms-ring .big { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 2.4rem; line-height: 1; }
+.ms-days { list-style: none; margin: 0; padding: 0; }
+.ms-day { border-top: 1px solid #efe8de; }
+.ms-day:first-child { border-top: 0; }
+.ms-dayb { display: flex; gap: 12px; align-items: center; width: 100%; background: none; border: 0; padding: 12px 0; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.ms-dn { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: .88rem; color: #fff; }
+.ms-dn.c { background: #c0623f; } .ms-dn.r { background: #b8924a; } .ms-dn.h { background: #7a8f6e; }
+.ms-day.fut .ms-dn { opacity: .45; }
+.ms-day.full .ms-dn { box-shadow: 0 0 0 3px #f6f1ea, 0 0 0 4.5px #2e5c45; }
+.ms-dt { flex: 1; min-width: 0; }
+.ms-dt b { display: block; font-size: .98rem; }
+.ms-dt small { display: block; font-size: .8rem; color: #8a7d71; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ms-dst { font-size: .72rem; font-weight: 700; color: #8a7d71; text-transform: uppercase; letter-spacing: .08em; flex: none; }
+.ms-dst.today { color: #c0623f; }
+.ms-dd { display: none; padding: 0 0 14px 46px; font-size: .9rem; line-height: 1.5; color: #4a423b; }
+.ms-day.open .ms-dd { display: block; }
+.ms-dd p { margin: 0 0 6px; }
+.ms-dd b { font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: #8a7d71; }
+.ms-start { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: .9rem; padding: 4px 0 8px; }
+.ms-start input { font: 600 .9rem 'DM Sans', system-ui, sans-serif; color: #2b2622; border: 1px solid #ddd3c6; border-radius: 10px; padding: 8px 10px; background: #fff; }
 
-html.mth-app[data-mth-tab="progress"] .hc-intake { display: flex !important; }
-html.mth-app[data-mth-tab="progress"] .hc-intake .di-panel > :not(.di-metrics-section-title):not(.di-metrics-grid) { display: none !important; }
-html.mth-app[data-mth-tab="progress"] .hc-intake .di-metrics-section-title { margin-top: 0 !important; }
-html.mth-app[data-mth-tab="progress"] .hc-below { display: block !important; }
-html.mth-app[data-mth-tab="progress"] .hc-below > * + * { margin-top: 10px; }
-html.mth-app[data-mth-tab="progress"] .ca-outer,
-html.mth-app[data-mth-tab="progress"] #main,
-html.mth-app[data-mth-tab="progress"] #fastingArcContainer,
-html.mth-app[data-mth-tab="progress"] .fx-outer,
-html.mth-app[data-mth-tab="progress"] #fxOverview { display: block !important; }
-html.mth-app[data-mth-tab="progress"] #fxOverview { margin-top: 10px; }
-html.mth-app[data-mth-tab="progress"] .ca-outer { margin-top: 10px !important; }
-
-html.mth-app[data-mth-tab="me"] .hc-intake, html.mth-app[data-mth-tab="me"] .hc-mid, html.mth-app[data-mth-tab="me"]:not(.mth-setup) .hc-heal { display: flex !important; }
-html.mth-app[data-mth-tab="me"] .hc-intake .di-metrics-section-title,
-html.mth-app[data-mth-tab="me"] .hc-intake .di-metrics-grid { display: none !important; }
-
-/* first visit: set up one step at a time */
-html.mth-app.mth-setup .mth-bar { display: none !important; }
+/* me */
+.ms-pages { display: flex; gap: 6px; margin: 0 0 12px; background: #ece4d8; padding: 4px; border-radius: 14px; }
+.ms-pages button { flex: 1; border: 0; background: none; border-radius: 11px; padding: 10px 4px; font: 600 .82rem 'DM Sans', system-ui, sans-serif; color: #8a7d71; cursor: pointer; }
+.ms-pages button.on { background: #fffcf7; color: #2b2622; box-shadow: 0 2px 8px rgba(43,38,34,.08); }
+.ms-pages button i { font-style: normal; display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: #d9cfc3; color: #fff; font-size: .68rem; margin-right: 5px; }
+.ms-pages button.on i { background: #2e5c45; }
+.ms-meact { padding: 12px 0 18px; display: grid; gap: 8px; }
+.ms-swipe { text-align: center; font-size: .78rem; color: #a3968a; margin: 8px 0 0; }
+.ms-foot { text-align: center; padding: 14px 0 6px; }
+.ms-foot button { background: none; border: 0; color: #8a7d71; font: 500 .8rem 'DM Sans', system-ui, sans-serif; text-decoration: underline; cursor: pointer; }
+html.mth-app.mth-setup .ms-plan, html.mth-app.mth-setup .ms-foot, html.mth-app.mth-setup .mth-bar { display: none !important; }
 html.mth-app.mth-setup body { padding-bottom: 24px !important; }
-html.mth-app.mth-setup .hc-intake .di-panel > .di-title,
-html.mth-app.mth-setup #diGenBtn, html.mth-app.mth-setup #diGenHint { display: none !important; }
-html.mth-app.mth-setup[data-mth-step="1"] .hc-mid { display: none !important; }
-html.mth-app.mth-setup[data-mth-step="2"] .hc-intake,
-html.mth-app.mth-setup[data-mth-step="2"] .lab-panel,
-html.mth-app.mth-setup[data-mth-step="3"] .hc-intake,
-html.mth-app.mth-setup[data-mth-step="3"] .gs-panel { display: none !important; }
-html.mth-app.mth-setup .gs-step { display: none !important; }
-
-.mth-wiz { display: none; }
-html.mth-app.mth-setup .mth-wiz { display: block; padding: 4px 4px 12px; }
-.mth-wiz-dots { display: flex; gap: 6px; margin-bottom: 10px; }
-.mth-wiz-dots i { flex: 1; height: 4px; border-radius: 4px; background: #e6ded3; }
-.mth-wiz-dots i.on { background: #2e5c45; }
-.mth-wiz-step { font: 700 .66rem/1.2 'DM Sans', system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: #2e5c45; }
-.mth-wiz-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.6rem; line-height: 1.1; color: #2b2622; margin-top: 2px; }
-.mth-wiz-sub { font: 400 .82rem/1.45 'DM Sans', system-ui, sans-serif; color: #8a7d71; margin-top: 4px; }
-.mth-wiz-nav { display: none; }
-html.mth-app.mth-setup .mth-wiz-nav { display: flex; gap: 10px; padding: 14px 4px 6px; }
-.mth-wiz-nav button { flex: 1; min-height: 50px; border-radius: 14px; font: 600 .95rem/1 'DM Sans', system-ui, sans-serif; cursor: pointer; }
-.mth-wiz-back { background: transparent; border: 1px solid #ddd3c6; color: #2b2622; flex: 0 0 34% !important; }
-.mth-wiz-next { background: #1e2820; border: 0; color: #fff; }
-.mth-wiz-back[hidden] { display: none; }
 
 /* bottom tab bar */
-.mth-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 960; display: flex; justify-content: space-around;
+.mth-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 960; display: flex; justify-content: center; gap: 4px;
   padding: 6px 6px calc(6px + env(safe-area-inset-bottom)); background: rgba(251,248,243,.96);
   -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-top: 1px solid #e7dfd4; }
-.mth-bar button { flex: 1; max-width: 120px; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0 4px;
-  border: 0; background: none; color: #9a8f84; font: 600 .68rem/1 'DM Sans', system-ui, sans-serif; letter-spacing: .02em; cursor: pointer;
-  -webkit-tap-highlight-color: transparent; }
+.mth-bar button { flex: 1; max-width: 140px; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0 4px;
+  border: 0; background: none; color: #9a8f84; font: 600 .7rem/1 'DM Sans', system-ui, sans-serif; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .mth-bar button svg { width: 24px; height: 24px; }
 .mth-bar button[aria-selected="true"] { color: #2e5c45; }
-.mth-bar button[aria-selected="true"] .mth-pip { opacity: 1; }
 .mth-pip { width: 18px; height: 3px; border-radius: 3px; background: #2e5c45; opacity: 0; margin-top: 1px; }
-.mth-bar { justify-content: center; gap: 4px; }
-@media (max-height: 500px) {
-  html.mth-app body { padding-bottom: calc(62px + env(safe-area-inset-bottom)) !important; }
-  .mth-bar { padding-top: 4px; padding-bottom: calc(4px + env(safe-area-inset-bottom)); }
-  .mth-bar button { flex-direction: row; justify-content: center; gap: 7px; max-width: 150px; font-size: .78rem; padding: 8px 0; }
-  .mth-bar button svg { width: 20px; height: 20px; }
-  .mth-pip { display: none; }
-}
-html.mth-app.mth-bar-inline .mth-bar { position: static; border: 1px solid #e7dfd4; border-radius: 16px; margin: 0 8px 10px; padding: 4px; }
+.mth-bar button[aria-selected="true"] .mth-pip { opacity: 1; }
+html.mth-app.mth-bar-inline .mth-bar { position: static; border: 1px solid #e7dfd4; border-radius: 16px; margin: 0 0 10px; padding: 4px; }
+html.mth-app.mth-bar-inline body { padding-bottom: 24px !important; }
 
 /* waiting for a saved plan */
-html.mth-app.mth-wait .di-outer, html.mth-app.mth-wait .ca-outer, html.mth-app.mth-wait #main, html.mth-app.mth-wait .mth-bar { visibility: hidden !important; }
+html.mth-app.mth-wait .di-outer, html.mth-app.mth-wait .mth-bar { visibility: hidden !important; }
 html.mth-app.mth-wait body::after { content: 'Opening your plan…'; position: fixed; left: 0; right: 0; top: 40%; text-align: center;
   font: 400 1.35rem 'Cormorant Garamond', Georgia, serif; color: #8a7d71; }
-
-/* inside the /app page the site shows its own header with the protocol name */
-html.mth-app.mth-standalone .hc-head { display: none !important; }
-html.mth-app.mth-standalone .di-outer { padding-top: 10px !important; }
-
-.mth-me-foot { display: none; }
-html.mth-app[data-mth-tab="me"]:not(.mth-setup) .mth-me-foot { display: block; text-align: center; padding: 18px 0 8px; }
-.mth-me-foot button { background: none; border: 0; color: #8a7d71; font: 500 .8rem 'DM Sans', system-ui, sans-serif; text-decoration: underline; cursor: pointer; }
 `;
   var st = document.createElement('style'); st.id = 'mth-app-styles'; st.textContent = css;
   (document.head || root).appendChild(st);
 
   var ICONS = {
     today: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>',
-    meals: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v8M4.5 3v5a2.5 2.5 0 0 0 5 0V3M7 11v10"/><path d="M17 21V3c-2.2 1-3.5 3.6-3.5 7v3H17"/></svg>',
-    move: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>',
-    progress: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5h16"/><path d="M6.5 16v-4M11 16V8M15.5 16v-6M20 16V5"/></svg>',
+    arc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3.5 17a8.5 8.5 0 0 1 17 0"/><circle cx="3.5" cy="17" r="1.6"/><circle cx="12" cy="8.5" r="1.6"/><circle cx="20.5" cy="17" r="1.6"/></svg>',
     me: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.5c1.2-3.7 4-5.6 7.5-5.6s6.3 1.9 7.5 5.6"/></svg>'
   };
-  var TABS = [['today', 'Today'], ['meals', 'Meals'], ['move', 'Exercise'], ['progress', 'Progress'], ['me', 'Me']];
-  var INNER = { today: 'prac', meals: 'eat', move: 'move' };   /* bottom tab -> daily plan section */
-  var STEPS = [
-    ['About you', 'A few basics so your plan fits your body.'],
-    ['Your symptoms', 'Tap everything you have most weeks for a month or more.'],
-    ['Test results', 'Optional. Add any blood work or gut tests you have, or skip this step.']
-  ];
-  var TAB_KEY = 'mth_app_tab';
+  var TABS = [['today', 'Today'], ['arc', 'My Arc'], ['me', 'Me']];
+  var TAB_KEY = 'mth_app_tab2';
+  var TICK = '<svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg>';
+  var PROTO = (location.pathname.match(/\/(gut|sugar|glp1)\b/) || [, 'gut'])[1];
+  var WD = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], MO = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  /* ---------- reading the protocol ---------- */
+  function g(name) { try { return (0, eval)(name); } catch (e) { return undefined; } }   /* the protocol's own top-level values */
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function cap(s) { s = String(s).trim(); return s.charAt(0).toUpperCase() + s.slice(1); }
+  function mid(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+  function iso(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+
+  function arc() {
+    var type = g('fastingType') || 'juice', C = (g('CLEANSE') || {})[type] || { name: 'Cleanse', short: 'Cleanse', emoji: '🌿' };
+    var L = { cd: 3, rd: 2 }; try { L = g('cleanseLen')(); } catch (e) {}
+    var start = new Date(); try { start = g('caStart')(); } catch (e) {}
+    start = mid(start);
+    var n = Math.max(7, L.cd + L.rd);
+    var today = Math.round((mid(new Date()) - start) / 864e5) + 1;
+    return { type: type, C: C, cd: L.cd, rd: L.rd, n: n, start: start, today: today };
+  }
+  function kind(A, d) { return d <= A.cd ? 'c' : d <= A.cd + A.rd ? 'r' : 'h'; }
+  function dayDate(A, d) { var x = new Date(A.start); x.setDate(x.getDate() + d - 1); return x; }
+  function dayName(A, d) {
+    var k = kind(A, d);
+    if (k === 'c') return A.C.short + ' day ' + d;
+    if (k === 'r') return (A.rd > 1 ? 'Refeed day ' + (d - A.cd) : 'Refeed day');
+    return 'Healing day';
+  }
+  function shortDate(x) { return WD[x.getDay()].slice(0, 3) + ' ' + MO[x.getMonth()] + ' ' + x.getDate(); }
+
+  /* split the protocol's sentence for a day into short tick-able lines */
+  function splitTop(s, sep) {
+    var out = [], depth = 0, cur = '';
+    for (var i = 0; i < s.length; i++) {
+      var ch = s[i]; if (ch === '(') depth++; if (ch === ')') depth = Math.max(0, depth - 1);
+      if (!depth && s.substr(i, sep.length) === sep) { out.push(cur); cur = ''; i += sep.length - 1; continue; }
+      cur += ch;
+    }
+    out.push(cur); return out.map(function (x) { return x.trim(); }).filter(Boolean);
+  }
+  var MEAL = /\b(breakfast|lunch|dinner)\b/i;
+  function foodLines(text) {
+    var body = String(text || '').replace(/^[^:]{0,40}:\s*/, '');
+    var sentences = splitTop(body.replace(/\.\s*$/, ''), '. ');
+    var first = sentences.shift() || '', items = [];
+    if (MEAL.test(first)) {
+      splitTop(first, ', ').forEach(function (c) {
+        c.replace(/\b(breakfast|lunch|dinner)\s+and\s+/gi, '$1\u0001').split('\u0001').forEach(function (p) {
+          p = p.replace(/^and\s+/i, '').replace(/\s*\(≈[^)]*\)/g, '').trim();
+          var m = p.match(MEAL), label = m ? cap(m[1].toLowerCase()) : (items.length ? '' : 'Morning');
+          p = p.replace(/\s+(?:at|for)\s+(?:breakfast|lunch|dinner)\b/i, '').trim();
+          if (p) items.push({ label: label, text: cap(p) });
+        });
+      });
+    } else if (first) items.push({ label: '', text: cap(first.replace(/\s*\(≈[^)]*\)/g, '')) });
+    var tip = sentences.map(function (s) { return cap(s.replace(/\s*\(≈[^)]*\)/g, '')); }).join('. ');
+    return { items: items, tip: tip ? tip + '.' : '' };
+  }
+  function plan(A, d) {
+    var k = kind(A, d), type = A.type, F;
+    try {
+      if (k === 'c') F = foodLines(g('cleanseDayText')(type, d));
+      else if (k === 'r') F = foodLines(g('refeedText')(type, d - A.cd));
+    } catch (e) {}
+    if (!F || !F.items.length) F = { items: [
+      { label: 'Meals', text: 'Whole-food meals: eggs, fish or chicken, cooked vegetables and olive oil. Small portions, eaten slowly.' },
+      { label: 'Before meals', text: '1 cup of warm bone broth' }], tip: '' };
+    var all = (F.items.map(function (i) { return i.text; }).join(' ') + ' ' + F.tip);
+    if (!/\b\d(?:–\d)?\s*L\b|litre/i.test(all)) F.items.push({ label: 'All day', text: '2–3 litres of water' });
+    var fast = type === 'water' && k === 'c' && /water/i.test(A.C.name);
+    var move = d <= 2 ? [{ label: '', text: fast ? 'Rest today. A slow 5-minute stroll only if you feel steady.' : 'A gentle 10-minute walk' }, { label: '', text: 'Easy stretching in bed, morning and night' }]
+      : fast ? [{ label: '', text: 'An easy 10-minute walk, only if you feel steady' }, { label: '', text: 'Gentle stretching' }]
+      : [{ label: '', text: (d <= 4 ? 'A gentle 20-minute walk' : 'A brisk 30-minute walk') }, { label: '', text: 'A dozen squats' }, { label: '', text: 'A dozen lunges' }, { label: '', text: 'A few flights of stairs' }];
+    var heal = [
+      { label: '', text: d <= 2 ? 'Rest as much as you can, with 8+ hours of sleep tonight' : '8 hours of sleep, with a window open for fresh air' },
+      { label: '', text: '20 minutes of midday sun' },
+      { label: '', text: d <= 2 ? '15 minutes of quiet: meditation, prayer or journaling' : '15 minutes of meditation or journaling' }];
+    return { food: F.items, tip: F.tip, move: move, heal: heal };
+  }
+
+  /* ---------- ticks ---------- */
+  function tkKey(A, d) { return 'mth_ms_' + PROTO + '_' + iso(A.start) + '_d' + d; }
+  function ticks(A, d) { try { return JSON.parse(localStorage.getItem(tkKey(A, d)) || '[]'); } catch (e) { return []; } }
+  function setTick(A, d, id, on) {
+    var t = ticks(A, d).filter(function (x) { return x !== id; }); if (on) t.push(id);
+    try { localStorage.setItem(tkKey(A, d), JSON.stringify(t)); } catch (e) {}
+  }
+  function total(P) { return P.food.length + P.move.length + P.heal.length; }
+  function doneOf(A, d) { var P = plan(A, d), t = ticks(A, d); return { done: Math.min(t.length, total(P)), total: total(P) }; }
 
   ready(function () {
     var genBtn = document.getElementById('diGenBtn');
     var card = document.querySelector('.hc-card');
     var grid = document.querySelector('.hc-grid3');
     if (!genBtn || !card || !grid) return;   /* not a protocol app page */
-
     function isSetUp() { return !genBtn.classList.contains('di-pending'); }
 
+    /* --- screens --- */
+    var today = document.createElement('div'); today.className = 'ms ms-today';
+    var arcEl = document.createElement('div'); arcEl.className = 'ms ms-arc';
+    var meTop = document.createElement('div'); meTop.className = 'ms ms-me';
+    var meBot = document.createElement('div'); meBot.className = 'ms ms-me';
+    card.insertBefore(today, grid); card.insertBefore(arcEl, grid); card.insertBefore(meTop, grid);
+    grid.parentNode.insertBefore(meBot, grid.nextSibling);
+
     /* --- tab bar --- */
-    var syncing = false;
     var bar = document.createElement('nav');
-    bar.className = 'mth-bar'; bar.setAttribute('role', 'tablist'); bar.setAttribute('aria-label', 'Protocol sections');
+    bar.className = 'mth-bar'; bar.setAttribute('role', 'tablist'); bar.setAttribute('aria-label', 'Sections');
     bar.innerHTML = TABS.map(function (t) {
       return '<button type="button" role="tab" data-tab="' + t[0] + '" aria-selected="false">' + ICONS[t[0]] + '<span>' + t[1] + '</span><span class="mth-pip"></span></button>';
     }).join('');
     bar.addEventListener('click', function (e) { var b = e.target.closest('button[data-tab]'); if (b) show(b.dataset.tab, true); });
 
-    /* --- set-up steps --- */
-    var wiz = document.createElement('div');
-    wiz.className = 'mth-wiz';
-    wiz.innerHTML = '<div class="mth-wiz-dots"><i></i><i></i><i></i></div><div class="mth-wiz-step"></div><div class="mth-wiz-title"></div><div class="mth-wiz-sub"></div>';
-    var nav = document.createElement('div');
-    nav.className = 'mth-wiz-nav';
-    nav.innerHTML = '<button type="button" class="mth-wiz-back">Back</button><button type="button" class="mth-wiz-next">Next</button>';
-    card.insertBefore(wiz, grid);
-    grid.parentNode.insertBefore(nav, grid.nextSibling);
-
-    var foot = document.createElement('div');
-    foot.className = 'mth-me-foot';
-    foot.innerHTML = '<button type="button">Show the full page layout</button>';
-    foot.firstChild.onclick = function () { try { localStorage.setItem(VIEW_KEY, 'desktop'); } catch (e) {} location.reload(); };
-    nav.parentNode.insertBefore(foot, nav.nextSibling);
-
-    var step = 1;
-    function setStep(n) {
-      step = n; root.setAttribute('data-mth-step', String(n));
-      var dots = wiz.querySelectorAll('.mth-wiz-dots i');
-      for (var i = 0; i < dots.length; i++) dots[i].classList.toggle('on', i < n);
-      wiz.querySelector('.mth-wiz-step').textContent = 'Step ' + n + ' of 3';
-      wiz.querySelector('.mth-wiz-title').textContent = STEPS[n - 1][0];
-      wiz.querySelector('.mth-wiz-sub').textContent = STEPS[n - 1][1];
-      nav.querySelector('.mth-wiz-back').hidden = n === 1;
-      nav.querySelector('.mth-wiz-next').textContent = n === 3 ? 'Build my plan' : 'Next';
-      toTop();
+    function itemsHtml(A, d, list, pre, live) {
+      var t = ticks(A, d);
+      return list.map(function (it, i) {
+        var id = pre + i, on = t.indexOf(id) >= 0;
+        return '<button type="button" class="ms-it' + (on ? ' on' : '') + '" data-id="' + id + '" data-d="' + d + '"' + (live ? '' : ' disabled') + '>' +
+          '<span class="bx">' + TICK + '</span><span class="tx">' + (it.label ? '<b>' + esc(it.label) + '</b>' : '') + esc(it.text) + '</span></button>';
+      }).join('');
     }
-    nav.querySelector('.mth-wiz-back').onclick = function () { if (step > 1) setStep(step - 1); };
-    nav.querySelector('.mth-wiz-next').onclick = function () { if (step < 3) setStep(step + 1); else genBtn.click(); };
+    function cardHtml(A, d, icon, bg, title, list, pre, live, tip) {
+      var t = ticks(A, d), n = list.filter(function (x, i) { return t.indexOf(pre + i) >= 0; }).length;
+      return '<div class="ms-card"><div class="ms-ch"><span class="ic" style="background:' + bg + '">' + icon + '</span><span class="t">' + title + '</span><span class="n">' + n + ' / ' + list.length + '</span></div>' +
+        itemsHtml(A, d, list, pre, live) + (tip ? '<div class="ms-tip">' + esc(tip) + '</div>' : '') + '</div>';
+    }
+    function dotsHtml(A, cur) {
+      var h = ''; for (var d = 1; d <= A.n; d++) h += '<i class="' + kind(A, d) + (d > cur ? ' fut' : '') + (d === cur ? ' now' : '') + '"></i>';
+      return '<div class="ms-dots">' + h + '</div>';
+    }
 
-    /* the plan can appear by pressing Generate, or a moment after opening when it is
-       restored from the member's account: either way, leave set-up and go to Today */
+    function renderToday() {
+      var A = arc(), d = A.today, live = d >= 1 && d <= A.n, show = live ? d : (d < 1 ? 1 : A.n);
+      var name = ((document.getElementById('diName') || {}).value || '').trim().split(' ')[0];
+      var P = plan(A, show), h = '';
+      if (d < 1) {
+        var x = A.start;
+        h += '<div class="ms-banner"><div class="ms-k" style="color:#e3a184">Coming up</div><div class="ms-h">Your arc starts ' + esc(WD[x.getDay()]) + '</div><p>' + esc(MO[x.getMonth()] + ' ' + x.getDate()) + '. Here is what Day 1 looks like, so you can get ready.</p><button type="button" class="ms-btn" data-act="startnow">Start today instead</button></div>';
+      } else if (d > A.n) {
+        h += '<div class="ms-banner"><div class="ms-k" style="color:#e3a184">Arc complete</div><div class="ms-h">You finished your ' + A.n + '-day arc</div><p>Well done' + (name ? ', ' + esc(name) : '') + '. When you are ready, start a fresh arc today, or change your cleanse level under Me first.</p><button type="button" class="ms-btn" data-act="startnow">Start a new arc today</button></div>';
+      }
+      h += '<div class="ms-top"><div class="ms-k">Day ' + show + ' of ' + A.n + ' · ' + esc(A.C.emoji || '') + ' ' + esc(A.C.name) + '</div>' +
+        '<div class="ms-h">' + (live ? (name ? 'Today, ' + esc(name) : 'Today') : 'Day ' + show) + '</div>' +
+        '<div class="ms-sub">' + esc(dayName(A, show)) + ' · ' + esc(shortDate(dayDate(A, show))) + '</div>' + dotsHtml(A, live ? d : 0) + '</div>';
+      h += cardHtml(A, show, '🥤', '#f6dccf', 'Food today', P.food, 'f', live, P.tip);
+      h += cardHtml(A, show, '🚶', '#e3ead9', 'Movement', P.move, 'm', live, '');
+      h += cardHtml(A, show, '🌿', '#efe3cc', 'Heal', P.heal, 'h', live, '');
+      if (live) {
+        var D = doneOf(A, show);
+        if (D.done >= D.total) h += '<div class="ms-done">Day ' + show + ' complete. Beautiful work.</div>';
+        if (show < A.n) h += '<div class="ms-next">Tomorrow: ' + esc(dayName(A, show + 1)) + '</div>';
+      }
+      today.innerHTML = h;
+    }
+
+    function daysHtml(A, open) {
+      var h = '<ul class="ms-days">';
+      for (var d = 1; d <= A.n; d++) {
+        var P = plan(A, d), D = doneOf(A, d), k = kind(A, d);
+        var stt = d === A.today ? '<span class="ms-dst today">Today</span>' : d < A.today ? '<span class="ms-dst">' + D.done + '/' + D.total + '</span>' : '<span class="ms-dst">' + esc(shortDate(dayDate(A, d)).slice(0, 3)) + '</span>';
+        h += '<li class="ms-day' + (d > A.today ? ' fut' : '') + (D.done >= D.total ? ' full' : '') + (open === d ? ' open' : '') + '"><button type="button" class="ms-dayb" data-day="' + d + '">' +
+          '<span class="ms-dn ' + k + '">' + d + '</span><span class="ms-dt"><b>' + esc(dayName(A, d)) + '</b><small>' + esc(P.food.map(function (i) { return i.text; }).join(' · ')) + '</small></span>' + stt + '</button>' +
+          '<div class="ms-dd"><p><b>Food</b><br>' + P.food.map(function (i) { return (i.label ? esc(i.label) + ': ' : '') + esc(i.text); }).join('<br>') + (P.tip ? '<br><i>' + esc(P.tip) + '</i>' : '') + '</p>' +
+          '<p><b>Movement</b><br>' + P.move.map(function (i) { return esc(i.text); }).join('<br>') + '</p>' +
+          '<p><b>Heal</b><br>' + P.heal.map(function (i) { return esc(i.text); }).join('<br>') + '</p></div></li>';
+      }
+      return h + '</ul>';
+    }
+
+    var openDay = null;
+    function renderArc() {
+      var A = arc(), full = 0, part = 0;
+      for (var d = 1; d <= A.n; d++) { var D = doneOf(A, d); if (D.done >= D.total) full++; else if (D.done) part++; }
+      var cur = Math.max(0, Math.min(A.n, A.today)), r = 38, L = 2 * Math.PI * r, pct = full / A.n;
+      var h = '<div class="ms-top"><div class="ms-k">' + esc(A.C.emoji || '') + ' ' + esc(A.C.name) + '</div><div class="ms-h">Your <em>healing arc</em></div>' +
+        '<div class="ms-sub">' + A.cd + ' cleanse day' + (A.cd === 1 ? '' : 's') + (A.rd ? ', ' + A.rd + ' refeed day' + (A.rd === 1 ? '' : 's') : '') + (A.n - A.cd - A.rd > 0 ? ', then healing days' : '') + '.</div></div>';
+      h += '<div class="ms-card"><div class="ms-ring"><svg viewBox="0 0 92 92"><circle cx="46" cy="46" r="' + r + '" fill="none" stroke="#efe8de" stroke-width="9"/>' +
+        '<circle cx="46" cy="46" r="' + r + '" fill="none" stroke="#2e5c45" stroke-width="9" stroke-linecap="round" stroke-dasharray="' + L.toFixed(1) + '" stroke-dashoffset="' + (L * (1 - pct)).toFixed(1) + '"/></svg>' +
+        '<div><div class="big">' + full + ' <span style="font-size:1.2rem;color:#8a7d71">of ' + A.n + '</span></div><div class="ms-sub">days complete' + (part ? ' · ' + part + ' in progress' : '') + '</div>' +
+        '<div class="ms-sub" style="margin-top:4px">' + (A.today < 1 ? 'Starts ' + esc(shortDate(A.start)) : A.today > A.n ? 'Arc finished' : 'You are on day ' + cur) + '</div></div></div>' + dotsHtml(A, cur) +
+        '<div class="ms-start" style="margin-top:12px"><span>Start date</span><input type="date" class="ms-startin" value="' + iso(A.start) + '"></div></div>';
+      h += '<div class="ms-card" style="padding-bottom:4px">' + daysHtml(A, openDay) + '</div>';
+      arcEl.innerHTML = h;
+    }
+
+    var PAGES = [['About you', 'A few basics and your cleanse level.'], ['Symptoms', 'Tap everything you have most weeks.'], ['Tests', 'Optional: add blood work or gut tests.']];
+    var page = 0;
+    function renderMe() {
+      var set = isSetUp();
+      meTop.innerHTML = '<div class="ms-top" style="padding-bottom:10px"><div class="ms-k">' + (set ? 'Your details' : 'Set up · 1 minute') + '</div><div class="ms-h">' + (set ? 'About <em>you</em>' : 'Let\'s build your <em>plan</em>') + '</div></div>' +
+        '<div class="ms-pages">' + PAGES.map(function (p, i) { return '<button type="button" data-page="' + i + '" class="' + (i === page ? 'on' : '') + '"><i>' + (i + 1) + '</i>' + p[0] + '</button>'; }).join('') + '</div>' +
+        '<div class="ms-sub" style="padding:0 4px 10px">' + esc(PAGES[page][1]) + '</div>';
+      var A = arc();
+      meBot.innerHTML = '<div class="ms-swipe">Swipe sideways for the next page</div><div class="ms-meact">' +
+        (set ? '<button type="button" class="ms-btn" data-act="gen">Update my plan</button>'
+             : '<button type="button" class="ms-btn" data-act="next">' + (page < 2 ? 'Next' : 'Build my plan') + '</button>' + (page ? '<button type="button" class="ms-btn ghost" data-act="back">Back</button>' : '')) + '</div>' +
+        (set ? '<div class="ms-plan"><div class="ms-top" style="padding-top:4px"><div class="ms-k">Your 7-day plan</div><div class="ms-h" style="font-size:1.7rem">' + esc(A.C.emoji || '') + ' ' + esc(A.C.name) + '</div>' +
+          '<div class="ms-sub">Tap a day to see everything in it.</div></div><div class="ms-card" style="padding-bottom:4px">' + daysHtml(A, openDay) + '</div></div>' +
+          '<div class="ms-foot"><button type="button" data-act="full">Show the full software</button></div>' : '');
+    }
+    function pageEls() { return [grid.querySelector('.hc-intake'), grid.querySelector('.gs-panel'), grid.querySelector('.lab-panel')]; }
+    function fit() { var el = pageEls()[page]; if (el && root.getAttribute('data-mth-tab') === 'me') grid.style.height = (el.offsetHeight + 8) + 'px'; }
+    function goPage(i, smooth) {
+      page = Math.max(0, Math.min(2, i)); var el = pageEls()[page];
+      if (el) grid.scrollTo({ left: el.offsetLeft - grid.offsetLeft - 12, behavior: smooth ? 'smooth' : 'auto' });
+      fit(); renderMe();
+    }
+    try { var ro = new ResizeObserver(function () { fit(); }); pageEls().forEach(function (el) { if (el) ro.observe(el); }); } catch (e) {}
+    var st0 = 0;
+    grid.addEventListener('scroll', function () {
+      clearTimeout(st0); st0 = setTimeout(function () {
+        var els = pageEls(), best = 0, bd = 1e9, mx = grid.scrollLeft + grid.clientWidth / 2;
+        els.forEach(function (el, i) { if (!el) return; var c = el.offsetLeft - grid.offsetLeft + el.offsetWidth / 2, dd = Math.abs(c - mx); if (dd < bd) { bd = dd; best = i; } });
+        if (best !== page) { page = best; renderMe(); } fit();
+      }, 90);
+    }, { passive: true });
+
+    function startToday() {
+      var inp = document.getElementById('caStartIn'), v = iso(new Date());
+      if (inp) { inp.value = v; inp.dispatchEvent(new Event('change', { bubbles: true })); }
+      else { try { window._caStart = mid(new Date()); } catch (e) {} }
+      renderAll();
+    }
+    function setStart(v) {
+      var inp = document.getElementById('caStartIn');
+      if (inp) { inp.value = v; inp.dispatchEvent(new Event('change', { bubbles: true })); }
+      else { var p = v.split('-').map(Number); try { window._caStart = new Date(p[0], p[1] - 1, p[2]); } catch (e) {} }
+      renderAll();
+    }
+
+    document.addEventListener('click', function (e) {
+      var it = e.target.closest('.ms-it');
+      if (it && !it.disabled) { var A = arc(), on = !it.classList.contains('on'); setTick(A, +it.dataset.d, it.dataset.id, on); renderToday(); return; }
+      var db = e.target.closest('.ms-dayb'); if (db) { var dd = +db.dataset.day; openDay = openDay === dd ? null : dd; renderArc(); renderMe(); return; }
+      var pg = e.target.closest('.ms-pages button'); if (pg) { goPage(+pg.dataset.page, true); return; }
+      var act = e.target.closest('[data-act]'); if (!act) return;
+      var a = act.dataset.act;
+      if (a === 'startnow') startToday();
+      else if (a === 'next') { if (page < 2) goPage(page + 1, true); else { justGenerated = true; genBtn.click(); setTimeout(planReady, 400); } }
+      else if (a === 'back') goPage(page - 1, true);
+      else if (a === 'gen') { genBtn.click(); setTimeout(function () { renderAll(); show('today', true); }, 450); }
+      else if (a === 'full') { try { localStorage.setItem(VIEW_KEY, 'desktop'); } catch (er) {} location.reload(); }
+    });
+    document.addEventListener('change', function (e) { if (e.target.classList && e.target.classList.contains('ms-startin') && e.target.value) setStart(e.target.value); });
+
+    function renderAll() { renderToday(); renderArc(); renderMe(); }
+
+    /* the plan can appear by pressing Build, or a moment after opening when it is restored from the member's account */
+    var justGenerated = false;
     function planReady() {
       if (!isSetUp()) return;
       var wasSetup = root.classList.contains('mth-setup') || root.classList.contains('mth-wait');
       root.classList.remove('mth-setup', 'mth-wait');
+      if (wasSetup) page = 0;
+      renderAll();
       if (wasSetup || justGenerated) show('today', true);
       justGenerated = false;
     }
-    var justGenerated = false;
-    genBtn.addEventListener('click', function () { justGenerated = true; setTimeout(planReady, 350); });
     try { new MutationObserver(function () { if (isSetUp()) planReady(); }).observe(genBtn, { attributes: true, attributeFilter: ['class'] }); } catch (e) {}
 
     function show(tab, scroll) {
       root.setAttribute('data-mth-tab', tab);
       var bs = bar.querySelectorAll('button');
       for (var i = 0; i < bs.length; i++) bs[i].setAttribute('aria-selected', bs[i].dataset.tab === tab ? 'true' : 'false');
-      if (tab === 'progress') { var ov = document.getElementById('fxOverview'); if (ov) ov.open = true; }
-      if (INNER[tab]) {
-        var ib = document.querySelector('#fx > .fx-tabs button[data-tab="' + INNER[tab] + '"]');
-        if (ib && ib.getAttribute('aria-selected') !== 'true') { syncing = true; ib.click(); syncing = false; }
-      }
+      if (tab === 'today') renderToday(); else if (tab === 'arc') renderArc(); else { renderMe(); requestAnimationFrame(function () { goPage(page, false); }); }
       try { sessionStorage.setItem(TAB_KEY, tab); } catch (e) {}
       if (scroll) toTop();
       setTimeout(placeBar, 60);
-      try { window.dispatchEvent(new Event('resize')); } catch (e) {}   /* let charts redraw at their new size */
     }
-
     function toTop() {
       try { window.scrollTo(0, 0); } catch (e) {}
       try { if (window.frameElement) window.frameElement.scrollIntoView({ block: 'start' }); } catch (e) {}
     }
-
-    /* Some course players stretch the frame to the full page height; a bar pinned to the
-       bottom would then sit far below the screen, so put it at the top instead. */
+    /* Some course players stretch the frame to the full page height; then the bar goes at the top instead */
     function placeBar() {
       var stretched = window.top !== window && window.innerHeight > (screen.height || 900) + 120;
       if (stretched !== root.classList.contains('mth-bar-inline')) {
         root.classList.toggle('mth-bar-inline', stretched);
-        if (stretched) card.insertBefore(bar, wiz); else document.body.appendChild(bar);
+        if (stretched) card.insertBefore(bar, card.firstChild); else document.body.appendChild(bar);
       }
     }
-
     document.body.appendChild(bar);
     placeBar();
-    var fxEl = document.getElementById('fx');
-    if (fxEl) try { new MutationObserver(function () {
-      if (syncing) return;
-      var cur = root.getAttribute('data-mth-tab'); if (!INNER[cur]) return;
-      var sb = fxEl.querySelector(':scope > .fx-tabs button[aria-selected="true"]'); if (!sb) return;
-      for (var k in INNER) if (INNER[k] === sb.dataset.tab && k !== cur) {
-        root.setAttribute('data-mth-tab', k);
-        var bs = bar.querySelectorAll('button');
-        for (var i = 0; i < bs.length; i++) bs[i].setAttribute('aria-selected', bs[i].dataset.tab === k ? 'true' : 'false');
-        try { sessionStorage.setItem(TAB_KEY, k); } catch (e) {}
-      }
-    }).observe(fxEl, { childList: true }); } catch (e) {}
     window.addEventListener('resize', function () { clearTimeout(placeBar.t); placeBar.t = setTimeout(placeBar, 200); });
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) renderAll(); });
 
     function startSetup() {
       root.classList.remove('mth-wait');
       if (isSetUp()) return;
       root.classList.add('mth-setup');
       show('me', false);
-      setStep(1);
+      goPage(0, false);
     }
     if (isSetUp()) {
       var last = null; try { last = sessionStorage.getItem(TAB_KEY); } catch (e) {}
-      show(last && /^(today|meals|move|progress|me)$/.test(last) ? last : 'today', false);
+      show(last && /^(today|arc|me)$/.test(last) ? last : 'today', false);
     } else {
-      /* give a saved plan a moment to come back from the member's account before offering set-up */
       root.classList.add('mth-wait');
       show('today', false);
       setTimeout(startSetup, 3500);
