@@ -81,6 +81,18 @@
       if(badge&&badge.parentNode===document.body) document.body.insertBefore(f,badge); else document.body.appendChild(f);
     },6000);
   }
+  /* the footer must always sit below the page: if any visible section or page design ends up after it
+     (pages that load late, or a LearnWorlds footer placed high up), move the footer down after the last one */
+  function footerLast(){
+    var f=document.querySelector(".mthf"); if(!f) return;
+    var last=null;
+    [].forEach.call(document.querySelectorAll(".mth-mount, .learnworlds-section:not(.lw-footer):not(.lw-topbar)"),function(el){
+      if(f.contains(el)||el.contains(f)||!el.offsetHeight) return;
+      if(el.parentNode&&el.parentNode.closest&&el.parentNode.closest(".mth-mount")) return;
+      if(f.compareDocumentPosition(el)&Node.DOCUMENT_POSITION_FOLLOWING) last=el;
+    });
+    if(last) last.parentNode.insertBefore(f,last.nextSibling);
+  }
 
   /* ---------------- homepage ---------------- */
   function home(){
@@ -448,7 +460,7 @@
       else if(ROUTE==="app") appPage();
       else if(ROUTE==="links") linksPage();
       else reveal();
-      if(ROUTE!=="app"&&ROUTE!=="links") footer();
+      if(ROUTE!=="app"&&ROUTE!=="links"){ footer(); [800,2500,6500,9500].forEach(function(ms){ setTimeout(footerLast,ms); }); }
     }catch(e){ console.warn("MTH site",e); reveal(); }
   });
   /* safety net: never leave a page hidden */
