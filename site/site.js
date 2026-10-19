@@ -154,15 +154,34 @@
     new MutationObserver(function(){ fix(); }).observe(document.body,{childList:true,subtree:false});
     document.addEventListener("click",function(){ setTimeout(fix,30); setTimeout(fix,400); },true);
   }
-  /* members: an "App" button in the desktop header, next to Courses (phones get it in the menu) */
+  /* the header "App" button. Mark's own LearnWorlds button wins; ours fills in only if there isn't one.
+     LearnWorlds rearranges its header while loading, so we put ours back whenever it gets dropped. */
+  function isAppLink(a){ if(!a||a.closest(".mth-appnav,.mth-appitem")) return false; var t=(a.textContent||"").trim().toLowerCase(), h=(a.getAttribute("href")||"").toLowerCase();
+    return t==="app"||t==="my app"||/\/app(\?|$)/.test(h.replace(/^https?:\/\/[^/]+/,""))||/mth-protocols\/(gut|sugar|glp1)\b/.test(h); }
+  function hasOwnApp(scope){ return [].some.call((scope||document).querySelectorAll("a"),isAppLink); }
   function appNav(){
-    waitFor(function(){ return signedIn()&&document.querySelector(".lw-topbar .lw-topbar-options"); },function(ul){
-      if(!ul||ul.querySelector(".mth-appnav")) return;
+    function ensure(){
+      var tb=document.querySelector(".lw-topbar"), ul=tb&&tb.querySelector(".lw-topbar-options"); if(!ul) return;
+      var mine=tb.querySelector(".mth-appnav");
+      if(hasOwnApp(tb.querySelector(".lw-topbar-menu")||tb)){ if(mine) mine.parentNode.removeChild(mine); return; }
+      if(mine) return;
       var first=null; [].forEach.call(ul.children,function(li){ if(!first&&li.classList.contains("lw-topbar-option")&&li.querySelector(":scope > a.lw-topbar-option-link")) first=li; });
       var li=document.createElement("li"); li.className="lw-topbar-option mth-appnav"+(ROUTE==="app"?" mth-on":"");
       li.innerHTML='<a href="/app" class="lw-topbar-option-link learnworlds-main-text-normal lw-brand-text text-only"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10.5 18.5h3"/></svg><span class="lw-topbar-option-link-lbl nowrap">App</span></a>';
       if(first) ul.insertBefore(li,first); else ul.appendChild(li);
-    },8000);
+    }
+    waitFor(function(){ return signedIn()&&document.querySelector(".lw-topbar .lw-topbar-options"); },function(ul){
+      if(!ul) return; ensure();
+      var q=0; try{ new MutationObserver(function(){ if(q) return; q=1; requestAnimationFrame(function(){ q=0; ensure(); }); }).observe(document.querySelector(".lw-topbar"),{subtree:true,childList:true}); }catch(e){}
+    },10000);
+    /* any App link (Mark's header button, or an old link straight to the software) opens the members' App page */
+    document.addEventListener("click",function(e){
+      var a=e.target.closest&&e.target.closest("a"); if(!a||!isAppLink(a)) return;
+      var h=(a.getAttribute("href")||""), m=h.match(/mth-protocols\/(gut|sugar|glp1)\b/i);
+      var to="/app"+(m?"?p="+m[1].toLowerCase():"");
+      if(h.replace(/^https?:\/\/[^/]+/,"")===to) return;
+      e.preventDefault(); e.stopPropagation(); location.href=to;
+    },true);
   }
   /* signed in? checked when needed: LearnWorlds fills in the member after this script starts */
   function signedIn(){ try{ var u=window.MTH_USER; if(u&&u.id&&String(u.id).indexOf("{{")<0) return true; var m=window.me; return !!(m&&m.id); }catch(e){ return false; } }
@@ -345,7 +364,7 @@
       /* members get "App" at the top of the phone menu (LearnWorlds' header button is desktop only) */
       if(signedIn()){
         var ul=document.querySelector(".lw-topbar-hamburger-menu .mobile-nav-menu");
-        if(ul&&!ul.querySelector('a.mobile-nav-menu-link[href$="/app"],.mth-appitem')){
+        if(ul&&!ul.querySelector('.mth-appitem')&&!hasOwnApp(ul)){
           var src=null;
           [].forEach.call(ul.children,function(li){ if(!src&&li.classList.contains("mobile-nav-menu-item")&&!li.classList.contains("has-subMenu")&&!li.classList.contains("mth-auth")&&!li.classList.contains("mth-out")&&li.querySelector(":scope > .mobile-nav-menu-link")) src=li; });
           if(src){
@@ -407,6 +426,7 @@
     /* a course's own link (/app?p=sugar) or the last one opened decides between several; otherwise the first owned */
     var pick=null; try{ pick=new URLSearchParams(location.search).get("p")||localStorage.getItem("mth_app_proto"); }catch(e){}
     if(owned.indexOf(pick)<0) pick=owned[0]||null;
+    var OUT=!signedIn(); if(OUT) pick=null;
     function name(k){ for(var i=0;i<APP_PROTOS.length;i++) if(APP_PROTOS[i][0]===k) return APP_PROTOS[i][1]; return ""; }
 
     /* home-screen app details */
@@ -462,6 +482,8 @@
       "#mth-app-shell .none p{font:400 15px/1.5 'DM Sans',system-ui,sans-serif;color:#8a7d71;max-width:340px;margin:0 0 8px}"+
       "#mth-app-shell .none a{display:block;width:100%;max-width:320px;padding:14px;border-radius:14px;background:#2b2622;color:#fff;text-decoration:none;font:600 15px 'DM Sans',system-ui,sans-serif}"+
       "#mth-app-shell .sw{flex:none;max-width:36%;padding:8px 10px;border-radius:999px;border:1px solid #ddd3c6;background:#fff;font:600 13px 'DM Sans',system-ui,sans-serif;color:#2b2622}"+
+      "#mth-app-shell .none a.alt{background:#fff;color:#2b2622;border:1px solid #ddd3c6}"+
+      "html.mth-r-app.mth-app-auth body>#animatedModal:not(#mth-app-shell),html.mth-r-app.mth-app-auth #animatedModal:not(#mth-app-shell){display:block!important;z-index:2147483600!important}"+
       "#mth-app-shell .ld{position:absolute;left:0;right:0;top:45%;text-align:center;font:400 22px 'Cormorant Garamond',Georgia,serif;color:#8a7d71;pointer-events:none}";
     /* Desktop: keep the site header, then an "App" section with the full-width software underneath.
        Phones (and the installed home-screen app) keep the full-screen app. */
@@ -502,7 +524,7 @@
     function load(k){
       pick=k; if(DESK){ nm.innerHTML="Your <em>app</em>"; shell.querySelector(".k").textContent=name(k)+" Protocol"; } else nm.textContent=name(k)+" Protocol"; ld.style.display="";
       try{ localStorage.setItem("mth_app_proto",k); }catch(e){}
-      fr.src=ROOT+k+"/?mode=app";
+      fr.src=ROOT+k+"/?mode=app"+(DESK?"":"&view=app");
     }
     fr.addEventListener("load",function(){ ld.style.display="none"; });
 
@@ -526,8 +548,12 @@
     if(!pick){
       fr.remove(); ld.style.display="none"; nm.textContent="Your protocol";
       var none=document.createElement("div"); none.className="none";
-      none.innerHTML='<h2>Your protocol lives here</h2><p>Once you join a protocol, your personal plan, meals and workouts open on this page.</p>'+
-        '<a href="/guthealthprotocol">Gut Health Protocol</a><a href="/thediabetesprotocol">Diabetes Protocol</a><a href="/glp1-weightloss">GLP-1 Weight Loss Protocol</a>';
+      none.innerHTML=(OUT?'<h2>Sign in to open your app</h2><p>Your personal plan, meals and workouts are waiting. New here? Choose a protocol to get started.</p><a href="javascript:void(0)" class="si">Sign in</a>':'<h2>Your protocol lives here</h2><p>Once you join a protocol, your personal plan, meals and workouts open on this page.</p>')+
+        '<a href="/guthealthprotocol" class="'+(OUT?'alt':'')+'">Gut Health Protocol</a><a href="/thediabetesprotocol" class="'+(OUT?'alt':'')+'">Diabetes Protocol</a><a href="/glp1-weightloss" class="'+(OUT?'alt':'')+'">GLP-1 Weight Loss Protocol</a>';
+      var si=none.querySelector(".si");
+      if(si) si.addEventListener("click",function(e){ e.preventDefault(); H.classList.add("mth-app-auth");
+        var l=document.querySelector('[data-interactive-link-type="openformslink"][data-interactive-link-var1="signin"]');
+        if(l) l.click(); else { try{ showAnimatedModal($(".login-form")); }catch(x){ location.href="/home"; } } });
       shell.appendChild(none);
     } else {
       if(owned.length>1&&(byTags||staff)){
@@ -591,7 +617,7 @@
       else if(ROUTE==="course") course();
       else if(ROUTE==="social") social();
       else if(ROUTE==="courses") courses();
-      else if(ROUTE==="app") appPage();
+      else if(ROUTE==="app") waitFor(signedIn,function(){ try{ appPage(); }catch(e){ console.warn("MTH app",e); reveal(); } },1500);
       else if(ROUTE==="links") linksPage();
       else reveal();
       if(ROUTE!=="app"&&ROUTE!=="links"){ footer(); [800,2500,6500,9500].forEach(function(ms){ setTimeout(footerLast,ms); }); }
