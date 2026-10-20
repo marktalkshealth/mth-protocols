@@ -249,8 +249,8 @@
     box.innerHTML=COURSES.map(function(c){ var href=loggedIn?c.course:c.funnel+"#checkout";
       return '<div class="bo"><div class="im" style="background-image:url(\''+IMG.replace("{id}",c.img)+'\')"></div><div class="tx"><h3>'+esc(c.t)+'</h3><p>Course, software &amp; community</p><div class="r">'+(loggedIn?'<span></span>':'<b>'+esc(c.price)+'</b>')+'<a class="btn" href="'+href+'">'+(loggedIn?'Open':'Get instant access')+'</a></div></div></div>'; }).join("");
   })();
-  var SIMG=["1-fasting","2-meditation","3-keto","4-cardio","5-music","6-sleep","7-nature"];
-  var STEPS=[["Fasting & cleanse","Rest digestion"],["Meditation & journaling","Calm the nervous system"],["Keto & broths","Feed repair"],["Cardio & strength","Move to heal"],["Music & spirit","Sound as medicine"],["Sleep & clean air","Repair at night"],["Nature & sun","Reset outdoors"]];
+  var SIMG=["1-fasting","2-meditation","3-high-protein","4-cardio","5-music","6-sleep","7-nature"];
+  var STEPS=[["Fasting & cleanse","Rest digestion"],["Meditation & journaling","Calm the nervous system"],["High protein","Feed repair"],["Cardio & strength","Move to heal"],["Music & spirit","Sound as medicine"],["Sleep & clean air","Repair at night"],["Nature & sun","Reset outdoors"]];
   var TILE=[["#c0623f","#7e3b25"],["#7a8f6e","#3f4b38"],["#b8924a","#6e5427"],["#8a7b6e","#463b33"],["#a8735a","#5a3a2b"],["#6f7a8c","#363c48"],["#7a8f6e","#2f3d2c"]];
   document.getElementById("mhSteps").innerHTML=STEPS.map(function(s,i){ return '<div class="step ph" role="img" aria-label="Step '+(i+1)+': '+esc(s[0])+'" style="background-image:url(https://marktalkshealth.github.io/mth-protocols/site/steps/'+SIMG[i]+'.jpg)"><b>'+(i+1)+'</b></div>'; }).join("");
   /* system cards: dots follow the swipe */

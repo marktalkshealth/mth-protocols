@@ -11,7 +11,7 @@
 (function(){
   if(window.MTHPhone) { window.MTHPhone.scan(); return; }
   var BASE="https://marktalkshealth.github.io/mth-protocols/site/";
-  var PICS=["1-fasting","2-meditation","3-keto","4-cardio","5-music","6-sleep","7-nature"];
+  var PICS=["1-fasting","2-meditation","3-high-protein","4-cardio","5-music","6-sleep","7-nature"];
 
   /* ======================= YOUR CONTENT =======================
      Recipes: [emoji, name, kcal, protein g, carbs g, fat g, ingredients]
@@ -20,11 +20,11 @@
   var PROTOS={
     gut:{
       name:"Gut Health Protocol", short:"Gut Health", fastGoal:16, fastNote:"Fat-burning shift · goal 16h",
-      steps:["Fasting & cleanse","Meditation & journaling","Keto & healing broths","Cardio & strength","Music therapy & spirit","Sleep & clean air","Nature: forest & sun"],
+      steps:["Fasting & cleanse","Meditation & journaling","High protein meals","Cardio & strength","Music therapy & spirit","Sleep & clean air","Nature: forest & sun"],
       days:[["Morning green juice","Ice cream cleanse meal","14-hour fasting window"],["10-minute meditation","Journal three lines","Bone broth, 1 cup"],
             ["Morning green juice","Bone broth, 1 cup","Evening walk, 20 min"],["Strength circuit","20-minute brisk walk","Rate your energy"],
             ["Music therapy session","Gratitude note","Morning green juice"],["No screens after 9pm","Lights out by 10:30","Log your sleep"],["20 minutes of morning sun","Forest or park walk","Day 7 check-in"]],
-      food:{goal:1600, carbLabel:"Net carbs", t:{p:90,c:25,f:120}, style:"Keto · gut-calming",
+      food:{goal:1600, carbLabel:"Net carbs", t:{p:90,c:25,f:120}, style:"High protein",
         meals:{
           Breakfast:[["🥑","Avocado coconut ice cream",420,6,6,40,"Avocado · coconut cream · vanilla · monk fruit"],["🍳","Eggs, spinach & avocado",410,20,5,34,"3 eggs · spinach · ½ avocado · olive oil"],["🥬","Green juice + collagen",150,12,8,0,"Celery · cucumber · spinach · lemon · collagen"]],
           Lunch:[["🍲","Bone broth & greens bowl",380,28,8,24,"Bone broth · kale · zucchini · olive oil · herbs"],["🐟","Salmon & cucumber salad",450,32,6,32,"Salmon · cucumber · dill · olive oil · lemon"],["🥗","Chicken & avocado salad",470,36,7,32,"Chicken · romaine · avocado · olive oil"]],

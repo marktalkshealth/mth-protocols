@@ -294,7 +294,7 @@
     if(/^intro|introduction|welcome|start here/.test(t)) return "0-intro";
     if(/fast|cleans/.test(t)) return "1-fasting";
     if(/meditat|journal/.test(t)) return "2-meditation";
-    if(/keto|diet|broth|food|nutrition/.test(t)) return "3-keto";
+    if(/keto|diet|broth|food|nutrition/.test(t)) return "3-high-protein";
     if(/exercis|cardio|weight|strength|movement/.test(t)) return "4-cardio";
     if(/music|spirit/.test(t)) return "5-music";
     if(/sleep|air/.test(t)) return "6-sleep";
