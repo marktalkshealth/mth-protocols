@@ -20,7 +20,7 @@
   }
 
   /* ================= OVERVIEW ================= */
-  A.screen("overview",{ nav:"Overview", group:"CRM", render: async function(V){
+  A.screen("overview",{ nav:"Dashboard", group:"Customers", live:true, help:"Your numbers at a glance. The coloured bar shows where everyone is, from first sign-up to happy customer.", render: async function(V){
     var res=await Promise.all([A.loadPeople(true), A.rpc("mth_admin_tasks",{p_include_done:false}), A.rpc("mth_admin_sales",{p_days:30})]);
     var P=res[0], T=res[1]||[], S=res[2]||[];
     var cust=P.filter(function(p){ return p.owns&&p.owns.length; }), list=P.filter(function(p){ return p.list_opt_in; }).length;
@@ -30,11 +30,11 @@
     var cnt={}; P.forEach(function(p){ cnt[p.stage]=(cnt[p.stage]||0)+1; });
     var tot=P.length||1;
     var fresh=P.filter(function(p){ return p.stage==="signed_up"&&p.signed_up&&(Date.now()-new Date(p.signed_up))<7*864e5; });
-    V.innerHTML='<div class="adm-h"><div><div class="kick">CRM</div><h1>Good '+(new Date().getHours()<12?'morning':new Date().getHours()<18?'afternoon':'evening')+', <em>Mark</em></h1></div><div class="acts"><a class="b sm ghost" href="#contacts">Contacts</a><a class="b sm" href="#studio">Social Studio</a></div></div>'+
+    V.innerHTML='<div class="adm-h"><div><div class="kick">Dashboard</div><h1>Good '+(new Date().getHours()<12?'morning':new Date().getHours()<18?'afternoon':'evening')+', <em>Mark</em></h1></div><div class="acts"><a class="b sm ghost" href="#contacts">People</a><a class="b sm" href="#studio">Posts</a></div></div>'+
       '<div class="kpis"><div class="card kpi"><b>'+P.length+'</b><span>Contacts</span></div><div class="card kpi"><b>'+cust.length+'</b><span>Customers</span></div>'+
       '<div class="card kpi"><b>'+A.money(live)+'</b><span>Sales, last 30 days</span></div><div class="card kpi"><b>'+A.money(test)+'</b><span>Test sales, 30 days</span></div>'+
       '<div class="card kpi"><b>'+list+'</b><span>On the email list</span></div><div class="card kpi'+(due.length?' warn':'')+'"><b>'+due.length+'</b><span>Tasks due</span></div></div>'+
-      '<div class="cols"><div class="card panel"><h3>Pipeline</h3><div class="pipe">'+A.STAGES.map(function(s){ var n=cnt[s[0]]||0; return n?'<i style="width:'+(100*n/tot)+'%;background:'+s[2]+'" title="'+s[1]+': '+n+'"></i>':''; }).join("")+'</div>'+
+      '<div class="cols"><div class="card panel"><h3>Where people are</h3><div class="pipe">'+A.STAGES.map(function(s){ var n=cnt[s[0]]||0; return n?'<i style="width:'+(100*n/tot)+'%;background:'+s[2]+'" title="'+s[1]+': '+n+'"></i>':''; }).join("")+'</div>'+
         '<div class="stg">'+A.STAGES.map(function(s){ return '<a href="#contacts/stage:'+s[0]+'"><b>'+(cnt[s[0]]||0)+'</b><span>'+s[1]+'</span></a>'; }).join("")+'</div>'+
         '<div class="sec-h">Sales, last 30 days</div>'+chart(S.filter(function(r){ return r.live||!live; }),30)+(live?'':'<p class="small">Showing test purchases until real sales come in.</p>')+'</div>'+
       '<div style="display:grid;gap:14px"><div class="card panel"><h3>Due now</h3>'+(due.slice(0,6).map(function(t){ return '<div class="row-i"><span><b>'+esc(t.title)+'</b>'+(t.email?'<br><a class="small" href="#person/'+encodeURIComponent(t.email)+'">'+esc(t.email)+'</a>':'')+'</span><span class="small">'+A.when(t.due)+'</span></div>'; }).join("")||'<p class="muted">Nothing due. </p>')+'<a class="b sm ghost" href="#tasks" style="margin-top:8px">All tasks</a></div>'+
@@ -46,11 +46,11 @@
 
   /* ================= CONTACTS ================= */
   var sel={}, state={ q:"", stage:"", prod:"", tag:"", sort:"active" };
-  A.screen("contacts",{ nav:"Contacts", group:"CRM", render: async function(V,arg){
+  A.screen("contacts",{ nav:"People", group:"Customers", help:"Everyone who joined your email list or made an account. Tap a person to see everything about them. Tick boxes to tag or email several at once.", render: async function(V,arg){
     if(arg&&arg.indexOf("stage:")===0){ state.stage=arg.slice(6); }
     var P=await A.loadPeople(true); sel={};
     var tags={}; P.forEach(function(p){ (p.tags||[]).forEach(function(t){ tags[t]=1; }); });
-    V.innerHTML='<div class="adm-h"><div><div class="kick">CRM</div><h1>Contacts</h1></div><div class="acts"><button class="b sm ghost" id="exp">Export CSV</button><button class="b sm" id="add">Add contact</button></div></div>'+
+    V.innerHTML='<div class="adm-h"><div><div class="kick">Customers</div><h1>People</h1></div><div class="acts"><button class="b sm ghost" id="exp">Export CSV</button><button class="b sm" id="add">Add contact</button></div></div>'+
       '<div class="bar"><input class="inp" id="q" type="search" placeholder="Search name, email, tag or source" value="'+esc(state.q)+'">'+
       '<select class="sel" id="fp"><option value="">All protocols</option>'+C.order.map(function(k){ return '<option value="'+k+'">'+prodShort(k)+'</option>'; }).join("")+'<option value="none">Hasn’t bought</option></select>'+
       '<select class="sel" id="ft"><option value="">All tags</option>'+Object.keys(tags).sort().map(function(t){ return '<option>'+esc(t)+'</option>'; }).join("")+'</select>'+
@@ -127,7 +127,7 @@
     (D.notes||[]).forEach(function(n){ ev.push({ at:n.at, k:"note", t:"Note", d:n.body, id:n.id }); });
     ev.sort(function(a,b){ return new Date(b.at)-new Date(a.at); });
     var tasks=D.tasks||[];
-    V.innerHTML='<div style="margin-bottom:10px"><a class="small" href="#contacts">← Contacts</a></div><div class="pp"><div style="display:grid;gap:14px">'+
+    V.innerHTML='<div style="margin-bottom:10px"><a class="small" href="#contacts">← People</a></div><div class="pp"><div style="display:grid;gap:14px">'+
       '<div class="card ph"><div class="kick">'+(acc?"Member":"Contact")+'</div><h2>'+esc(ct.name||email)+'</h2>'+(ct.name?'<div class="small">'+esc(email)+'</div>':'')+
         '<div style="margin-top:8px">'+A.stagePill(row.stage)+(row.stage!==row.auto_stage&&ct.stage?'<span class="small">set by you · auto: '+A.stageName(row.auto_stage)+'</span>':'')+'</div>'+
         '<div class="kpis" style="margin-top:14px;grid-template-columns:repeat(2,1fr)"><div class="card kpi"><b>'+A.money(row.spent_cents)+'</b><span>Spent</span></div><div class="card kpi"><b>'+(row.lessons_total?Math.round(100*row.lessons_done/row.lessons_total)+'%':'—')+'</b><span>Course progress</span></div></div>'+
@@ -163,11 +163,11 @@
 
   /* ================= TASKS ================= */
   var showDone=false;
-  A.screen("tasks",{ nav:"Tasks", group:"CRM", render: async function(V){
+  A.screen("tasks",{ nav:"To-dos", group:"Customers", live:true, help:"Your follow-up list. Tick a box when it\u2019s done. Claude adds some of these for you each morning.", render: async function(V){
     var res=await Promise.all([A.rpc("mth_admin_tasks",{ p_include_done:showDone }), A.loadPeople()]);
     var T=res[0]||[], P=res[1]||[], today=A.today();
     var groups=[["Overdue",function(t){ return !t.done&&t.due&&t.due<today; }],["Today",function(t){ return !t.done&&t.due===today; }],["Coming up",function(t){ return !t.done&&t.due&&t.due>today; }],["No date",function(t){ return !t.done&&!t.due; }],["Done",function(t){ return t.done; }]];
-    V.innerHTML='<div class="adm-h"><div><div class="kick">CRM</div><h1>Tasks</h1></div><label class="check"><input type="checkbox" id="sd"'+(showDone?' checked':'')+'> Show done</label></div>'+
+    V.innerHTML='<div class="adm-h"><div><div class="kick">Customers</div><h1>To-dos</h1></div><label class="check"><input type="checkbox" id="sd"'+(showDone?' checked':'')+'> Show done</label></div>'+
       '<div class="card panel"><div class="addrow" style="margin-top:0"><input class="inp" id="tt" placeholder="New task, e.g. Film Step 3 video"><input class="inp" id="te" list="ppl" placeholder="Contact (optional)" style="flex:0 1 220px"><datalist id="ppl">'+P.map(function(p){ return '<option value="'+esc(p.email)+'">'; }).join("")+'</datalist><input class="inp" id="td" type="date" style="flex:0 1 160px"><button class="b sm" id="ta">Add task</button></div></div>'+
       groups.map(function(g){ var L=T.filter(g[1]); if(!L.length) return ""; return '<div class="sec-h">'+g[0]+' · '+L.length+'</div><div class="card panel">'+L.map(function(t){ var late=!t.done&&t.due&&t.due<today;
         return '<div class="task'+(t.done?' done':'')+'"><input type="checkbox" data-t="'+t.id+'" data-d="'+(t.due||"")+'"'+(t.done?' checked':'')+' aria-label="Done"><div class="tx"><b>'+esc(t.title)+'</b><div class="due'+(late?' late':'')+'">'+(t.due?A.when(t.due):"No date")+(t.email?' · <a href="#person/'+encodeURIComponent(t.email)+'">'+esc(t.email)+'</a>':'')+'</div></div><input type="date" class="sel" data-due="'+t.id+'" value="'+(t.due||"")+'" style="min-height:34px;font-size:12.5px;max-width:150px" aria-label="Change due date"></div>'; }).join("")+'</div>'; }).join("")||'<p class="muted" style="margin-top:14px">No tasks yet.</p>';
@@ -180,13 +180,13 @@
 
   /* ================= SALES ================= */
   var range=30, mode="all";
-  A.screen("sales",{ nav:"Sales", group:"CRM", render: async function(V){
+  A.screen("sales",{ nav:"Sales", group:"Customers", live:true, help:"Every order. \u201cTest\u201d sales are pretend ones made with the test card; they don\u2019t count as real money.", render: async function(V){
     var res=await Promise.all([A.rpc("mth_admin_sales",{ p_days:range }), A.rpc("mth_admin_members")]);
     var S=(res[0]||[]).filter(function(r){ return mode==="all"||(mode==="live")===!!r.live; });
     var M=(res[1]||[]).filter(function(m){ return m.source==="stripe"&&(mode==="all"||(mode==="live")===!!m.livemode); });
     var by={}; S.forEach(function(r){ by[r.product]=by[r.product]||{n:0,c:0}; by[r.product].n+=r.sales; by[r.product].c+=Number(r.cents); });
     var total=S.reduce(function(a,r){ return a+Number(r.cents); },0), n=S.reduce(function(a,r){ return a+r.sales; },0);
-    V.innerHTML='<div class="adm-h"><div><div class="kick">CRM</div><h1>Sales</h1></div><div class="acts"><select class="sel" id="rg"><option value="30">Last 30 days</option><option value="90">Last 90 days</option><option value="365">Last 12 months</option></select><select class="sel" id="md"><option value="all">Real + test</option><option value="live">Real only</option><option value="test">Test only</option></select></div></div>'+
+    V.innerHTML='<div class="adm-h"><div><div class="kick">Customers</div><h1>Sales</h1></div><div class="acts"><select class="sel" id="rg"><option value="30">Last 30 days</option><option value="90">Last 90 days</option><option value="365">Last 12 months</option></select><select class="sel" id="md"><option value="all">Real + test</option><option value="live">Real only</option><option value="test">Test only</option></select></div></div>'+
       '<div class="kpis"><div class="card kpi"><b>'+A.money(total)+'</b><span>Revenue</span></div><div class="card kpi"><b>'+n+'</b><span>Orders</span></div><div class="card kpi"><b>'+(n?A.money(Math.round(total/n)):"—")+'</b><span>Average order</span></div>'+
       C.order.map(function(k){ var x=by[k]||{n:0,c:0}; return '<div class="card kpi"><b>'+x.n+'</b><span>'+prodShort(k)+' · '+A.money(x.c)+'</span></div>'; }).join("")+'</div>'+
       '<div class="card panel" style="margin-top:14px">'+chart(S,Math.min(range,90))+'</div>'+

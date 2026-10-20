@@ -114,3 +114,36 @@ textarea.inp{min-height:90px;resize:vertical;font-size:15px}
 .status-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--faint);margin-right:6px}
 .status-dot.on{background:#2e8a62;box-shadow:0 0 6px rgba(46,138,98,.5)}
 .bar .sel,.acts .sel{width:auto}
+
+/* ---------- help line, own-window button, big text, pop-out windows ---------- */
+.adm-help{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:16px;font-size:14.5px;color:var(--muted)}
+.adm-help-t:before{content:"ⓘ";color:var(--terra);font-weight:700;margin-right:8px}
+.adm-help-b{display:flex;gap:8px;align-items:center;margin-left:auto}
+.adm-help .b{min-height:34px;padding:6px 12px;font-size:13px}
+html.adm-big .adm-main{zoom:1.18}
+html.adm-pop .adm{grid-template-columns:1fr!important;min-height:100vh}
+html.adm-pop .adm-nav,html.adm-pop .adm-tabs,html.adm-pop .mx-test{display:none!important}
+html.adm-pop .adm-main{padding-top:20px}
+.adm-live{color:var(--sage)}
+.adm-live:before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#2e8a62;margin-right:6px;animation:gpPulse 2s ease-in-out infinite}
+@keyframes gpPulse{50%{opacity:.35}}
+
+/* ---------- Today page ---------- */
+.today-big{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
+@media(min-width:900px){.today-big{grid-template-columns:repeat(4,1fr)}}
+.tb{display:flex;flex-direction:column;gap:2px;padding:18px;text-decoration:none;transition:transform .15s,box-shadow .15s}
+.tb:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(43,39,36,.10)}
+.tb .ic{font-size:28px;line-height:1;margin-bottom:8px}
+.tb b{font-family:var(--serif);font-weight:500;font-size:24px;line-height:1.1}
+.tb span:last-child{font-size:13px;color:var(--muted)}
+.setup{border-top:1px solid var(--line);padding:4px 0}
+.setup:first-of-type{border-top:0}
+.setup summary{list-style:none;display:flex;gap:12px;align-items:center;padding:10px 0;cursor:pointer}
+.setup summary::-webkit-details-marker{display:none}
+.setup .ck{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:14px;background:var(--bg2);color:var(--muted)}
+.setup.done .ck{background:var(--sage);color:#fff}
+.setup .tx{display:flex;flex-direction:column;min-width:0}
+.setup .tx b{font-size:15.5px}
+.setup.done .tx b{color:var(--muted)}
+.setup .how{padding:0 0 12px 42px}
+.setup[open] summary .tx b{color:var(--terra)}

@@ -4,9 +4,9 @@
 (function(){
   var A=window.ADM, esc=A.esc, C=MTH.config, sb=MTH.sb;
 
-  A.screen("content",{ nav:"Course content", group:"Courses", render: async function(V){
+  A.screen("content",{ nav:"Videos & ebooks", group:"Courses", help:"Add your lesson videos and ebooks here. Paste a YouTube link and press Save. That\u2019s it.", render: async function(V){
     var pk=sessionStorage.getItem("mth_admin_p")||"gut";
-    V.innerHTML='<div class="adm-h"><div><div class="kick">Courses</div><h1>Course <em>content</em></h1></div><div class="acts"><select class="sel" id="pp">'+C.order.map(function(k){ return '<option value="'+k+'"'+(k===pk?' selected':'')+'>'+C.products[k].name+'</option>'; }).join("")+'</select><a class="b sm ghost" href="'+C.products[pk].course+'" target="_blank" rel="noopener">Preview course</a></div></div>'+
+    V.innerHTML='<div class="adm-h"><div><div class="kick">Courses</div><h1>Videos &amp; <em>ebooks</em></h1></div><div class="acts"><select class="sel" id="pp">'+C.order.map(function(k){ return '<option value="'+k+'"'+(k===pk?' selected':'')+'>'+C.products[k].name+'</option>'; }).join("")+'</select><a class="b sm ghost" href="'+C.products[pk].course+'" target="_blank" rel="noopener">Preview course</a></div></div>'+
       '<p class="small" style="margin:-6px 0 14px">Video: paste a YouTube, Vimeo or Wistia link (unlisted works). Ebook: upload the file (HTML or PDF) or paste a link. Members only see these after buying. To preview, give yourself access under "Give access".</p><div id="ls">Loading…</div>';
     document.getElementById("pp").onchange=function(){ sessionStorage.setItem("mth_admin_p",this.value); A.refresh(); };
     var r=await sb.from("mth_lesson_media").select("lesson_id,video_url,ebook_url,updated_at").eq("product",pk);
@@ -42,7 +42,7 @@
     });
   }});
 
-  A.screen("access",{ nav:"Give access", group:"Courses", render: async function(V){
+  A.screen("access",{ nav:"Give access", group:"Courses", help:"Let someone into a course for free, for example a friend, or yourself to preview.", render: async function(V){
     V.innerHTML='<div class="adm-h"><div><div class="kick">Courses</div><h1>Give <em>access</em></h1></div></div><div class="card panel" style="max-width:560px"><p class="small" style="margin-top:0">For a comp, a friend, a refund swap or a test. They need to have signed in once first.</p>'+
       '<div class="field"><label for="ge">Their email</label><input class="inp" id="ge" type="email" placeholder="name@example.com"></div>'+
       '<div class="field"><label for="gp">Protocol</label><select id="gp" class="inp">'+C.order.map(function(k){ return '<option value="'+k+'">'+C.products[k].name+'</option>'; }).join("")+'</select></div>'+

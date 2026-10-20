@@ -7,14 +7,14 @@
 
   /* ================= CONVERSIONS ================= */
   var days=30;
-  A.screen("conversions",{ nav:"Conversions", group:"Growth", render: async function(V){
+  A.screen("conversions",{ nav:"What\u2019s working", group:"Growing", live:true, help:"Which posts and websites bring you visitors, email sign-ups and sales. Bigger numbers on the right = that post is working.", render: async function(V){
     var res=await Promise.all([A.rpc("mth_admin_funnel",{ p_days:days }), A.rpc("mth_admin_attribution",{ p_days:days }), sb.from("mth_posts").select("id,title,slug")]);
     var F=res[0]||[], AT=res[1]||[], posts={}; ((res[2]&&res[2].data)||[]).forEach(function(p){ posts["post-"+p.id]=p; });
     var T={ v:0,j:0,s:0,c:0,p:0 }; F.forEach(function(d){ T.v+=+d.visits; T.j+=+d.list_joins; T.s+=+d.signups; T.c+=+d.checkouts; T.p+=+d.purchases; });
     var pct=function(a,b){ return b?Math.round(100*a/b)+"%":"—"; };
     var steps=[["Visitors",T.v],["Joined list",T.j],["Created account",T.s],["Started checkout",T.c],["Bought",T.p]], max=Math.max(1,T.v,T.j,T.s,T.c,T.p);
     var rev=AT.reduce(function(a,r){ return a+Number(r.revenue_cents||0); },0);
-    V.innerHTML='<div class="adm-h"><div><div class="kick">Growth</div><h1>What’s <em>working</em></h1></div><select class="sel" id="dd"><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option><option value="365">Last 12 months</option></select></div>'+
+    V.innerHTML='<div class="adm-h"><div><div class="kick">Growing</div><h1>What’s <em>working</em></h1></div><select class="sel" id="dd"><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option><option value="365">Last 12 months</option></select></div>'+
       '<div class="card panel"><h3>Funnel</h3>'+steps.map(function(s,i){ return '<div class="row-i"><span style="flex:0 0 150px">'+s[0]+'</span><span style="flex:1"><span style="display:block;height:12px;border-radius:9px;background:'+["#cbbfae","#d9b979","#9fb592","#b8924a","#c0623f"][i]+';width:'+Math.max(2,100*s[1]/max)+'%"></span></span><b style="flex:0 0 60px;text-align:right">'+s[1]+'</b><span class="small" style="flex:0 0 70px;text-align:right">'+(i?pct(s[1],steps[i-1][1])+' step':'')+'</span></div>'; }).join("")+
         '<p class="small" style="margin:10px 0 0">Visitor → buyer: <b>'+pct(T.p,T.v)+'</b> · Revenue credited to sources: <b>'+A.money(rev)+'</b>. Visits count once per browser session.</p></div>'+
       '<div class="sec-h">By source and post</div><div class="card" style="overflow:auto"><table class="ct"><thead><tr><th>Source</th><th>Campaign / post</th><th>Visits</th><th>List</th><th>Accounts</th><th class="hm">Checkouts</th><th>Sales</th><th>Revenue</th></tr></thead><tbody>'+
@@ -26,13 +26,13 @@
 
   /* ================= INTEGRATIONS ================= */
   function dot(on){ return '<span class="status-dot'+(on?' on':'')+'"></span>'; }
-  A.screen("integrations",{ nav:"Integrations", group:"Growth", render: async function(V){
+  A.screen("integrations",{ nav:"Connections", group:"Growing", help:"Where your website connects to other services (payments, email, Metricool). Green dot = connected. Follow the steps under any grey dot.", render: async function(V){
     var st={}; try{ st=await MTH.fn("mth-sync",{ action:"status" }); }catch(e){}
     var P=st.providers||{}, log=[]; try{ log=await A.rpc("mth_admin_sync_log",{ p_limit:30 },true)||[]; }catch(e){}
     var site=MTH.base;
     function card(title,on,body){ return '<div class="card panel" style="margin-bottom:14px"><h3>'+dot(on)+esc(title)+'</h3>'+body+'</div>'; }
     function secret(name,hint){ return '<li>Supabase → <b>Edge Functions → Secrets</b> → add <code>'+name+'</code>'+(hint?' = '+hint:'')+'</li>'; }
-    V.innerHTML='<div class="adm-h"><div><div class="kick">Growth</div><h1>Integrations</h1></div><button class="b sm" id="test">Send me a test contact</button></div>'+
+    V.innerHTML='<div class="adm-h"><div><div class="kick">Growing</div><h1>Connections</h1></div><button class="b sm" id="test">Send me a test contact</button></div>'+
       '<p class="small" style="margin:-6px 0 16px">Green = switched on. Everything here is switched on by pasting a key into Supabase; nothing else to install.</p>'+
       card("Stripe payments",!!st.stripe,'<p class="small">'+(st.stripe?'Test key added.'+(st.live_allowed?' <b>Live payments are allowed.</b>':' Live payments are blocked until you add ALLOW_LIVE.'):'Not switched on yet.')+'</p><ol class="step-list">'+secret("STRIPE_SECRET_KEY","your sk_test_… key (Stripe → Developers → API keys)")+
         '<li>Backup webhook (optional): Stripe → Developers → Webhooks → add endpoint <code>'+FN+'mth-stripe-webhook</code>, event <code>checkout.session.completed</code>, then add its signing secret as <code>STRIPE_WEBHOOK_SECRET</code> '+dot(!!st.stripe_webhook)+'</li>'+

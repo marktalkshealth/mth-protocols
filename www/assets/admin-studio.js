@@ -69,12 +69,12 @@
 
   /* ================= STUDIO (board / calendar / list) ================= */
   var view=localStorage.getItem("mth_studio_view")||"board", month=null, fprod="";
-  A.screen("studio",{ nav:"Social Studio", group:"Growth", render: async function(V){
+  A.screen("studio",{ nav:"Posts", group:"Growing", help:"Plan your social posts. Each card is one post. Move it along as you go: idea → write → film → edit → ready. Then Export for Metricool to schedule them.", render: async function(V){
     var P=await loadPosts();
     if(fprod) P=P.filter(function(p){ return p.product===fprod; });
     var due=P.filter(function(p){ return p.status!=="posted"&&p.publish_at&&new Date(p.publish_at)<Date.now(); }).length;
     var week=P.filter(function(p){ if(!p.publish_at) return false; var d=(new Date(p.publish_at)-Date.now())/864e5; return d>=0&&d<7; }).length;
-    V.innerHTML='<div class="adm-h"><div><div class="kick">Growth</div><h1>Social <em>Studio</em></h1></div><div class="acts"><button class="b sm ghost" id="ideas">Get ideas</button><button class="b sm ghost" id="exp">Export for Metricool</button><button class="b sm" id="new">New post</button></div></div>'+
+    V.innerHTML='<div class="adm-h"><div><div class="kick">Growing</div><h1>Your <em>posts</em></h1></div><div class="acts"><button class="b sm ghost" id="ideas">Get ideas</button><button class="b sm ghost" id="exp">Export for Metricool</button><button class="b sm" id="new">New post</button></div></div>'+
       '<div class="kpis" style="margin-bottom:14px">'+[["idea","Ideas"],["script","Scripted"],["filmed","Filmed"],["edited","Edited"],["ready","Ready"],["scheduled","Scheduled"]].map(function(s){ return '<div class="card kpi"><b>'+P.filter(function(p){ return p.status===s[0]; }).length+'</b><span>'+s[1]+'</span></div>'; }).join("")+'</div>'+
       (due?'<div class="msg err">'+due+' post'+(due>1?'s are':' is')+' past the publish date but not marked posted.</div>':'')+
       '<div class="bar"><div class="chips" style="margin:0">'+[["board","Board"],["calendar","Calendar"],["list","List"]].map(function(v){ return '<button class="chip'+(view===v[0]?' on':'')+'" data-v="'+v[0]+'">'+v[1]+'</button>'; }).join("")+'</div>'+
@@ -188,7 +188,7 @@
     var stats={}; try{ var at=await A.rpc("mth_admin_attribution",{ p_days:365 },true); (at||[]).forEach(function(x){ if(x.utm_content==="post-"+p.id){ ["visits","list_joins","signups","purchases","revenue_cents"].forEach(function(k){ stats[k]=(stats[k]||0)+Number(x[k]||0); }); } }); }catch(e){}
     var local=p.publish_at?new Date(new Date(p.publish_at).getTime()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16):"";
     var tab=p.platforms[0]||"instagram";
-    V.innerHTML='<div style="margin-bottom:10px"><a class="small" href="#studio">← Social Studio</a></div><div class="pp"><div style="display:grid;gap:14px">'+
+    V.innerHTML='<div style="margin-bottom:10px"><a class="small" href="#studio">← Posts</a></div><div class="pp"><div style="display:grid;gap:14px">'+
       '<div class="card panel"><div class="field"><label>Working title</label><input class="inp" id="t" value="'+esc(p.title)+'"></div>'+
         '<div style="display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">'+
           '<div class="field"><label>Stage</label><select class="sel" id="st">'+STATUS.map(function(s){ return '<option value="'+s[0]+'"'+(p.status===s[0]?' selected':'')+'>'+s[1]+'</option>'; }).join("")+'</select></div>'+
