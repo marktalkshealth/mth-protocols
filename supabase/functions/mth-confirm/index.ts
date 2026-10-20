@@ -1,6 +1,7 @@
 // Mark Talks Health: after Stripe sends the member back, confirm the payment and unlock the protocol.
 // POST { session_id }  (signed-in member's token in Authorization)  ->  { ok: true, product }
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { syncContact } from "./sync.ts";
 
 const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info", "Access-Control-Allow-Methods": "POST, OPTIONS" };
 const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { ...CORS, "Content-Type": "application/json" } });
@@ -29,6 +30,8 @@ async function grant(s: Record<string, any>) {
     body: JSON.stringify({ user_id: uid, product, source: "stripe", livemode: !!s.livemode, stripe_session: s.id, amount_cents: s.amount_total, currency: s.currency, active: true }),
   });
   if (!r.ok && r.status !== 409) throw new Error("grant " + r.status + " " + (await r.text()));
+  const email = String(s.customer_details?.email || s.customer_email || "").toLowerCase();
+  if (email) { try { await syncContact({ email, name: s.customer_details?.name || null, event: "purchase", product, source: "stripe" }); } catch (_) { /* email service is best-effort */ } }
   return product as string;
 }
 

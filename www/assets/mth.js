@@ -46,6 +46,23 @@
   M.qs=function(k){ try{ return new URLSearchParams(location.search).get(k); }catch(e){ return null; } };
   M.setRemember=function(on){ var l=ls(); if(l) l.setItem(REMEMBER,on?"1":"0"); };
   M.remembered=remembered;
+  /* ---------- conversion tracking: where visitors came from, and what they did ----------
+     first touch (utm_* from social posts / tracking links) is kept on the device and credited
+     to the list sign-up, account and purchase. Visits are logged once per browser session. */
+  (function(){
+    var l=ls(), id=l&&l.getItem("mth_anon");
+    if(!id){ id="a"+Math.random().toString(36).slice(2)+Date.now().toString(36); try{ l&&l.setItem("mth_anon",id); }catch(e){} }
+    M.anon=id;
+    var q={}; try{ new URLSearchParams(location.search).forEach(function(v,k){ if(/^utm_(source|medium|campaign|content|term)$/.test(k)) q[k]=v.slice(0,80); }); }catch(e){}
+    var ref=""; try{ ref=document.referrer?new URL(document.referrer).hostname:""; }catch(e){}
+    if(ref&&ref!==location.hostname&&!q.utm_source){ q.utm_source=ref.replace(/^www\./,"").replace(/^(l|m|lm)\./,""); q.utm_medium="referral"; }
+    var has=Object.keys(q).length>0;
+    if(has){ q.landing=M.page||"index.html"; try{ if(!l.getItem("mth_first")) l.setItem("mth_first",JSON.stringify(q)); l.setItem("mth_last",JSON.stringify(q)); }catch(e){} }
+    M.utm=function(){ try{ return JSON.parse(l.getItem("mth_first")||"null")||JSON.parse(l.getItem("mth_last")||"null"); }catch(e){ return null; } };
+    M.track=function(ev,product){ try{ sb.rpc("mth_track",{ p_anon:M.anon, p_event:ev, p_page:M.page, p_utm:(ev==="visit"&&has)?q:M.utm(), p_product:product||null }).then(function(){},function(){}); }catch(e){} };
+    var sk="mth_v_"+M.page; var ses=ss();
+    if(M.page!=="admin.html"&&(has||!(ses&&ses.getItem("mth_v")))){ try{ ses&&ses.setItem("mth_v","1"); }catch(e){} M.track("visit"); }
+  })();
   M.isPhone=function(){ try{ return matchMedia("(pointer: coarse)").matches&&Math.min(screen.width,screen.height)<=820; }catch(e){ return false; } };
 
   /* ---------- who is here, and what they own ---------- */
@@ -72,6 +89,8 @@
     M.session=s.data.session||null; M.user=M.session?M.session.user:null;
     window.MTH_USER=M.user?{ id:M.user.id, email:(M.user.email||"").toLowerCase() }:null;
     await loadOwned();
+    if(M.user){ var hk="mth_hello_"+M.user.id; try{ if(!localStorage.getItem(hk)){ localStorage.setItem(hk,"1");
+      sb.rpc("mth_hello",{ p_anon:M.anon, p_utm:M.utm() }).then(function(){ return M.fn("mth-sync",{ action:"signup" }); }).then(function(){},function(){}); } }catch(e){} }
     H.classList.toggle("mx-in",!!M.user); H.classList.toggle("mx-out",!M.user);
     return M;
   };
@@ -111,6 +130,7 @@
     if(!M.user){ location.href=M.loginUrl(CONFIG.products[product].sales+"?buy=1"); return; }
     if(M.owns(product)){ location.href=CONFIG.products[product].course; return; }
     var old=btn&&btn.innerHTML; if(btn){ btn.disabled=true; btn.innerHTML="Opening secure checkout…"; }
+    M.track("checkout",product);
     try{
       var j=await M.fn("mth-checkout",{ product:product, return_base:M.base });
       if(j.url){ location.href=j.url; return; }
@@ -270,8 +290,9 @@
         e.preventDefault(); var inp=f.querySelector('[name="email"]'), b=f.querySelector("button"), em=(inp.value||"").trim();
         if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ M.toast("Please enter a valid email."); inp.focus(); return; }
         b.disabled=true;
-        try{ var r=await sb.rpc("mth_join_list",{ p_email:em, p_source:f.getAttribute("data-source")||M.page });
+        try{ var r=await sb.rpc("mth_join",{ p_email:em, p_name:null, p_source:f.getAttribute("data-source")||M.page, p_anon:M.anon, p_utm:M.utm() });
           if(r.error||r.data!=="ok") throw r.error||new Error(r.data);
+          M.fn("mth-sync",{ action:"list_join", email:em }).then(function(){},function(){});
           f.innerHTML='<p class="mx-list-ok">You\u2019re on the list. Thank you!</p>';
         }catch(err){ M.toast("Couldn\u2019t sign you up. Please try again."); b.disabled=false; }
       });

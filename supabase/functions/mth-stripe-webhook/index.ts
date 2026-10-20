@@ -2,6 +2,7 @@
 // Stripe dashboard -> Developers -> Webhooks -> endpoint .../functions/v1/mth-stripe-webhook, event checkout.session.completed.
 // Needs the STRIPE_WEBHOOK_SECRET (whsec_…) secret.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { syncContact } from "./sync.ts";
 
 const SB_URL = Deno.env.get("SUPABASE_URL")!;
 const SB_SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -15,6 +16,8 @@ async function grant(s: Record<string, any>) {
     body: JSON.stringify({ user_id: uid, product, source: "stripe", livemode: !!s.livemode, stripe_session: s.id, amount_cents: s.amount_total, currency: s.currency, active: true }),
   });
   if (!r.ok && r.status !== 409) throw new Error("grant " + r.status + " " + (await r.text()));
+  const email = String(s.customer_details?.email || s.customer_email || "").toLowerCase();
+  if (email) { try { await syncContact({ email, name: s.customer_details?.name || null, event: "purchase", product, source: "stripe" }); } catch (_) { /* email service is best-effort */ } }
 }
 const hex = (b: ArrayBuffer) => [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("");
 function same(a: string, b: string) { if (a.length !== b.length) return false; let d = 0; for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i); return d === 0; }

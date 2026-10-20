@@ -16,7 +16,8 @@ Branch `own-site-mvp`. Nothing here touches the live LearnWorlds site or `main`.
 | `community.html` | The Healing Hub, for anyone who owns a protocol |
 | `welcome.html` | After payment: confirms with Stripe and unlocks everything |
 | `account.html` | Purchases, "keep me signed in", sign out (and a link to Admin for you) |
-| `admin.html` | **Your admin:** overview, contacts (CRM with tags, notes, CSV export), course content, give/remove access |
+| `admin.html` | **Your admin** — CRM (overview, pipeline stages, contacts, person timelines, notes, tasks, sales), course content, access, Conversions (which posts bring sign-ups and sales), Integrations, Social Studio |
+| `go.html` | Tracking links for social posts (`go.html?p=<post>&s=instagram`) |
 | `terms.html` · `privacy.html` · `refunds.html` · `404.html` | Draft legal pages — please read before going live |
 
 ## Day-to-day (all in admin.html, sign in as marktalkshealth@gmail.com)
@@ -38,3 +39,10 @@ The sales pages and homepage are built from the LearnWorlds designs in `site/` b
 - Supabase → Authentication → Emails → Magic Link: add `Your code: {{ .Token }}` so the email shows the 6-digit code.
 - Supabase's built-in email sender only sends to your own address. Before customers arrive, add a real sender (Authentication → SMTP, e.g. Resend).
 - Authentication → URL Configuration: add the site address (test link now, your domain later) to Redirect URLs.
+
+## Growth system
+- **Conversion tracking:** every visit from a tracking link or social site is tagged (utm), and credited to the list sign-up, account and purchase. See Admin → Conversions.
+- **Social Studio:** board / calendar / list of posts, idea engine built from your course facts, script + teleprompter, captions per platform, media uploads, ready check, tracking links, **Export for Metricool** (bulk-upload CSV).
+- **Email service:** add `KIT_API_KEY` (or Resend / MailerLite / a webhook) in Supabase secrets; list sign-ups, accounts and purchases sync automatically with tags. Admin → Integrations shows status and a log.
+- **Leads in:** `mth-hook` (add `HOOK_SECRET`) for ManyChat, Zapier, Make.
+- **For Claude:** see `ORCHESTRATION.md` in the repo root.

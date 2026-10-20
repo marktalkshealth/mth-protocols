@@ -1,0 +1,8 @@
+-- Applied to Supabase project oihefcsonqjeicelezln on 2026-10-20 (kept here as a record; full SQL in the migration history).
+-- mth_crm_full, mth_crm_activity_fix: mth_contacts.stage, mth_notes, mth_tasks, mth_admin_crm(), mth_admin_person(),
+--   mth_admin_add_note(), mth_admin_archive_note(), mth_admin_task(), mth_admin_tasks(), mth_admin_set_stage(),
+--   mth_admin_bulk_tag(), mth_admin_sales().
+-- mth_growth_tracking_studio: mth_contacts.first_touch/anon_id, mth_events, mth_track(), mth_join(), mth_hello(),
+--   trigger mth_enrollment_event (purchase events), mth_admin_attribution(), mth_admin_funnel(), mth_posts (admin RLS),
+--   mth_link() for go.html, public storage bucket social-media.
+-- mth_sync_log: mth_sync_log + mth_admin_sync_log().  mth_hook_contact: service-role lead intake.
