@@ -18,7 +18,7 @@
       glp1: { name:"GLP-1 Weight Loss Protocol", short:"GLP-1", price:"$97", was:"$147", sales:"glp1.html",   course:"course.html?p=glp1",  app:"app.html?p=glp1",  img:"4-cardio",  line:"Lose fat while protecting muscle. A customised roadmap for using GLP-1s intelligently." }
     },
     order:["gut","sugar","glp1"],
-    testMode:true,                       /* shows the "test checkout" ribbon; set false when Stripe is live */
+    testMode:false,                      /* shows the "test checkout" ribbon; set false when Stripe is live */
     assets:"https://marktalkshealth.github.io/mth-protocols/site/"   /* photos already hosted with the old site */
   };
   var H=document.documentElement;
