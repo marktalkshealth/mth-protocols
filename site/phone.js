@@ -24,7 +24,7 @@
       days:[["Morning green juice","Ice cream cleanse meal","14-hour fasting window"],["10-minute meditation","Journal three lines","Bone broth, 1 cup"],
             ["Morning green juice","Bone broth, 1 cup","Evening walk, 20 min"],["Strength circuit","20-minute brisk walk","Rate your energy"],
             ["Music therapy session","Gratitude note","Morning green juice"],["No screens after 9pm","Lights out by 10:30","Log your sleep"],["20 minutes of morning sun","Forest or park walk","Day 7 check-in"]],
-      food:{goal:1600, carbLabel:"Net carbs", t:{p:90,c:25,f:120}, style:"High protein",
+      food:{goal:1600, carbLabel:"Carbs", t:{p:130,c:110,f:55}, style:"High protein",
         meals:{
           Breakfast:[["🥑","Avocado coconut ice cream",420,6,6,40,"Avocado · coconut cream · vanilla · monk fruit"],["🍳","Eggs, spinach & avocado",410,20,5,34,"3 eggs · spinach · ½ avocado · olive oil"],["🥬","Green juice + collagen",150,12,8,0,"Celery · cucumber · spinach · lemon · collagen"]],
           Lunch:[["🍲","Bone broth & greens bowl",380,28,8,24,"Bone broth · kale · zucchini · olive oil · herbs"],["🐟","Salmon & cucumber salad",450,32,6,32,"Salmon · cucumber · dill · olive oil · lemon"],["🥗","Chicken & avocado salad",470,36,7,32,"Chicken · romaine · avocado · olive oil"]],
@@ -38,11 +38,11 @@
     },
     sugar:{
       name:"Diabetes Protocol", short:"Diabetes", fastGoal:14, fastNote:"Overnight window · goal 14h",
-      steps:["Eating window & fasting","Meditation & journaling","Low-carb food order","Movement after meals","Music therapy & spirit","Sleep & clean air","Nature: light & walking"],
+      steps:["Eating window & fasting","Meditation & journaling","High-protein food order","Movement after meals","Music therapy & spirit","Sleep & clean air","Nature: light & walking"],
       days:[["14-hour overnight window","Protein-first breakfast","Log fasting reading"],["10-minute meditation","Walk after lunch","Log your reading"],
             ["Veg before carbs at lunch","10-minute walk after dinner","Log bedtime reading"],["Walk after every meal","15-minute strength","Log your reading"],
-            ["Music therapy session","Low-carb lunch","Log your reading"],["No late-night snacks","Lights out by 10:30","Log your sleep"],["Morning sun, 20 min","Nature walk after a meal","Day 7 check-in"]],
-      food:{goal:1750, carbLabel:"Net carbs", t:{p:110,c:90,f:90}, style:"Low-carb · food order",
+            ["Music therapy session","High-protein lunch","Log your reading"],["No late-night snacks","Lights out by 10:30","Log your sleep"],["Morning sun, 20 min","Nature walk after a meal","Day 7 check-in"]],
+      food:{goal:1750, carbLabel:"Carbs", t:{p:130,c:120,f:65}, style:"High protein · food order",
         meals:{
           Breakfast:[["🍳","Eggs, greens & avocado",420,22,6,34,"2 eggs · spinach · ½ avocado · olive oil"],["🫐","Greek yogurt, berries & walnuts",380,24,18,22,"Greek yogurt · berries · walnuts · cinnamon"],["🥞","Almond-flour protein pancakes",400,30,12,24,"Almond flour · eggs · protein · berries"]],
           Lunch:[["🐟","Salmon salad, olive oil",520,38,10,36,"Salmon · greens · cucumber · olive oil"],["🍲","Chicken & lentil soup",460,36,30,14,"Chicken · lentils · carrot · celery"],["🥙","Turkey lettuce wraps",430,34,12,26,"Turkey · lettuce · avocado · tomato"]],

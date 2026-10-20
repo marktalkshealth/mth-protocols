@@ -215,7 +215,7 @@
   </div>
   <div class="hvid"><div class="mthv" data-wistia="c6bmdm7xd7" data-title="Watch my story" data-len=""></div></div>
   <div class="hbot">
-    <p class="lead">Enter your readings and symptoms into the app. It builds your day-by-day protocol: what to eat and when, how to move after meals, low-carb recipes, and the 7 healing steps that will balance your blood sugar.</p>
+    <p class="lead">Enter your readings and symptoms into the app. It builds your day-by-day protocol: what to eat and when, how to move after meals, high-protein recipes, and the 7 healing steps that will balance your blood sugar.</p>
     <div style="margin-top:24px"><button class="btn g2-buy">Start my protocol <small>· $97</small></button></div>
     <div class="ticks"><span>80+ published studies</span><span>Personalised plan</span><span>30-day guarantee</span></div>
   </div>
@@ -248,7 +248,7 @@
   <div class="rv"><div class="k">The solution</div><h2>Three things working together, <em>so you never guess</em></h2><p class="lead">Most diabetes advice is a list of foods to avoid. This starts with your numbers, then guides you every single day.</p></div>
   <div class="trio">
     <div class="card tc rv"><div class="im" style="background-image:url('https://lwfiles.mycourse.app/6ac2bb5648140f5f6d8ca00c-public/1ae11977dd83e66451d36a98f0f4ccd0.jpg')"></div><div class="tx"><div class="n">01 · THE SOFTWARE</div><h3>Your personal metabolic plan</h3><p>Enter your readings, labs and symptoms. Get a day-by-day plan with meals, movement and the tests worth discussing with your doctor.</p></div></div>
-    <div class="card tc rv"><div class="im" style="background-image:url('https://lwfiles.mycourse.app/6ac2bb5648140f5f6d8ca00c-public/22c7349909403e2793af8f4b776ef5c7.jpg')"></div><div class="tx"><div class="n">02 · THE FOOD</div><h3>Low-carb food you'll enjoy</h3><p>Low-carb recipes, signature juices and low-sugar ice creams that tame cravings, plus when to eat carbs and what to do after.</p></div></div>
+    <div class="card tc rv"><div class="im" style="background-image:url('https://lwfiles.mycourse.app/6ac2bb5648140f5f6d8ca00c-public/22c7349909403e2793af8f4b776ef5c7.jpg')"></div><div class="tx"><div class="n">02 · THE FOOD</div><h3>High-protein food you'll enjoy</h3><p>High-protein recipes, signature juices and low-sugar ice creams that tame cravings, plus when to eat carbs and what to do after.</p></div></div>
     <div class="card tc rv"><div class="im" style="background-image:url('https://lwfiles.mycourse.app/6ac2bb5648140f5f6d8ca00c-public/0a6332bc4c328ebc923ed47446b1c9d3.jpg')"></div><div class="tx"><div class="n">03 · THE COURSE</div><h3>The science, made simple</h3><p>A 7-part course on insulin resistance, metabolic flexibility and glucose monitoring, drawing on 80+ published studies.</p></div></div>
   </div>
   <div class="trio-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
@@ -291,7 +291,7 @@
     <ul>
       <li><i>✓</i><div>Personalised healing software<small>Your day-by-day plan, built from your intake</small></div></li>
       <li><i>✓</i><div>7-part course + interactive ebook<small>The science behind every step</small></div></li>
-      <li><i>✓</i><div>Low-carb recipes &amp; meal plans<small>Plus when to eat carbs, and what to do after</small></div></li>
+      <li><i>✓</i><div>High-protein recipes &amp; meal plans<small>Plus when to eat carbs, and what to do after</small></div></li>
       <li><i>✓</i><div>Glucose log, fasting clock &amp; dashboard<small>See your progress day by day</small></div></li>
       <li><i>✓</i><div>Healing Hub community &amp; live Q&amp;A<small>Ask Mark, share your progress</small></div></li>
     </ul>
@@ -336,7 +336,7 @@ if(location.hash==="#checkout"){ setTimeout(function(){ var el=findCheckout(); i
 
 /* ---- symptom picker ---- */
 var SYM=[["Energy crashes",2,[2,3]],["Sugar cravings",3,[2,0]],["Brain fog after meals",2,[2,3]],["High morning readings",3,[0,5]],["Belly weight",2,[3,2]],["Always thirsty",2,[2,0]],["Tingling feet",3,[3,2]],["High blood pressure",2,[1,3]],["Poor sleep",2,[5,1]],["Stress",2,[1,4]],["Low activity",2,[3,6]],["Snacking at night",2,[0,5]]];
-var STEP=["Eating window & fasting","Meditation & journaling","Low-carb food order","Movement after meals","Music therapy & spirit","Sleep & clean air","Nature: light & walking"];
+var STEP=["Eating window & fasting","Meditation & journaling","High-protein food order","Movement after meals","Music therapy & spirit","Sleep & clean air","Nature: light & walking"];
 var picked={};
 $("g2Chips").innerHTML=SYM.map(function(s,i){ return '<button class="chip" data-s="'+i+'">'+esc(s[0])+'</button>'; }).join("");
 R.querySelectorAll("#g2Chips .chip").forEach(function(c){ c.addEventListener("click",function(){ var i=+c.dataset.s; picked[i]=!picked[i]; c.classList.toggle("on",!!picked[i]); result(); }); });
@@ -354,7 +354,7 @@ function result(){
 
 /* ---- cleanse levels ---- */
 var LV=[
- {t:"Steady low-carb reset",d:"Three low-carb meals a day built around protein, vegetables and healthy fats, with a short walk after each meal. The easiest place to start.",n:1,p:[["Breakfast","Eggs, greens & avocado"],["Lunch","Protein salad, olive oil"],["Dinner","Fish or chicken & veg"],["After meals","10-minute walk"]]},
+ {t:"Steady high-protein reset",d:"Three high-protein meals a day built around lean protein, vegetables and healthy fats, with a short walk after each meal. The easiest place to start.",n:1,p:[["Breakfast","Eggs, greens & avocado"],["Lunch","Protein salad, olive oil"],["Dinner","Fish or chicken & veg"],["After meals","10-minute walk"]]},
  {t:"Time-restricted eating",d:"The same meals inside an 8–10 hour eating window, so your body gets a longer overnight rest. Agree it with your doctor if you take medication.",n:2,p:[["Window","Eat between 10am and 6pm"],["Order","Veg and protein before carbs"],["Evening","Herbal tea, no snacks"],["Track","Morning and bedtime readings"]]},
  {t:"Supervised fasting",d:"Longer fasts can lower blood sugar quickly. Only with your doctor's supervision, especially if you take insulin or glucose-lowering medication.",n:3,p:[["Who","Experienced, doctor-approved"],["Track","Readings several times a day"],["Stop if","You feel shaky, dizzy or unwell"],["Note","Medical supervision required"]]}
 ];
@@ -368,13 +368,13 @@ R.querySelectorAll("#g2Seg button").forEach(function(b){ b.addEventListener("cli
 var DAYS=[
  ["Reset your eating window","Start your level and track your overnight window on the built-in clock.",["Set your eating window","Log your morning reading","2–3 litres of water"]],
  ["Calm the stress response","Stress hormones push glucose up. Today is about switching into rest-and-repair.",["10-minute guided meditation","One page of journaling","Slow breaths before meals"]],
- ["Eat in the right order","Low-carb whole foods, with vegetables and protein before any carbohydrate.",["Veg first, carbs last","Protein at every meal","Prep tomorrow from the recipe library"]],
+ ["Eat in the right order","High-protein whole foods, with protein and vegetables before any carbohydrate.",["Veg first, carbs last","Protein at every meal","Prep tomorrow from the recipe library"]],
  ["Move after meals","A short walk after eating is one of the simplest ways to blunt a glucose spike.",["10–15 minute walk after meals","10 minutes of strength","Log a post-meal reading"]],
  ["Sound as medicine","Music, prayer, gratitude or stillness, to lower stress that drives cravings.",["Music therapy session","10 minutes of gratitude or silence","Reach out to one person"]],
  ["Sleep steadies glucose","Short sleep raises next-day blood sugar. Set up your night for deep rest.",["Screens off an hour before bed","Cool, dark bedroom","Same bedtime tonight and tomorrow"]],
  ["Reset outdoors","Morning light and an outdoor walk support healthier glucose rhythms.",["Sunlight within an hour of waking","A 30-minute walk outside","Compare your Day 1 and Day 7 readings"]]
 ];
-var SIMG=["1-fasting","2-meditation","3-keto","4-cardio","5-music","6-sleep","7-nature"];
+var SIMG=["1-fasting","2-meditation","3-high-protein","4-cardio","5-music","6-sleep","7-nature"];
 $("g2TL").innerHTML=DAYS.map(function(d,i){ return '<button class="td ph" data-d="'+i+'" aria-label="Day '+(i+1)+': '+esc(STEP[i])+'" style="background-image:url(https://marktalkshealth.github.io/mth-protocols/site/steps/'+SIMG[i]+'.jpg)"><b>'+(i+1)+'</b></button>'; }).join("");
 function day(i){ R.querySelectorAll(".td").forEach(function(b,j){b.classList.toggle("on",j===i);});
   $("g2DK").textContent="Day "+(i+1)+" · "+STEP[i]; $("g2DT").textContent=DAYS[i][0]; $("g2DD").textContent=DAYS[i][1];

@@ -336,7 +336,7 @@ if(location.hash==="#checkout"){ setTimeout(function(){ var el=findCheckout(); i
 
 /* ---- symptom picker ---- */
 var SYM=[["Bloating & gas",3,[0,2]],["Acid reflux",3,[2,5]],["Constipation",2,[2,3]],["Loose stools",3,[0,2]],["Fatigue",2,[5,1]],["Brain fog",2,[1,5]],["Poor sleep",2,[5,4]],["Food sensitivities",3,[0,2]],["Skin flare-ups",2,[2,6]],["Joint aches",2,[3,2]],["Sugar cravings",2,[0,1]],["Stress & anxiety",2,[1,4]]];
-var STEP=["Fasting & cleanse","Meditation & journaling","Keto & healing broths","Cardio & strength","Music therapy & spirit","Sleep & clean air","Nature: forest & sun"];
+var STEP=["Fasting & cleanse","Meditation & journaling","High protein & healing broths","Cardio & strength","Music therapy & spirit","Sleep & clean air","Nature: forest & sun"];
 var picked={};
 $("g2Chips").innerHTML=SYM.map(function(s,i){ return '<button class="chip" data-s="'+i+'">'+esc(s[0])+'</button>'; }).join("");
 R.querySelectorAll("#g2Chips .chip").forEach(function(c){ c.addEventListener("click",function(){ var i=+c.dataset.s; picked[i]=!picked[i]; c.classList.toggle("on",!!picked[i]); result(); }); });
@@ -368,13 +368,13 @@ R.querySelectorAll("#g2Seg button").forEach(function(b){ b.addEventListener("cli
 var DAYS=[
  ["Give digestion a rest","Start your cleanse level and track it on the built-in fasting clock.",["Start your fast on the clock","2–3 litres of water","Note how you feel tonight"]],
  ["Calm the nervous system","Stress shows up in the gut. Today is about switching into rest-and-repair.",["10-minute guided meditation","One page of journaling","Slow breaths before meals"]],
- ["Feed repair","Low-carb whole foods and a warm cup of healing broth.",["One cup of bone or veg broth","Protein + vegetables at every meal","Prep tomorrow from the recipe library"]],
+ ["Feed repair","High-protein whole foods and a warm cup of healing broth.",["One cup of bone or veg broth","Protein + vegetables at every meal","Prep tomorrow from the recipe library"]],
  ["Move to heal","A short walk and a little strength work to wake up your metabolism.",["20–30 minute brisk walk","10 minutes of strength","5 minutes of stretching"]],
  ["Sound as medicine","Music, prayer, gratitude or stillness. The part of healing labs can't measure.",["Music therapy session","10 minutes of gratitude or silence","Reach out to one person"]],
  ["Repair happens at night","Set up your room and routine for deep, restorative sleep.",["Screens off an hour before bed","Air out and cool your bedroom","Same bedtime tonight and tomorrow"]],
  ["Reset outdoors","Morning light and time among trees to finish the week.",["Sunlight within an hour of waking","A walk in a park or forest","Share your win in the community"]]
 ];
-var SIMG=["1-fasting","2-meditation","3-keto","4-cardio","5-music","6-sleep","7-nature"];
+var SIMG=["1-fasting","2-meditation","3-high-protein","4-cardio","5-music","6-sleep","7-nature"];
 $("g2TL").innerHTML=DAYS.map(function(d,i){ return '<button class="td ph" data-d="'+i+'" aria-label="Day '+(i+1)+': '+esc(STEP[i])+'" style="background-image:url(https://marktalkshealth.github.io/mth-protocols/site/steps/'+SIMG[i]+'.jpg)"><b>'+(i+1)+'</b></button>'; }).join("");
 function day(i){ R.querySelectorAll(".td").forEach(function(b,j){b.classList.toggle("on",j===i);});
   $("g2DK").textContent="Day "+(i+1)+" · "+STEP[i]; $("g2DT").textContent=DAYS[i][0]; $("g2DD").textContent=DAYS[i][1];

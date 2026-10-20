@@ -14,7 +14,7 @@
     /* the three protocols: sales page, course and app for each */
     products:{
       gut:  { name:"Gut Health Protocol", short:"Gut Health", price:"$97", was:"$147", sales:"gut.html",      course:"course.html?p=gut",   app:"app.html?p=gut",   img:"1-fasting", line:"Calm the gut lining and rebuild your microbiome with a guided juice cleanse." },
-      sugar:{ name:"Diabetes Protocol",   short:"Diabetes",   price:"$97", was:"$147", sales:"diabetes.html", course:"course.html?p=sugar", app:"app.html?p=sugar", img:"3-keto",    line:"Gain control of your blood sugar and enjoy steadier energy with your personalised protocol." },
+      sugar:{ name:"Diabetes Protocol",   short:"Diabetes",   price:"$97", was:"$147", sales:"diabetes.html", course:"course.html?p=sugar", app:"app.html?p=sugar", img:"3-high-protein",    line:"Gain control of your blood sugar and enjoy steadier energy with your personalised protocol." },
       glp1: { name:"GLP-1 Weight Loss Protocol", short:"GLP-1", price:"$97", was:"$147", sales:"glp1.html",   course:"course.html?p=glp1",  app:"app.html?p=glp1",  img:"4-cardio",  line:"Lose fat while protecting muscle. A customised roadmap for using GLP-1s intelligently." }
     },
     order:["gut","sugar","glp1"],
@@ -164,8 +164,7 @@
     if(document.querySelector(".mx-h")||H.classList.contains("mx-bare")) return;
     var cur=M.product(), P=CONFIG.products[cur], inn=!!M.user, any=M.ownsAny(), ownCur=M.owns(cur);
     var initial=inn?M.esc((M.user.email||"?").charAt(0).toUpperCase()):"";
-    var links=[["index.html","Home"],["protocols.html","Protocols"]];
-    if(any){ links.push(["course.html","My course"]); links.push(["app.html","My app"]); links.push(["community.html","Healing Hub"]); }
+    var links=[[any?"course.html":"protocols.html","Courses"],["app.html","Apps"],["community.html","Hub"]];
     var cta=ownCur?'<a class="b sm" href="'+P.app+'">Open app</a>':any?'<a class="b sm" href="app.html">Open app</a>':'<a class="b sm wide" href="'+P.sales+'#checkout">Start · '+P.price+'</a>';
     var h=document.createElement("header"); h.className="mx-h";
     h.innerHTML='<div class="in"><a class="mx-word" href="index.html">Mark Talks <em>Health</em></a>'+
@@ -177,7 +176,7 @@
     var sh=document.createElement("div"); sh.className="mx-sheet"; sh.setAttribute("role","dialog"); sh.setAttribute("aria-label","Menu");
     var sl=[["index.html","Home","Natural healing meets modern science"]];
     CONFIG.order.forEach(function(k){ var q=CONFIG.products[k]; sl.push([M.owns(k)?q.course:q.sales,q.name,M.owns(k)?"Your course · open":"From "+q.price]); });
-    if(any){ sl.push(["app.html","My app","Your personal healing plan"]); sl.push(["community.html","The Healing Hub","Community, questions and live sessions"]); }
+    sl.push(["app.html","Apps","Your personal healing plan"]); sl.push(["community.html","Hub","Community, questions and live sessions"]);
     if(inn) sl.push(["account.html","My account",M.esc(M.user.email)]);
     sh.innerHTML='<div class="top"><a class="mx-word" href="index.html">Mark Talks <em>Health</em></a><button class="mx-burger" type="button" aria-label="Close menu" style="display:grid">'+ICON.close+'</button></div>'+
       '<nav>'+sl.map(function(l){ return '<a href="'+l[0]+'">'+l[1]+(l[2]?'<small>'+l[2]+'</small>':'')+'</a>'; }).join("")+'</nav>'+

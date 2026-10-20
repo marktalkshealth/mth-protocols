@@ -243,70 +243,70 @@ window.MTH_COURSES={
    {
     "id": "s3",
     "step": 3,
-    "title": "Keto & healing broths",
+    "title": "High protein & healing broths",
     "sub": "Feed repair",
-    "img": "3-keto",
+    "img": "3-high-protein",
     "lessons": [
      {
       "id": "keto",
-      "title": "The ketogenic diet",
+      "title": "The High Protein Meal Plan",
       "mins": 12,
-      "text": "How a low-carb, whole-food way of eating steadies blood sugar and supports a calmer gut, and how to build a plate after your cleanse.",
+      "text": "How protein-first meals keep you full, protect muscle while you lose fat, and give your gut lining the building blocks to repair, and how to build a high-protein plate after your cleanse.",
       "quiz": [
        {
-        "q": "About how many grams of carbohydrate a day does a ketogenic diet usually keep you under?",
+        "q": "Which nutrient keeps you full the longest per calorie?",
         "o": [
-         "20–50 g",
-         "150–200 g",
-         "300 g",
-         "There is no limit"
+         "Protein",
+         "Sugar",
+         "Fat",
+         "Alcohol"
         ],
         "a": 0,
-        "fb": "Keeping carbs below roughly 20–50 g a day removes the main sugar load, so blood sugar settles and the body switches fuel."
+        "fb": "Protein is the most filling nutrient. It calms hunger hormones, so you naturally eat less without fighting cravings."
        },
        {
-        "q": "Roughly how long does it take to enter nutritional ketosis on a low-carb diet?",
+        "q": "Roughly how much protein per kilogram of body weight is a good daily target when healing and losing weight?",
         "o": [
-         "1 hour",
-         "About 72 hours",
-         "3 weeks",
-         "6 months"
+         "0.3 g",
+         "About 1.2–1.6 g",
+         "5 g",
+         "No target needed"
         ],
         "a": 1,
-        "fb": "Most people reach ketosis in about three days, which is when steadier energy and lower appetite usually kick in."
+        "fb": "Around 1.2–1.6 g per kg a day protects muscle while you lose fat and gives your body the building blocks to repair."
        },
        {
-        "q": "What does the body burn for fuel in ketosis instead of sugar?",
+        "q": "About how much protein per meal helps your muscles rebuild best?",
         "o": [
-         "Protein only",
-         "Ketones made from fat",
-         "Alcohol",
-         "Vitamins"
+         "5 g",
+         "About 25–40 g",
+         "100 g",
+         "It doesn't matter"
         ],
         "a": 1,
-        "fb": "In ketosis the liver turns fat into ketones, a clean, steady fuel for the brain and muscles."
+        "fb": "Spreading 25–40 g of protein across each meal switches on muscle repair several times a day."
        },
        {
-        "q": "Which marker does the ebook call the \"hidden driver\" of fat storage and insulin resistance?",
+        "q": "Why does protein help when you're losing weight?",
         "o": [
-         "Fasting insulin",
-         "Vitamin C",
-         "Heart rate",
-         "Body temperature"
+         "It protects muscle so the weight you lose is fat",
+         "It adds water weight",
+         "It stops digestion",
+         "It replaces sleep"
         ],
         "a": 0,
-        "fb": "High fasting insulin keeps the body in storage mode. Keto lowers it, which helps unlock stored fat."
+        "fb": "Without enough protein the body breaks down muscle. High protein keeps muscle, so the scale drop is real fat loss."
        },
        {
-        "q": "What is the \"dawn phenomenon\" that keto often helps settle?",
+        "q": "Roughly how much of protein's calories does your body burn just digesting it?",
         "o": [
-         "Waking up too early",
-         "An early-morning blood sugar spike from the liver releasing stored sugar",
-         "Feeling cold at sunrise",
-         "A morning headache from coffee"
+         "About 20–30%",
+         "1%",
+         "Over 80%",
+         "None"
         ],
-        "a": 1,
-        "fb": "Overnight the liver can release stored sugar. In ketosis it makes ketones instead, so morning readings tend to settle."
+        "a": 0,
+        "fb": "Protein has the highest 'thermic effect': about a quarter of its calories are used just to digest it."
        }
       ]
      },
@@ -1038,70 +1038,70 @@ window.MTH_COURSES={
    {
     "id": "s3",
     "step": 3,
-    "title": "Keto & healing broths",
+    "title": "High protein & healing broths",
     "sub": "Feed repair",
-    "img": "3-keto",
+    "img": "3-high-protein",
     "lessons": [
      {
       "id": "keto",
-      "title": "Low-carb eating for steady glucose",
+      "title": "High protein for steady glucose",
       "mins": 12,
-      "text": "How a low-carb, whole-food way of eating flattens blood sugar spikes, and how to build a plate that keeps your energy steady all day.",
+      "text": "How protein-first meals blunt blood sugar spikes, keep you full for hours and protect muscle, and how to build a high-protein plate that keeps your energy steady all day.",
       "quiz": [
        {
-        "q": "About how many grams of carbohydrate a day does a ketogenic diet usually keep you under?",
+        "q": "Which nutrient keeps you full the longest per calorie?",
         "o": [
-         "20–50 g",
-         "150–200 g",
-         "300 g",
-         "There is no limit"
+         "Protein",
+         "Sugar",
+         "Fat",
+         "Alcohol"
         ],
         "a": 0,
-        "fb": "Keeping carbs below roughly 20–50 g a day removes the main sugar load, so blood sugar settles and the body switches fuel."
+        "fb": "Protein is the most filling nutrient. It calms hunger hormones, so you naturally eat less without fighting cravings."
        },
        {
-        "q": "Roughly how long does it take to enter nutritional ketosis on a low-carb diet?",
+        "q": "Roughly how much protein per kilogram of body weight is a good daily target when healing and losing weight?",
         "o": [
-         "1 hour",
-         "About 72 hours",
-         "3 weeks",
-         "6 months"
+         "0.3 g",
+         "About 1.2–1.6 g",
+         "5 g",
+         "No target needed"
         ],
         "a": 1,
-        "fb": "Most people reach ketosis in about three days, which is when steadier energy and lower appetite usually kick in."
+        "fb": "Around 1.2–1.6 g per kg a day protects muscle while you lose fat and gives your body the building blocks to repair."
        },
        {
-        "q": "What does the body burn for fuel in ketosis instead of sugar?",
+        "q": "About how much protein per meal helps your muscles rebuild best?",
         "o": [
-         "Protein only",
-         "Ketones made from fat",
-         "Alcohol",
-         "Vitamins"
+         "5 g",
+         "About 25–40 g",
+         "100 g",
+         "It doesn't matter"
         ],
         "a": 1,
-        "fb": "In ketosis the liver turns fat into ketones, a clean, steady fuel for the brain and muscles."
+        "fb": "Spreading 25–40 g of protein across each meal switches on muscle repair several times a day."
        },
        {
-        "q": "Which marker does the ebook call the \"hidden driver\" of fat storage and insulin resistance?",
+        "q": "Why does protein help when you're losing weight?",
         "o": [
-         "Fasting insulin",
-         "Vitamin C",
-         "Heart rate",
-         "Body temperature"
+         "It protects muscle so the weight you lose is fat",
+         "It adds water weight",
+         "It stops digestion",
+         "It replaces sleep"
         ],
         "a": 0,
-        "fb": "High fasting insulin keeps the body in storage mode. Keto lowers it, which helps unlock stored fat."
+        "fb": "Without enough protein the body breaks down muscle. High protein keeps muscle, so the scale drop is real fat loss."
        },
        {
-        "q": "What is the \"dawn phenomenon\" that keto often helps settle?",
+        "q": "Roughly how much of protein's calories does your body burn just digesting it?",
         "o": [
-         "Waking up too early",
-         "An early-morning blood sugar spike from the liver releasing stored sugar",
-         "Feeling cold at sunrise",
-         "A morning headache from coffee"
+         "About 20–30%",
+         "1%",
+         "Over 80%",
+         "None"
         ],
-        "a": 1,
-        "fb": "Overnight the liver can release stored sugar. In ketosis it makes ketones instead, so morning readings tend to settle."
+        "a": 0,
+        "fb": "Protein has the highest 'thermic effect': about a quarter of its calories are used just to digest it."
        }
       ]
      },
@@ -1833,70 +1833,70 @@ window.MTH_COURSES={
    {
     "id": "s3",
     "step": 3,
-    "title": "Keto & healing broths",
+    "title": "High protein & healing broths",
     "sub": "Feed repair",
-    "img": "3-keto",
+    "img": "3-high-protein",
     "lessons": [
      {
       "id": "keto",
-      "title": "Protein-first, low-carb eating",
+      "title": "Protein-first eating on a GLP-1",
       "mins": 12,
-      "text": "Eating less on a GLP-1 makes every meal count. How to hit your protein so you lose fat, not muscle, with low-carb whole foods that are easy on the stomach.",
+      "text": "Eating less on a GLP-1 makes every meal count. How to hit your protein so you lose fat, not muscle, with high-protein whole foods that are easy on the stomach.",
       "quiz": [
        {
-        "q": "About how many grams of carbohydrate a day does a ketogenic diet usually keep you under?",
+        "q": "Which nutrient keeps you full the longest per calorie?",
         "o": [
-         "20–50 g",
-         "150–200 g",
-         "300 g",
-         "There is no limit"
+         "Protein",
+         "Sugar",
+         "Fat",
+         "Alcohol"
         ],
         "a": 0,
-        "fb": "Keeping carbs below roughly 20–50 g a day removes the main sugar load, so blood sugar settles and the body switches fuel."
+        "fb": "Protein is the most filling nutrient. It calms hunger hormones, so you naturally eat less without fighting cravings."
        },
        {
-        "q": "Roughly how long does it take to enter nutritional ketosis on a low-carb diet?",
+        "q": "Roughly how much protein per kilogram of body weight is a good daily target when healing and losing weight?",
         "o": [
-         "1 hour",
-         "About 72 hours",
-         "3 weeks",
-         "6 months"
+         "0.3 g",
+         "About 1.2–1.6 g",
+         "5 g",
+         "No target needed"
         ],
         "a": 1,
-        "fb": "Most people reach ketosis in about three days, which is when steadier energy and lower appetite usually kick in."
+        "fb": "Around 1.2–1.6 g per kg a day protects muscle while you lose fat and gives your body the building blocks to repair."
        },
        {
-        "q": "What does the body burn for fuel in ketosis instead of sugar?",
+        "q": "About how much protein per meal helps your muscles rebuild best?",
         "o": [
-         "Protein only",
-         "Ketones made from fat",
-         "Alcohol",
-         "Vitamins"
+         "5 g",
+         "About 25–40 g",
+         "100 g",
+         "It doesn't matter"
         ],
         "a": 1,
-        "fb": "In ketosis the liver turns fat into ketones, a clean, steady fuel for the brain and muscles."
+        "fb": "Spreading 25–40 g of protein across each meal switches on muscle repair several times a day."
        },
        {
-        "q": "Which marker does the ebook call the \"hidden driver\" of fat storage and insulin resistance?",
+        "q": "Why does protein help when you're losing weight?",
         "o": [
-         "Fasting insulin",
-         "Vitamin C",
-         "Heart rate",
-         "Body temperature"
+         "It protects muscle so the weight you lose is fat",
+         "It adds water weight",
+         "It stops digestion",
+         "It replaces sleep"
         ],
         "a": 0,
-        "fb": "High fasting insulin keeps the body in storage mode. Keto lowers it, which helps unlock stored fat."
+        "fb": "Without enough protein the body breaks down muscle. High protein keeps muscle, so the scale drop is real fat loss."
        },
        {
-        "q": "What is the \"dawn phenomenon\" that keto often helps settle?",
+        "q": "Roughly how much of protein's calories does your body burn just digesting it?",
         "o": [
-         "Waking up too early",
-         "An early-morning blood sugar spike from the liver releasing stored sugar",
-         "Feeling cold at sunrise",
-         "A morning headache from coffee"
+         "About 20–30%",
+         "1%",
+         "Over 80%",
+         "None"
         ],
-        "a": 1,
-        "fb": "Overnight the liver can release stored sugar. In ketosis it makes ketones instead, so morning readings tend to settle."
+        "a": 0,
+        "fb": "Protein has the highest 'thermic effect': about a quarter of its calories are used just to digest it."
        }
       ]
      },
