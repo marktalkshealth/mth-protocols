@@ -154,7 +154,7 @@ html.mth-app #fastingArcContainer .chart-card { margin: 0 !important; padding: 1
 html.mth-app #fastingArcContainer .chart-title { font-size: 1.35rem !important; line-height: 1.15 !important; position: sticky; left: 0; }
 html.mth-app #fastingArcContainer .chart-sub { font-size: .82rem !important; line-height: 1.45 !important; position: sticky; left: 0; max-width: calc(100vw - 60px); }
 html.mth-app #fastingArcContainer .chart-legend { position: sticky; left: 0; max-width: calc(100vw - 60px); }
-html.mth-app #fastingArcContainer .slope-chart { min-width: 760px !important; }
+html.mth-app #fastingArcContainer .slope-chart { min-width: 760px !important; height: 190px !important; }
 html.mth-app.mth-setup .mp-archint { display: none !important; }
 
 /* ---- the demo look, at phone size ---- */
