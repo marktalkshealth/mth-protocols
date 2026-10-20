@@ -357,7 +357,7 @@ var DAYS=[
  ["Sleep steadies glucose","Short sleep raises next-day blood sugar. Set up your night for deep rest.",["Screens off an hour before bed","Cool, dark bedroom","Same bedtime tonight and tomorrow"]],
  ["Reset outdoors","Morning light and an outdoor walk support healthier glucose rhythms.",["Sunlight within an hour of waking","A 30-minute walk outside","Compare your Day 1 and Day 7 readings"]]
 ];
-var SIMG=["1-fasting","2-meditation","3-keto","4-cardio","5-music","6-sleep","7-nature"];
+var SIMG=["1-fasting","2-meditation","3-high-protein","4-cardio","5-music","6-sleep","7-nature"];
 $("g2TL").innerHTML=DAYS.map(function(d,i){ return '<button class="td ph" data-d="'+i+'" aria-label="Day '+(i+1)+': '+esc(STEP[i])+'" style="background-image:url(https://marktalkshealth.github.io/mth-protocols/site/steps/'+SIMG[i]+'.jpg)"><b>'+(i+1)+'</b></button>'; }).join("");
 function day(i){ R.querySelectorAll(".td").forEach(function(b,j){b.classList.toggle("on",j===i);});
   $("g2DK").textContent="Day "+(i+1)+" · "+STEP[i]; $("g2DT").textContent=DAYS[i][0]; $("g2DD").textContent=DAYS[i][1];

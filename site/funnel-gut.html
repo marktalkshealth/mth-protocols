@@ -319,7 +319,7 @@ if(location.hash==="#checkout"){ var tries=0; (function go(){ var el=findCheckou
 
 /* ---- symptom picker ---- */
 var SYM=[["Bloating & gas",3,[0,2]],["Acid reflux",3,[2,5]],["Constipation",2,[2,3]],["Loose stools",3,[0,2]],["Fatigue",2,[5,1]],["Brain fog",2,[1,5]],["Poor sleep",2,[5,4]],["Food sensitivities",3,[0,2]],["Skin flare-ups",2,[2,6]],["Joint aches",2,[3,2]],["Sugar cravings",2,[0,1]],["Stress & anxiety",2,[1,4]]];
-var STEP=["Fasting & cleanse","Meditation & journaling","Keto & healing broths","Cardio & strength","Music therapy & spirit","Sleep & clean air","Nature: forest & sun"];
+var STEP=["Fasting & cleanse","Meditation & journaling","High protein meals","Cardio & strength","Music therapy & spirit","Sleep & clean air","Nature: forest & sun"];
 var picked={};
 $("g2Chips").innerHTML=SYM.map(function(s,i){ return '<button class="chip" data-s="'+i+'">'+esc(s[0])+'</button>'; }).join("");
 R.querySelectorAll("#g2Chips .chip").forEach(function(c){ c.addEventListener("click",function(){ var i=+c.dataset.s; picked[i]=!picked[i]; c.classList.toggle("on",!!picked[i]); result(); }); });
@@ -357,7 +357,7 @@ var DAYS=[
  ["Repair happens at night","Set up your room and routine for deep, restorative sleep.",["Screens off an hour before bed","Air out and cool your bedroom","Same bedtime tonight and tomorrow"]],
  ["Reset outdoors","Morning light and time among trees to finish the week.",["Sunlight within an hour of waking","A walk in a park or forest","Share your win in the community"]]
 ];
-var SIMG=["1-fasting","2-meditation","3-keto","4-cardio","5-music","6-sleep","7-nature"];
+var SIMG=["1-fasting","2-meditation","3-high-protein","4-cardio","5-music","6-sleep","7-nature"];
 $("g2TL").innerHTML=DAYS.map(function(d,i){ return '<button class="td ph" data-d="'+i+'" aria-label="Day '+(i+1)+': '+esc(STEP[i])+'" style="background-image:url(https://marktalkshealth.github.io/mth-protocols/site/steps/'+SIMG[i]+'.jpg)"><b>'+(i+1)+'</b></button>'; }).join("");
 function day(i){ R.querySelectorAll(".td").forEach(function(b,j){b.classList.toggle("on",j===i);});
   $("g2DK").textContent="Day "+(i+1)+" · "+STEP[i]; $("g2DT").textContent=DAYS[i][0]; $("g2DD").textContent=DAYS[i][1];
