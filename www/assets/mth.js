@@ -1,0 +1,262 @@
+/* =================================================================
+   MARK TALKS HEALTH — OWN SITE CORE (no LearnWorlds)
+   Every page loads this after assets/vendor/supabase-*.js.
+   - sign-in (email code) with "remember me"
+   - who owns what (mth_enrollments in Supabase)
+   - header, footer, toasts
+   - Stripe checkout (test mode until Mark switches it on)
+   Edit CONFIG below; everything else follows.
+================================================================= */
+(function(){
+  var CONFIG={
+    supabaseUrl:"https://oihefcsonqjeicelezln.supabase.co",
+    supabaseKey:"sb_publishable_vxaKCnn-2XlvV7MmoV3wqg_dxgdqtz2",
+    products:{ gut:{ name:"Gut Health Protocol", price:"$97", was:"$147", sales:"gut.html", course:"course.html", app:"app.html" } },
+    testMode:true,                       /* shows the "test checkout" ribbon; set false when Stripe is live */
+    assets:"https://marktalkshealth.github.io/mth-protocols/site/"   /* photos already hosted with the old site */
+  };
+  var H=document.documentElement;
+  var REMEMBER="mth_remember";
+
+  /* ---------- storage that follows "remember me" ----------
+     Remember me ON (default on phones): stays signed in on this device.
+     OFF: signed out when the browser is closed. */
+  function ls(){ try{ return window.localStorage; }catch(e){ return null; } }
+  function ss(){ try{ return window.sessionStorage; }catch(e){ return null; } }
+  function remembered(){ var l=ls(); var v=l&&l.getItem(REMEMBER); return v!=="0"; }
+  var store={
+    getItem:function(k){ var a=ls(), b=ss(); return (b&&b.getItem(k))||(a&&a.getItem(k))||null; },
+    setItem:function(k,v){ var a=ls(), b=ss(); if(remembered()){ a&&a.setItem(k,v); b&&b.removeItem(k); } else { b&&b.setItem(k,v); a&&a.removeItem(k); } },
+    removeItem:function(k){ var a=ls(), b=ss(); a&&a.removeItem(k); b&&b.removeItem(k); }
+  };
+  var sb=window.supabase.createClient(CONFIG.supabaseUrl,CONFIG.supabaseKey,{
+    auth:{ storage:store, storageKey:"mth-auth", persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, flowType:"implicit" }
+  });
+
+  var M=window.MTH={ config:CONFIG, sb:sb, user:null, owned:[] };
+  M.base=location.href.replace(/[#?].*$/,"").replace(/[^/]*$/,"");
+  M.page=(location.pathname.split("/").pop()||"index.html").toLowerCase();
+  M.esc=function(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); };
+  M.qs=function(k){ try{ return new URLSearchParams(location.search).get(k); }catch(e){ return null; } };
+  M.setRemember=function(on){ var l=ls(); if(l) l.setItem(REMEMBER,on?"1":"0"); };
+  M.remembered=remembered;
+  M.isPhone=function(){ try{ return matchMedia("(pointer: coarse)").matches&&Math.min(screen.width,screen.height)<=820; }catch(e){ return false; } };
+
+  /* ---------- who is here, and what they own ---------- */
+  async function loadOwned(){
+    if(!M.user){ M.owned=[]; return; }
+    try{
+      var r=await sb.from("mth_enrollments").select("product,livemode,created_at");
+      M.owned=(r.data||[]).map(function(x){ return x.product; });
+    }catch(e){ console.warn("[mth] enrolments",e); M.owned=[]; }
+  }
+  M.owns=function(p){ return M.owned.indexOf(p)>-1; };
+  M.refresh=async function(){
+    var s=await sb.auth.getSession();
+    M.session=s.data.session||null; M.user=M.session?M.session.user:null;
+    window.MTH_USER=M.user?{ id:M.user.id, email:(M.user.email||"").toLowerCase() }:null;
+    await loadOwned();
+    H.classList.toggle("mx-in",!!M.user); H.classList.toggle("mx-out",!M.user);
+    return M;
+  };
+  M.ready=M.refresh();
+  sb.auth.onAuthStateChange(function(ev){
+    if(ev==="SIGNED_OUT"){ M.user=null; M.owned=[]; window.MTH_USER=null; }
+  });
+
+  M.signOut=async function(){
+    try{ await sb.auth.signOut(); }catch(e){}
+    store.removeItem("mth-auth");
+    location.href="index.html";
+  };
+  M.loginUrl=function(next){ return "login.html?next="+encodeURIComponent(next||M.page+location.search+location.hash); };
+
+  /* page guard: sign-in (and optionally a purchase) required */
+  M.require=async function(product){
+    await M.ready;
+    if(!M.user){ location.replace(M.loginUrl()); return new Promise(function(){}); }
+    if(product&&!M.owns(product)){ location.replace(CONFIG.products[product].sales+"?locked=1#checkout"); return new Promise(function(){}); }
+    return M;
+  };
+
+  /* ---------- checkout (Stripe, via the mth-checkout edge function) ---------- */
+  M.fn=async function(name,body){
+    var s=(await sb.auth.getSession()).data.session;
+    var r=await fetch(CONFIG.supabaseUrl+"/functions/v1/"+name,{ method:"POST",
+      headers:{ "Content-Type":"application/json", apikey:CONFIG.supabaseKey, Authorization:"Bearer "+(s?s.access_token:CONFIG.supabaseKey) },
+      body:JSON.stringify(body||{}) });
+    var j={}; try{ j=await r.json(); }catch(e){}
+    if(!r.ok&&!j.error) j.error="http_"+r.status;
+    return j;
+  };
+  M.buy=async function(product,btn){
+    product=product||"gut";
+    await M.ready;
+    if(!M.user){ location.href=M.loginUrl(CONFIG.products[product].sales+"?buy=1"); return; }
+    if(M.owns(product)){ location.href=CONFIG.products[product].course; return; }
+    var old=btn&&btn.innerHTML; if(btn){ btn.disabled=true; btn.innerHTML="Opening secure checkout…"; }
+    try{
+      var j=await M.fn("mth-checkout",{ product:product, return_base:M.base });
+      if(j.url){ location.href=j.url; return; }
+      if(j.already){ await M.refresh(); location.href=CONFIG.products[product].course; return; }
+      var why={ stripe_not_configured:"Checkout isn't switched on yet: the Stripe test key still needs to be added in Supabase.",
+                live_key_blocked:"A live Stripe key was added, but live payments are still switched off on purpose.",
+                sign_in_required:"Please sign in again, then try once more." }[j.error]||("Checkout couldn't start ("+(j.message||j.error||"unknown")+"). Please try again.");
+      M.modal("Checkout unavailable",why,[["OK",null,"dark"]]);
+    }catch(e){ M.modal("Checkout unavailable","We couldn't reach checkout. Check your connection and try again.",[["OK",null,"dark"]]); }
+    if(btn){ btn.disabled=false; btn.innerHTML=old; }
+  };
+
+  /* ---------- small UI helpers ---------- */
+  M.toast=function(t,ms){ var el=document.querySelector(".mx-toast"); if(!el){ el=document.createElement("div"); el.className="mx-toast"; el.setAttribute("role","status"); document.body.appendChild(el); }
+    el.textContent=t; el.classList.add("on"); clearTimeout(el._t); el._t=setTimeout(function(){ el.classList.remove("on"); },ms||2600); };
+  M.modal=function(title,text,buttons){
+    var m=document.createElement("div"); m.className="mx-modal"; m.setAttribute("role","dialog"); m.setAttribute("aria-modal","true");
+    m.innerHTML='<div class="box"><h3>'+M.esc(title)+'</h3><p>'+M.esc(text)+'</p><div class="acts"></div></div>';
+    (buttons||[["OK"]]).forEach(function(b){ var x=document.createElement(b[1]&&typeof b[1]==="string"?"a":"button"); x.className="b full "+(b[2]||""); x.textContent=b[0];
+      if(typeof b[1]==="string") x.href=b[1]; else x.addEventListener("click",function(){ m.remove(); if(typeof b[1]==="function") b[1](); });
+      m.querySelector(".acts").appendChild(x); });
+    m.addEventListener("click",function(e){ if(e.target===m) m.remove(); });
+    document.body.appendChild(m); var f=m.querySelector(".b"); if(f) f.focus();
+    return m;
+  };
+
+  /* ---------- header + footer ---------- */
+  var ICON={ menu:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
+             close:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' };
+  function header(){
+    if(document.querySelector(".mx-h")||H.classList.contains("mx-bare")) return;
+    var P=CONFIG.products.gut, inn=!!M.user, own=M.owns("gut");
+    var initial=inn?M.esc((M.user.email||"?").charAt(0).toUpperCase()):"";
+    var links=[["index.html","Home"],[P.sales,"Gut Health Protocol"]];
+    if(own){ links.push([P.course,"My course"]); links.push([P.app,"My app"]); }
+    var h=document.createElement("header"); h.className="mx-h";
+    h.innerHTML='<div class="in"><a class="mx-word" href="index.html">Mark Talks <em>Health</em></a>'+
+      '<nav class="mx-nav" aria-label="Main">'+links.map(function(l){ return '<a href="'+l[0]+'"'+(M.page===l[0]?' class="on" aria-current="page"':'')+'>'+l[1]+'</a>'; }).join("")+'</nav>'+
+      '<div class="mx-act">'+
+        (inn?(own?'<a class="b sm" href="'+P.app+'">Open app</a>':'<a class="b sm wide" href="'+P.sales+'#checkout">Start · '+P.price+'</a>')+'<a class="mx-me wide" href="account.html" title="Your account" aria-label="Your account">'+initial+'</a>'
+            :'<a class="b sm ghost" href="'+M.loginUrl()+'">Sign in</a><a class="b sm wide" href="'+P.sales+'#checkout">Start · '+P.price+'</a>')+
+        '<button class="mx-burger" type="button" aria-label="Open menu">'+ICON.menu+'</button></div></div>';
+    var sh=document.createElement("div"); sh.className="mx-sheet"; sh.setAttribute("role","dialog"); sh.setAttribute("aria-label","Menu");
+    var sl=links.slice(); if(inn) sl.push(["account.html","My account"]);
+    var sub={"index.html":"Natural healing meets modern science","gut.html":"Reset your gut in 7 days","course.html":"Lessons, ebooks and quizzes","app.html":"Your personal healing plan","account.html":inn?M.esc(M.user.email):""};
+    sh.innerHTML='<div class="top"><a class="mx-word" href="index.html">Mark Talks <em>Health</em></a><button class="mx-burger" type="button" aria-label="Close menu" style="display:grid">'+ICON.close+'</button></div>'+
+      '<nav>'+sl.map(function(l){ return '<a href="'+l[0]+'">'+l[1]+(sub[l[0]]?'<small>'+sub[l[0]]+'</small>':'')+'</a>'; }).join("")+'</nav>'+
+      '<div class="bot">'+(inn?(own?'<a class="b full" href="'+P.app+'">Open my app</a>':'<a class="b full" href="'+P.sales+'#checkout">Start the Gut Health Protocol · '+P.price+'</a>')+'<button class="b full ghost" type="button" data-out>Sign out</button>'
+        :'<a class="b full" href="'+P.sales+'#checkout">Start the Gut Health Protocol · '+P.price+'</a><a class="b full ghost" href="'+M.loginUrl()+'">Sign in</a>')+'</div>';
+    document.body.insertBefore(h,document.body.firstChild);
+    document.body.appendChild(sh);
+    h.querySelector(".mx-burger").addEventListener("click",function(){ sh.classList.add("on"); document.body.style.overflow="hidden"; });
+    sh.querySelector(".mx-burger").addEventListener("click",function(){ sh.classList.remove("on"); document.body.style.overflow=""; });
+    var so=sh.querySelector("[data-out]"); if(so) so.addEventListener("click",M.signOut);
+    if(CONFIG.testMode){ var t=document.createElement("div"); t.className="mx-test"; t.innerHTML='<b>Preview site</b> · Stripe test mode<span class="wide"> · test card 4242 4242 4242 4242</span>'; document.body.insertBefore(t,document.body.firstChild); }
+  }
+  function footer(){
+    if(document.querySelector(".mx-f")||H.classList.contains("mx-bare")) return;
+    var f=document.createElement("footer"); f.className="mx-f";
+    f.innerHTML='<div class="in"><div class="brand">Mark Talks Health<small>Natural healing meets modern science. Personalised protocols, guided day by day.</small></div>'+
+      '<nav aria-label="Footer"><a href="index.html">Home</a><a href="gut.html">Gut Health Protocol</a>'+(M.user?'<a href="account.html">My account</a>':'<a href="'+M.loginUrl()+'">Sign in</a>')+'<a href="mailto:marktalkshealth@gmail.com">Contact</a></nav>'+
+      '<div class="fine">Educational program, not a substitute for professional medical advice, diagnosis or treatment. Individual results vary. Consult your healthcare provider before starting any fasting or cleansing protocol. &copy; '+new Date().getFullYear()+' Mark Talks Health</div></div>';
+    document.body.appendChild(f);
+  }
+  M.chrome=function(){ header(); footer(); };
+
+  /* ---------- pieces copied from the LearnWorlds site script ---------- */
+  var BASE=CONFIG.assets;
+  function wistiaJs(){ if(document.getElementById("wistia-js")) return; var s=document.createElement("script"); s.id="wistia-js"; s.async=true; s.src="https://fast.wistia.com/assets/external/E-v1.js"; document.head.appendChild(s); }
+  function videos(root){
+    [].forEach.call(root.querySelectorAll(".mthv:not([data-ready])"),function(el){
+      el.setAttribute("data-ready","1");
+      var id=(el.getAttribute("data-wistia")||"").trim(), title=el.getAttribute("data-title")||"Watch my story", len=el.getAttribute("data-len")||"";
+      var poster=el.getAttribute("data-poster")||BASE+"mark-kitchen.jpg";
+      var hint=function(t){ return (len?len+" · ":"")+t; };
+      el.setAttribute("role","button"); el.setAttribute("tabindex","0"); el.setAttribute("aria-label",title+", video");
+      el.innerHTML='<div class="mthv-player"></div><div class="mthv-poster" style="background-image:url(\''+poster+'\')"></div><div class="mthv-shade"></div>'+
+        '<div class="mthv-cta"><span class="mthv-play"><span class="mthv-ring"></span></span><span class="mthv-txt"><b></b><small></small></span></div>'+
+        '<div class="mthv-bar"><i></i></div><button type="button" class="mthv-mute" aria-label="Mute">🔊</button>';
+      var slot=el.querySelector(".mthv-player"), bar=el.querySelector(".mthv-bar i"), B=el.querySelector(".mthv-txt b"), S=el.querySelector(".mthv-txt small"), M=el.querySelector(".mthv-mute");
+      B.textContent=title; S.textContent=hint("Tap for sound");
+      if(!id){ S.textContent=len||"Video coming soon"; el.style.cursor="default"; return; }
+      var calm=false; try{ calm=matchMedia("(prefers-reduced-motion: reduce)").matches||!!(navigator.connection&&navigator.connection.saveData); }catch(e){}
+      var V=null, mode="preview";
+      slot.innerHTML='<div class="wistia_embed wistia_async_'+id+' muted=true autoPlay='+(calm?"false":"true")+' endVideoBehavior=loop playbar=false playButton=false smallPlayButton=false bigPlayButton=false fullscreenButton=false volumeControl=false settingsControl=false playbackRateControl=false qualityControl=false controlsVisibleOnLoad=false fitStrategy=cover videoFoam=false silentAutoPlay=allow playsinline=true copyLinkAndThumbnailEnabled=false"></div>';
+      wistiaJs();
+      window._wq=window._wq||[];
+      window._wq.push({id:id,onReady:function(v){
+        V=v;
+        v.bind("play",function(){ el.classList.add("is-live"); el.classList.remove("is-paused"); });
+        v.bind("pause",function(){ if(mode==="sound") el.classList.add("is-paused"); });
+        v.bind("timechange",function(t){ if(mode==="sound"){ var d=v.duration()||1; bar.style.width=Math.min(100,100*t/d)+"%"; } });
+        /* after the full watch, drift back to the silent loop */
+        v.bind("end",function(){ if(mode!=="sound") return; mode="preview"; v.mute(); el.classList.remove("is-sound","is-paused"); B.textContent="Watch again"; S.textContent=hint("Tap for sound"); bar.style.width="0"; });
+      }});
+      function frame(){ /* the player script didn't load: fall back to Wistia's normal player */
+        slot.innerHTML='<iframe src="https://fast.wistia.net/embed/iframe/'+id+'?autoPlay=true&playbar=true&fitStrategy=cover&videoFoam=false&playerColor=c0623f" allow="autoplay; fullscreen" allowfullscreen title="'+title.replace(/"/g,"")+'"></iframe>';
+        el.classList.add("is-live","is-sound","is-frame"); el.style.cursor="default"; }
+      function sound(){
+        if(!V) return frame();
+        mode="sound"; el.classList.add("is-sound","is-live"); el.classList.remove("is-paused");
+        B.textContent=title; S.textContent=hint("Tap to pause"); M.textContent="🔊";
+        V.unmute(); V.volume(1); V.time(0); V.play();
+      }
+      el.addEventListener("click",function(e){
+        if(el.classList.contains("is-frame")) return;
+        if(e.target.closest(".mthv-mute")){ e.stopPropagation(); if(V){ if(V.isMuted()){ V.unmute(); M.textContent="🔊"; } else { V.mute(); M.textContent="🔇"; } } return; }
+        if(mode!=="sound") return sound();
+        if(V.state()==="playing") V.pause(); else V.play();
+      });
+      el.addEventListener("keydown",function(e){ if((e.key==="Enter"||e.key===" ")&&e.target===el){ e.preventDefault(); el.click(); } });
+      /* stop talking when it scrolls away */
+      if("IntersectionObserver" in window) new IntersectionObserver(function(es){ es.forEach(function(x){ if(!x.isIntersecting&&mode==="sound"&&V&&V.state()==="playing") V.pause(); }); },{threshold:.15}).observe(el);
+    });
+  }
+  /* swipe rows (cards, 7 steps, course cards): fingers already swipe; add mouse dragging and left/right arrows */
+  function rails(root){
+    var ARW=function(d){ return '<svg viewBox="0 0 24 24"><path d="'+(d<0?"M15 5l-7 7 7 7":"M9 5l7 7-7 7")+'"/></svg>'; };
+    [].forEach.call(root.querySelectorAll(".sys, .rail, .tl"),function(r){
+      if(r.__mthr) return; r.__mthr=1; r.classList.add("mthr-on");
+      var nav=document.createElement("div"); nav.className="mthr-nav";
+      var prev=document.createElement("button"), next=document.createElement("button");
+      prev.type=next.type="button"; prev.className=next.className="mthr-b";
+      prev.setAttribute("aria-label","Previous"); next.setAttribute("aria-label","Next"); prev.innerHTML=ARW(-1); next.innerHTML=ARW(1);
+      nav.appendChild(prev);
+      var dots=r.nextElementSibling; if(dots&&dots.classList.contains("sys-dots")) nav.appendChild(dots);
+      nav.appendChild(next);
+      r.parentNode.insertBefore(nav,r.nextSibling);
+      function step(){ var c=r.children[0]; if(!c) return r.clientWidth*.8; var g=parseFloat(getComputedStyle(r).columnGap)||14; return c.getBoundingClientRect().width+g; }
+      function upd(){ var max=r.scrollWidth-r.clientWidth; nav.hidden=max<8; prev.disabled=r.scrollLeft<6; next.disabled=r.scrollLeft>max-6; }
+      prev.onclick=function(){ r.scrollBy({left:-step(),behavior:"smooth"}); };
+      next.onclick=function(){ r.scrollBy({left:step(),behavior:"smooth"}); };
+      r.addEventListener("scroll",upd,{passive:true}); window.addEventListener("resize",upd); setTimeout(upd,60); setTimeout(upd,1500);
+      /* mouse drag */
+      var down=false, sx=0, sl=0, moved=false;
+      r.addEventListener("pointerdown",function(e){ if(e.pointerType!=="mouse"||e.button!==0) return; down=true; moved=false; sx=e.clientX; sl=r.scrollLeft; });
+      window.addEventListener("pointermove",function(e){ if(!down) return; var dx=e.clientX-sx; if(!moved&&Math.abs(dx)>5){ moved=true; r.classList.add("mthr-drag"); } if(moved) r.scrollLeft=sl-dx; });
+      window.addEventListener("pointerup",function(){ if(!down) return; down=false; if(!moved) return;
+        var kids=[].slice.call(r.children), x0=r.getBoundingClientRect().left+parseFloat(getComputedStyle(r).paddingLeft||0), best=0, bd=1e9;
+        kids.forEach(function(k,i){ var d=Math.abs(k.getBoundingClientRect().left-x0); if(d<bd){ bd=d; best=i; } });
+        var t=kids[best]?r.scrollLeft+kids[best].getBoundingClientRect().left-x0:r.scrollLeft;
+        r.classList.remove("mthr-drag"); r.scrollTo({left:t,behavior:"smooth"});
+        setTimeout(function(){ moved=false; },0); });
+      r.addEventListener("click",function(e){ if(moved){ e.preventDefault(); e.stopPropagation(); } },true);
+      r.addEventListener("dragstart",function(e){ e.preventDefault(); });
+    });
+  }
+  M.videos=videos; M.rails=rails;
+  /* mount a page design: run its scripts, then the video card, swipe rows and test-drive phone */
+  M.mount=function(html,target){
+    var box=document.createElement("div"); box.innerHTML=html;
+    var scripts=[].slice.call(box.querySelectorAll("script"));
+    target.appendChild(box);
+    scripts.forEach(function(old){ var s=document.createElement("script"); if(old.src) s.src=old.src; else s.textContent=old.textContent; old.parentNode.replaceChild(s,old); });
+    if(box.querySelector(".mthp[data-proto]")&&!document.getElementById("mthp-js")){ var s=document.createElement("script"); s.id="mthp-js"; s.src=BASE+"phone.js?v=4"; document.head.appendChild(s); }
+    if(box.querySelector(".mthv")) videos(box);
+    try{ rails(box); }catch(e){}
+    return box;
+  };
+
+  /* every page: draw the header/footer once we know who is signed in */
+  M.ready.then(function(){
+    if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",M.chrome); else M.chrome();
+  });
+})();
