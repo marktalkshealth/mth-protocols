@@ -511,12 +511,12 @@
       "#mth-app-shell .sh li:before{content:counter(s);flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#2e5c45;color:#fff;font-size:13px;font-weight:700}"+
       "#mth-app-shell .sh li b{font-weight:700}"+
       "#mth-app-shell .sh button.ok{width:100%;min-height:50px;border:0;border-radius:14px;background:#2b2622;color:#fff;font:600 15px 'DM Sans',system-ui,sans-serif}"+
-      "#mth-app-shell .none{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:10px}"+
-      "#mth-app-shell .none h2{font:500 28px/1.1 'Cormorant Garamond',Georgia,serif;color:#2b2622;margin:0}"+
-      "#mth-app-shell .none p{font:400 15px/1.5 'DM Sans',system-ui,sans-serif;color:#8a7d71;max-width:340px;margin:0 0 8px}"+
-      "#mth-app-shell .none a{display:block;width:100%;max-width:320px;padding:14px;border-radius:14px;background:#2b2622;color:#fff;text-decoration:none;font:600 15px 'DM Sans',system-ui,sans-serif}"+
+      "#mth-app-shell .mth-none{flex:1;display:flex!important;visibility:visible!important;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:10px}"+
+      "#mth-app-shell .mth-none h2{font:500 28px/1.1 'Cormorant Garamond',Georgia,serif;color:#2b2622;margin:0}"+
+      "#mth-app-shell .mth-none p{font:400 15px/1.5 'DM Sans',system-ui,sans-serif;color:#8a7d71;max-width:340px;margin:0 0 8px}"+
+      "#mth-app-shell .mth-none a{display:block;width:100%;max-width:320px;padding:14px;border-radius:14px;background:#2b2622;color:#fff;text-decoration:none;font:600 15px 'DM Sans',system-ui,sans-serif}"+
       "#mth-app-shell .sw{flex:none;max-width:36%;padding:8px 10px;border-radius:999px;border:1px solid #ddd3c6;background:#fff;font:600 13px 'DM Sans',system-ui,sans-serif;color:#2b2622}"+
-      "#mth-app-shell .none a.alt{background:#fff;color:#2b2622;border:1px solid #ddd3c6}"+
+      "#mth-app-shell .mth-none a.alt{background:#fff;color:#2b2622;border:1px solid #ddd3c6}"+
       "html.mth-r-app.mth-app-auth body>#animatedModal:not(#mth-app-shell),html.mth-r-app.mth-app-auth #animatedModal:not(#mth-app-shell){display:block!important;z-index:2147483600!important}"+
       "#mth-app-shell .ld{position:absolute;left:0;right:0;top:45%;text-align:center;font:400 22px 'Cormorant Garamond',Georgia,serif;color:#8a7d71;pointer-events:none}";
     /* Desktop: keep the site header, then an "App" section with the full-width software underneath.
@@ -543,7 +543,7 @@
         "html.mth-app-desk #mth-app-shell .frame{position:relative;background:#fffcf7;border:1px solid #e7dccb;border-radius:22px;overflow:hidden;box-shadow:0 24px 60px rgba(43,39,36,.10)}"+
         "html.mth-app-desk #mth-app-shell iframe{height:calc(100vh - 210px);min-height:720px;background:#fffcf7}"+
         "html.mth-app-desk #mth-app-shell .ld{top:220px}"+
-        "html.mth-app-desk #mth-app-shell .none{min-height:60vh}";
+        "html.mth-app-desk #mth-app-shell .mth-none{min-height:60vh}";
       document.head.appendChild(dst);
     }
     document.head.appendChild(st);
@@ -584,7 +584,7 @@
     sh.addEventListener("click",function(e){ if(e.target===sh||e.target.classList.contains("ok")) sh.classList.remove("on"); });
     if(!pick){
       fr.remove(); ld.style.display="none"; nm.textContent="Your protocol";
-      var none=document.createElement("div"); none.className="none";
+      var none=document.createElement("div"); none.className="mth-none";
       none.innerHTML=(OUT?'<h2>Sign in to open your app</h2><p>Your personal plan, meals and workouts are waiting. New here? Choose a protocol to get started.</p><a href="javascript:void(0)" class="si">Sign in</a>':'<h2>Your protocol lives here</h2><p>Once you join a protocol, your personal plan, meals and workouts open on this page.</p>')+
         '<a href="/guthealthprotocol" class="'+(OUT?'alt':'')+'">Gut Health Protocol</a><a href="/thediabetesprotocol" class="'+(OUT?'alt':'')+'">Diabetes Protocol</a><a href="/glp1-weightloss" class="'+(OUT?'alt':'')+'">GLP-1 Weight Loss Protocol</a>';
       var si=none.querySelector(".si");
@@ -592,6 +592,7 @@
         var l=document.querySelector('[data-interactive-link-type="openformslink"][data-interactive-link-var1="signin"]');
         if(l) l.click(); else { try{ showAnimatedModal($(".login-form")); }catch(x){ location.href="/home"; } } });
       shell.appendChild(none);
+      if(OUT) waitFor(signedIn,function(ok){ if(ok){ shell.remove(); try{ appPage(); }catch(e){ location.reload(); } } },20000);
     } else {
       if(owned.length>1&&(byTags||staff)){
         var sw=document.createElement("select"); sw.className="sw"; sw.setAttribute("aria-label","Switch protocol");
@@ -654,7 +655,7 @@
       else if(ROUTE==="course") course();
       else if(ROUTE==="social") social();
       else if(ROUTE==="courses") courses();
-      else if(ROUTE==="app") waitFor(signedIn,function(){ try{ appPage(); }catch(e){ console.warn("MTH app",e); reveal(); } },1500);
+      else if(ROUTE==="app") waitFor(signedIn,function(){ try{ appPage(); }catch(e){ console.warn("MTH app",e); reveal(); } },6000);
       else if(ROUTE==="links") linksPage();
       else reveal();
       if(ROUTE!=="app"&&ROUTE!=="links"){ footer(); [800,2500,6500,9500].forEach(function(ms){ setTimeout(footerLast,ms); }); }
