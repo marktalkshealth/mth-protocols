@@ -228,7 +228,7 @@
 
 <section style="padding-top:0"><div class="w">
   <div class="hub rv">
-    <div><div class="k">The Healing Hub</div><h2>Heal <em>together</em></h2><p class="lead" style="margin-bottom:20px">A private community for members: daily check-ins, fasting milestones, questions answered by Mark, and live sessions.</p><a class="btn" href="protocols.html">Choose your protocol</a></div>
+    <div><div class="k">The Healing Hub</div><h2>Heal <em>together</em></h2><p class="lead" style="margin-bottom:20px">A private community for members: daily check-ins, fasting milestones, questions answered by Mark, and live sessions.</p><a class="btn" id="mhHub" href="protocols.html">Choose your protocol</a></div>
     <div class="feed">
       <div class="post"><span class="av">🌸</span><div><b>Sarah</b><span class="tg">DAY 3</span><br>Bone broth in the morning is becoming my favourite ritual.</div></div>
       <div class="post"><span class="av">🌊</span><div><b>James</b><span class="tg">FAST</span><br>Finished a 16-hour fast. Steadiest morning reading all month.</div></div>
@@ -301,6 +301,7 @@ MTH.ready.then(function(){
   var main=document.getElementById("page"); main.innerHTML="";
   MTH.mount(document.getElementById("design").innerHTML, main);
   MTH.listForms(main);
+  if(MTH.ownsAny()){ var hb=document.getElementById('mhHub'); if(hb){ hb.href='community.html'; hb.textContent='Open the Healing Hub'; } }
 });
 </script>
 </body>

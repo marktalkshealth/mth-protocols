@@ -160,6 +160,7 @@
       '<div class="pr"><div class="pbar"><i style="width:'+P.p+'%"></i></div><span>'+P.p+'% complete</span></div>'+
       '<div class="acts"><a class="b" href="?p='+PK+'&l='+resume.id+'" data-go="'+resume.id+'">'+(P.d?'Continue: ':'Start: ')+esc(resume.title)+'</a><a class="b ghost" href="'+PP.app+'">Open my app</a></div></div>'+
       '<div class="card appcard" style="margin-top:16px"><img src="assets/app-icon-180.png" alt=""><div class="tx"><b>Your healing app</b><span class="small">Your personal plan, cleanse, meals and daily tracker. On your phone it installs like an app.</span></div><a class="b sm dark" href="'+PP.app+'">Open</a></div>'+
+      '<div class="card appcard" style="margin-top:12px"><img src="assets/app-icon-180.png" alt="" style="filter:hue-rotate(60deg) saturate(.6)"><div class="tx"><b>The Healing Hub</b><span class="small">Check in, ask Mark questions and join the live sessions.</span></div><a class="b sm ghost" href="community.html">Join</a></div>'+
       '<div class="secs" style="margin-top:16px">'+C.sections.map(function(s){
         var d=s.lessons.filter(function(l){ return isDone(l.id); }).length;
         return '<div class="card sc"><div class="im" style="background-image:url('+IMG+s.img+'.jpg)">'+(s.step?'<b>'+s.step+'</b>':'')+'</div><div class="bd"><div class="k">'+(s.step?'Step '+s.step:'Start here')+' · '+d+'/'+s.lessons.length+'</div><h3>'+esc(s.title)+'</h3>'+

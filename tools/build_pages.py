@@ -65,7 +65,7 @@ s = rep(s, 'funnel:"/glp1-weightloss",course:"/course/total-body-healing"', 'fun
 s = s.replace("loggedIn?", "own(c)?").replace("(loggedIn?", "(own(c)?")
 assert "loggedIn" not in s, re.findall(r".{40}loggedIn.{40}", s)
 s = rep(s, '<a class="more" href="/courses">All courses →</a>', '<a class="more" href="protocols.html">All protocols →</a>')
-s = rep(s, '<a class="btn" href="/social">Open the Healing Hub</a>', '<a class="btn" href="protocols.html">Choose your protocol</a>')
+s = rep(s, '<a class="btn" href="/social">Open the Healing Hub</a>', '<a class="btn" id="mhHub" href="protocols.html">Choose your protocol</a>')
 assert "/social" not in s and '"/course' not in s
 s = rep(s, '</div></section>\n\n<script>', '''</div></section>
 
@@ -76,7 +76,8 @@ s = rep(s, '</div></section>\n\n<script>', '''</div></section>
 
 <script>''')
 W("www/index.html", page("Mark Talks Health · Natural healing meets modern science",
-    "Science-backed natural healing protocols with a personalised daily plan, built on a seven-step method.", s, "  MTH.listForms(main);", "Mark Talks Health"))
+    "Science-backed natural healing protocols with a personalised daily plan, built on a seven-step method.", s,
+    "  MTH.listForms(main);\n  if(MTH.ownsAny()){ var hb=document.getElementById('mhHub'); if(hb){ hb.href='community.html'; hb.textContent='Open the Healing Hub'; } }", "Mark Talks Health"))
 
 # ---------------- sales pages ----------------
 FUNNELS = [

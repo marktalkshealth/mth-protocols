@@ -145,7 +145,7 @@
     var cur=M.product(), P=CONFIG.products[cur], inn=!!M.user, any=M.ownsAny(), ownCur=M.owns(cur);
     var initial=inn?M.esc((M.user.email||"?").charAt(0).toUpperCase()):"";
     var links=[["index.html","Home"],["protocols.html","Protocols"]];
-    if(any){ links.push(["course.html","My course"]); links.push(["app.html","My app"]); }
+    if(any){ links.push(["course.html","My course"]); links.push(["app.html","My app"]); links.push(["community.html","Healing Hub"]); }
     var cta=ownCur?'<a class="b sm" href="'+P.app+'">Open app</a>':any?'<a class="b sm" href="app.html">Open app</a>':'<a class="b sm wide" href="'+P.sales+'#checkout">Start · '+P.price+'</a>';
     var h=document.createElement("header"); h.className="mx-h";
     h.innerHTML='<div class="in"><a class="mx-word" href="index.html">Mark Talks <em>Health</em></a>'+
@@ -157,7 +157,7 @@
     var sh=document.createElement("div"); sh.className="mx-sheet"; sh.setAttribute("role","dialog"); sh.setAttribute("aria-label","Menu");
     var sl=[["index.html","Home","Natural healing meets modern science"]];
     CONFIG.order.forEach(function(k){ var q=CONFIG.products[k]; sl.push([M.owns(k)?q.course:q.sales,q.name,M.owns(k)?"Your course · open":"From "+q.price]); });
-    if(any) sl.push(["app.html","My app","Your personal healing plan"]);
+    if(any){ sl.push(["app.html","My app","Your personal healing plan"]); sl.push(["community.html","The Healing Hub","Community, questions and live sessions"]); }
     if(inn) sl.push(["account.html","My account",M.esc(M.user.email)]);
     sh.innerHTML='<div class="top"><a class="mx-word" href="index.html">Mark Talks <em>Health</em></a><button class="mx-burger" type="button" aria-label="Close menu" style="display:grid">'+ICON.close+'</button></div>'+
       '<nav>'+sl.map(function(l){ return '<a href="'+l[0]+'">'+l[1]+(l[2]?'<small>'+l[2]+'</small>':'')+'</a>'; }).join("")+'</nav>'+
