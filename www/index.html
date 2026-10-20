@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mark Talks Health · Natural healing meets modern science</title>
 <meta name="description" content="Science-backed natural healing protocols with a personalised daily plan, built on a seven-step method.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Mark Talks Health">
+<meta property="og:title" content="Mark Talks Health · Natural healing meets modern science">
+<meta property="og:description" content="Science-backed natural healing protocols with a personalised daily plan, built on a seven-step method.">
+<meta property="og:image" content="https://marktalkshealth.github.io/mth-protocols/site/mark-kitchen.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#f7f1e7">
 <link rel="icon" href="assets/app-icon-192.png">
 <link rel="apple-touch-icon" href="assets/app-icon-180.png">
@@ -177,7 +183,7 @@
 
 <section style="padding-top:8px"><div class="w rv tryapp">
   <div class="tryit" aria-hidden="true"><svg viewBox="0 0 32 36" fill="none" stroke="#c0623f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M28 5C17 5 10 11 9 27"/><path d="M4.5 22.5L9 28l4.5-5.5"/></svg><span>Test <em>your</em> app</span></div>
-  <div class="mthp" data-proto="gut" data-hint="off"></div>
+  <div class="mthp" data-proto="all" data-hint="off"></div>
 </div></section>
 
 <section class="dark"><div class="w">
@@ -186,7 +192,7 @@
 </div></section>
 
 <section id="mh-protocols"><div class="w">
-  <div class="rowh rv"><div><h2>Choose <em>your</em> course</h2></div></div>
+  <div class="rowh rv"><div><h2>Choose <em>your</em> course</h2></div><a class="more" href="protocols.html">All protocols →</a></div>
   <div class="rail rv" id="mhCards"></div>
 </div></section>
 
@@ -222,7 +228,7 @@
 
 <section style="padding-top:0"><div class="w">
   <div class="hub rv">
-    <div><div class="k">The Healing Hub</div><h2>Heal <em>together</em></h2><p class="lead" style="margin-bottom:20px">A private community for members: daily check-ins, fasting milestones, questions answered by Mark, and live sessions.</p><a class="btn" href="gut.html">Join with the Gut Health Protocol</a></div>
+    <div><div class="k">The Healing Hub</div><h2>Heal <em>together</em></h2><p class="lead" style="margin-bottom:20px">A private community for members: daily check-ins, fasting milestones, questions answered by Mark, and live sessions.</p><a class="btn" href="protocols.html">Choose your protocol</a></div>
     <div class="feed">
       <div class="post"><span class="av">🌸</span><div><b>Sarah</b><span class="tg">DAY 3</span><br>Bone broth in the morning is becoming my favourite ritual.</div></div>
       <div class="post"><span class="av">🌊</span><div><b>James</b><span class="tg">FAST</span><br>Finished a 16-hour fast. Steadiest morning reading all month.</div></div>
@@ -248,23 +254,30 @@
   <div class="trust rv"><span>30-day money-back guarantee</span><span>Secure checkout</span><span>Card, Apple Pay &amp; Google Pay</span></div>
 </div></section>
 
+<section id="mh-list" style="padding-top:0"><div class="w"><div class="hub rv" style="display:block">
+  <div class="k">New protocols first</div><h2>Join the <em>list</em></h2><p class="lead" style="margin-bottom:16px">Get a note when a new protocol, ebook or live Q&amp;A opens. No spam, unsubscribe any time.</p>
+  <form class="mx-list" data-source="home"><input class="inp" type="email" name="email" placeholder="you@example.com" autocomplete="email" required aria-label="Email"><button class="btn" type="submit">Join</button></form>
+</div></div></section>
+
 <script>
 (function(){
   var ROOT=document.getElementById("mh");
-  var loggedIn=!!(window.MTH&&MTH.owns("gut"));   /* own site: "Open" once they own the protocol */
+  var own=function(c){ return !!(window.MTH&&MTH.owns(c.key)); };   /* own site: "Open" once they own that protocol */
   var IMG="https://api.us-e1.learnworlds.com/imagefile//{id}?client_id=6ac2bb5648140f5f6d8ca00c&width=800&height=0";
   var COURSES=[
-    {t:"Gut Health Protocol",tag:"GUT",img:"6eec355b2cfe342f0ac9f7061029e4e7.png",d:"Calm the gut lining and rebuild your microbiome with a guided juice cleanse.",funnel:"gut.html",course:"course.html",price:"$97"}
+    {key:"gut",t:"Gut Health Protocol",tag:"GUT",img:"6eec355b2cfe342f0ac9f7061029e4e7.png",d:"Calm the gut lining and rebuild your microbiome with a guided juice cleanse.",funnel:"gut.html",course:"course.html?p=gut",price:"$97"},
+    {key:"sugar",t:"Diabetes Protocol",tag:"DIABETES",img:"fe26b6c96fac54ea10f9208392449ea2.png",d:"Gain control of your blood sugar once and for all, and enjoy better energy throughout the day with your personalised protocol.",funnel:"diabetes.html",course:"course.html?p=sugar",price:"$97"},
+    {key:"glp1",t:"GLP-1 Weight Loss Protocol",tag:"GLP-1",img:"85077c63e15333e491250e4536f2ee4c.png",d:"Lose fat while protecting muscle. A customised roadmap for using GLP-1s intelligently.",funnel:"glp1.html",course:"course.html?p=glp1",price:"$97"}
   ];
   var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});};
   document.getElementById("mhCards").innerHTML=COURSES.map(function(c){
-    var href=loggedIn?c.course:c.funnel;
-    return '<a class="pcard" href="'+href+'"><div class="im" style="background-image:url(\''+IMG.replace("{id}",c.img)+'\')"></div><div class="tx"><h3>'+esc(c.t)+'</h3><p>'+esc(c.d)+'</p><div class="ft"><span class="pr2">'+(loggedIn?'':esc(c.price))+'</span><span class="go">'+(loggedIn?'Open':'Learn more')+'</span></div></div></a>';
+    var href=own(c)?c.course:c.funnel;
+    return '<a class="pcard" href="'+href+'"><div class="im" style="background-image:url(\''+IMG.replace("{id}",c.img)+'\')"></div><div class="tx"><h3>'+esc(c.t)+'</h3><p>'+esc(c.d)+'</p><div class="ft"><span class="pr2">'+(own(c)?'':esc(c.price))+'</span><span class="go">'+(own(c)?'Open':'Learn more')+'</span></div></div></a>';
   }).join("")+'<div class="pcard soon" aria-hidden="true"><div class="im" style="background:linear-gradient(150deg,#d8c4ad,#a8998b)"><span class="tag">COMING SOON</span></div><div class="tx"><h3>More protocols</h3><p>New protocols for more conditions are on the way. Members hear first.</p><div class="ft"><span></span><span class="go">Soon</span></div></div></div>';
   /* checkout: each option opens that course's sales page right at its checkout */
   (function(){ var box=document.getElementById("mhBuy"); if(!box) return;
-    box.innerHTML=COURSES.map(function(c){ var href=loggedIn?c.course:c.funnel+"#checkout";
-      return '<div class="bo"><div class="im" style="background-image:url(\''+IMG.replace("{id}",c.img)+'\')"></div><div class="tx"><h3>'+esc(c.t)+'</h3><p>Course, software &amp; community</p><div class="r">'+(loggedIn?'<span></span>':'<b>'+esc(c.price)+'</b>')+'<a class="btn" href="'+href+'">'+(loggedIn?'Open':'Get instant access')+'</a></div></div></div>'; }).join("");
+    box.innerHTML=COURSES.map(function(c){ var href=own(c)?c.course:c.funnel+"#checkout";
+      return '<div class="bo"><div class="im" style="background-image:url(\''+IMG.replace("{id}",c.img)+'\')"></div><div class="tx"><h3>'+esc(c.t)+'</h3><p>Course, software &amp; community</p><div class="r">'+(own(c)?'<span></span>':'<b>'+esc(c.price)+'</b>')+'<a class="btn" href="'+href+'">'+(own(c)?'Open':'Get instant access')+'</a></div></div></div>'; }).join("");
   })();
   var SIMG=["1-fasting","2-meditation","3-keto","4-cardio","5-music","6-sleep","7-nature"];
   var STEPS=[["Fasting & cleanse","Rest digestion"],["Meditation & journaling","Calm the nervous system"],["Keto & broths","Feed repair"],["Cardio & strength","Move to heal"],["Music & spirit","Sound as medicine"],["Sleep & clean air","Repair at night"],["Nature & sun","Reset outdoors"]];
@@ -287,6 +300,7 @@
 MTH.ready.then(function(){
   var main=document.getElementById("page"); main.innerHTML="";
   MTH.mount(document.getElementById("design").innerHTML, main);
+  MTH.listForms(main);
 });
 </script>
 </body>

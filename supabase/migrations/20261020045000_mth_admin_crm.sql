@@ -1,0 +1,7 @@
+-- Applied to Supabase project oihefcsonqjeicelezln on 2026-10-20 (kept here as a record).
+-- Two migrations: mth_admin_tools and mth_crm_and_more_protocols.
+-- Adds: mth_admins (Mark's email), mth_is_admin(), admin policies on lesson media and the course-files bucket,
+-- mth_admin_members(), mth_admin_grant(), mth_contacts (CRM notes/tags + email list), mth_join_list(),
+-- mth_admin_contacts(), mth_admin_save_contact(), mth_enrollments.active + restrictive policy,
+-- mth_admin_set_access(), lesson rows for sugar and glp1, mth_app_state (app plans for Diabetes / GLP-1).
+-- Full SQL is in the Supabase migration history (supabase migration list).

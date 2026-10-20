@@ -11,7 +11,13 @@
   var CONFIG={
     supabaseUrl:"https://oihefcsonqjeicelezln.supabase.co",
     supabaseKey:"sb_publishable_vxaKCnn-2XlvV7MmoV3wqg_dxgdqtz2",
-    products:{ gut:{ name:"Gut Health Protocol", price:"$97", was:"$147", sales:"gut.html", course:"course.html", app:"app.html" } },
+    /* the three protocols: sales page, course and app for each */
+    products:{
+      gut:  { name:"Gut Health Protocol", short:"Gut Health", price:"$97", was:"$147", sales:"gut.html",      course:"course.html?p=gut",   app:"app.html?p=gut",   img:"1-fasting", line:"Calm the gut lining and rebuild your microbiome with a guided juice cleanse." },
+      sugar:{ name:"Diabetes Protocol",   short:"Diabetes",   price:"$97", was:"$147", sales:"diabetes.html", course:"course.html?p=sugar", app:"app.html?p=sugar", img:"3-keto",    line:"Gain control of your blood sugar and enjoy steadier energy with your personalised protocol." },
+      glp1: { name:"GLP-1 Weight Loss Protocol", short:"GLP-1", price:"$97", was:"$147", sales:"glp1.html",   course:"course.html?p=glp1",  app:"app.html?p=glp1",  img:"4-cardio",  line:"Lose fat while protecting muscle. A customised roadmap for using GLP-1s intelligently." }
+    },
+    order:["gut","sugar","glp1"],
     testMode:true,                       /* shows the "test checkout" ribbon; set false when Stripe is live */
     assets:"https://marktalkshealth.github.io/mth-protocols/site/"   /* photos already hosted with the old site */
   };
@@ -51,6 +57,16 @@
     }catch(e){ console.warn("[mth] enrolments",e); M.owned=[]; }
   }
   M.owns=function(p){ return M.owned.indexOf(p)>-1; };
+  M.ownsAny=function(){ return M.owned.length>0; };
+  /* which protocol a page is about: ?p=, then the sales page, then the last one used, then the first owned */
+  M.product=function(){
+    var p=M.qs("p"); if(CONFIG.products[p]) return p;
+    for(var k in CONFIG.products) if(CONFIG.products[k].sales===M.page) return k;
+    var last=null; try{ last=localStorage.getItem("mth_last_product"); }catch(e){}
+    if(CONFIG.products[last]&&(!M.owned.length||M.owns(last))) return last;
+    return M.owned[0]||"gut";
+  };
+  M.remember=function(p){ try{ localStorage.setItem("mth_last_product",p); }catch(e){} };
   M.refresh=async function(){
     var s=await sb.auth.getSession();
     M.session=s.data.session||null; M.user=M.session?M.session.user:null;
@@ -126,24 +142,27 @@
              close:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' };
   function header(){
     if(document.querySelector(".mx-h")||H.classList.contains("mx-bare")) return;
-    var P=CONFIG.products.gut, inn=!!M.user, own=M.owns("gut");
+    var cur=M.product(), P=CONFIG.products[cur], inn=!!M.user, any=M.ownsAny(), ownCur=M.owns(cur);
     var initial=inn?M.esc((M.user.email||"?").charAt(0).toUpperCase()):"";
-    var links=[["index.html","Home"],[P.sales,"Gut Health Protocol"]];
-    if(own){ links.push([P.course,"My course"]); links.push([P.app,"My app"]); }
+    var links=[["index.html","Home"],["protocols.html","Protocols"]];
+    if(any){ links.push(["course.html","My course"]); links.push(["app.html","My app"]); }
+    var cta=ownCur?'<a class="b sm" href="'+P.app+'">Open app</a>':any?'<a class="b sm" href="app.html">Open app</a>':'<a class="b sm wide" href="'+P.sales+'#checkout">Start · '+P.price+'</a>';
     var h=document.createElement("header"); h.className="mx-h";
     h.innerHTML='<div class="in"><a class="mx-word" href="index.html">Mark Talks <em>Health</em></a>'+
       '<nav class="mx-nav" aria-label="Main">'+links.map(function(l){ return '<a href="'+l[0]+'"'+(M.page===l[0]?' class="on" aria-current="page"':'')+'>'+l[1]+'</a>'; }).join("")+'</nav>'+
       '<div class="mx-act">'+
-        (inn?(own?'<a class="b sm" href="'+P.app+'">Open app</a>':'<a class="b sm wide" href="'+P.sales+'#checkout">Start · '+P.price+'</a>')+'<a class="mx-me wide" href="account.html" title="Your account" aria-label="Your account">'+initial+'</a>'
-            :'<a class="b sm ghost" href="'+M.loginUrl()+'">Sign in</a><a class="b sm wide" href="'+P.sales+'#checkout">Start · '+P.price+'</a>')+
+        (inn?cta+'<a class="mx-me wide" href="account.html" title="Your account" aria-label="Your account">'+initial+'</a>'
+            :'<a class="b sm ghost" href="'+M.loginUrl()+'">Sign in</a>'+cta)+
         '<button class="mx-burger" type="button" aria-label="Open menu">'+ICON.menu+'</button></div></div>';
     var sh=document.createElement("div"); sh.className="mx-sheet"; sh.setAttribute("role","dialog"); sh.setAttribute("aria-label","Menu");
-    var sl=links.slice(); if(inn) sl.push(["account.html","My account"]);
-    var sub={"index.html":"Natural healing meets modern science","gut.html":"Reset your gut in 7 days","course.html":"Lessons, ebooks and quizzes","app.html":"Your personal healing plan","account.html":inn?M.esc(M.user.email):""};
+    var sl=[["index.html","Home","Natural healing meets modern science"]];
+    CONFIG.order.forEach(function(k){ var q=CONFIG.products[k]; sl.push([M.owns(k)?q.course:q.sales,q.name,M.owns(k)?"Your course · open":"From "+q.price]); });
+    if(any) sl.push(["app.html","My app","Your personal healing plan"]);
+    if(inn) sl.push(["account.html","My account",M.esc(M.user.email)]);
     sh.innerHTML='<div class="top"><a class="mx-word" href="index.html">Mark Talks <em>Health</em></a><button class="mx-burger" type="button" aria-label="Close menu" style="display:grid">'+ICON.close+'</button></div>'+
-      '<nav>'+sl.map(function(l){ return '<a href="'+l[0]+'">'+l[1]+(sub[l[0]]?'<small>'+sub[l[0]]+'</small>':'')+'</a>'; }).join("")+'</nav>'+
-      '<div class="bot">'+(inn?(own?'<a class="b full" href="'+P.app+'">Open my app</a>':'<a class="b full" href="'+P.sales+'#checkout">Start the Gut Health Protocol · '+P.price+'</a>')+'<button class="b full ghost" type="button" data-out>Sign out</button>'
-        :'<a class="b full" href="'+P.sales+'#checkout">Start the Gut Health Protocol · '+P.price+'</a><a class="b full ghost" href="'+M.loginUrl()+'">Sign in</a>')+'</div>';
+      '<nav>'+sl.map(function(l){ return '<a href="'+l[0]+'">'+l[1]+(l[2]?'<small>'+l[2]+'</small>':'')+'</a>'; }).join("")+'</nav>'+
+      '<div class="bot">'+(ownCur?'<a class="b full" href="'+P.app+'">Open my app</a>':'<a class="b full" href="'+P.sales+'#checkout">Start the '+P.name+' · '+P.price+'</a>')+
+        (inn?'<button class="b full ghost" type="button" data-out>Sign out</button>':'<a class="b full ghost" href="'+M.loginUrl()+'">Sign in</a>')+'</div>';
     document.body.insertBefore(h,document.body.firstChild);
     document.body.appendChild(sh);
     h.querySelector(".mx-burger").addEventListener("click",function(){ sh.classList.add("on"); document.body.style.overflow="hidden"; });
@@ -155,7 +174,7 @@
     if(document.querySelector(".mx-f")||H.classList.contains("mx-bare")) return;
     var f=document.createElement("footer"); f.className="mx-f";
     f.innerHTML='<div class="in"><div class="brand">Mark Talks Health<small>Natural healing meets modern science. Personalised protocols, guided day by day.</small></div>'+
-      '<nav aria-label="Footer"><a href="index.html">Home</a><a href="gut.html">Gut Health Protocol</a>'+(M.user?'<a href="account.html">My account</a>':'<a href="'+M.loginUrl()+'">Sign in</a>')+'<a href="mailto:marktalkshealth@gmail.com">Contact</a></nav>'+
+      '<nav aria-label="Footer"><a href="index.html">Home</a><a href="gut.html">Gut Health</a><a href="diabetes.html">Diabetes</a><a href="glp1.html">GLP-1</a>'+(M.user?'<a href="account.html">My account</a>':'<a href="'+M.loginUrl()+'">Sign in</a>')+'<a href="mailto:marktalkshealth@gmail.com">Contact</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="refunds.html">Refunds</a></nav>'+
       '<div class="fine">Educational program, not a substitute for professional medical advice, diagnosis or treatment. Individual results vary. Consult your healthcare provider before starting any fasting or cleansing protocol. &copy; '+new Date().getFullYear()+' Mark Talks Health</div></div>';
     document.body.appendChild(f);
   }
@@ -243,6 +262,21 @@
     });
   }
   M.videos=videos; M.rails=rails;
+  /* email list forms: <form class="mx-list" data-source="home"> with an email input */
+  M.listForms=function(root){
+    [].forEach.call((root||document).querySelectorAll("form.mx-list:not([data-on])"),function(f){
+      f.setAttribute("data-on","1");
+      f.addEventListener("submit",async function(e){
+        e.preventDefault(); var inp=f.querySelector('[name="email"]'), b=f.querySelector("button"), em=(inp.value||"").trim();
+        if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ M.toast("Please enter a valid email."); inp.focus(); return; }
+        b.disabled=true;
+        try{ var r=await sb.rpc("mth_join_list",{ p_email:em, p_source:f.getAttribute("data-source")||M.page });
+          if(r.error||r.data!=="ok") throw r.error||new Error(r.data);
+          f.innerHTML='<p class="mx-list-ok">You\u2019re on the list. Thank you!</p>';
+        }catch(err){ M.toast("Couldn\u2019t sign you up. Please try again."); b.disabled=false; }
+      });
+    });
+  };
   /* mount a page design: run its scripts, then the video card, swipe rows and test-drive phone */
   M.mount=function(html,target){
     var box=document.createElement("div"); box.innerHTML=html;

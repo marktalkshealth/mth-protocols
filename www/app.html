@@ -47,6 +47,8 @@ html.app-phone #shell{position:fixed;inset:0;display:flex;flex-direction:column;
 #shell .ab .k{font:700 10px/1 'DM Sans',system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#b8664a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #shell .ab .n{font:500 20px/1.15 'Cormorant Garamond',Georgia,serif;color:#2b2622;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #shell .ab .n em{font-style:italic;color:#c0623f}
+#shell .sw{flex:none;max-width:34%;padding:8px 10px;border-radius:999px;border:1px solid #ddd3c6;background:#fff;font:600 13px 'DM Sans',system-ui,sans-serif;color:#2b2622}
+html.app-desk #shell .sw{padding:10px 14px;font-size:14px;max-width:none}
 #shell .ab .me{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#2b2622;color:#fff;text-decoration:none;font:700 14px 'DM Sans',sans-serif}
 #shell .ins{flex:none;display:none;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:0;background:#2b2622;color:#fff;font:600 13px 'DM Sans',system-ui,sans-serif;cursor:pointer}
 #shell .ins svg{width:15px;height:15px}
@@ -83,26 +85,41 @@ html.app-phone #shell .lnk{display:none}
 <div id="shell">
   <div class="ab">
     <a class="home" href="index.html" aria-label="Back to the Mark Talks Health site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a>
-    <div class="t"><div class="k">Gut Health Protocol</div><div class="n">Your <em>app</em></div></div>
+    <div class="t"><div class="k">Your protocol</div><div class="n">Your <em>app</em></div></div>
     <div class="lnk"><a class="b sm ghost" href="course.html">Course</a><a class="b sm ghost" href="?view=app">Phone view</a></div>
     <button type="button" class="ins" aria-label="Install the app on your phone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span>Install</span></button>
     <a class="me" href="account.html" aria-label="Your account"></a>
   </div>
-  <div class="frame"><div class="ld">Opening your protocol&hellip;</div><iframe title="Your Gut Health Protocol app" allow="fullscreen; clipboard-write"></iframe></div>
+  <div class="frame"><div class="ld">Opening your protocol&hellip;</div><iframe title="Your protocol app" allow="fullscreen; clipboard-write"></iframe></div>
   <div class="sh" role="dialog" aria-modal="true" aria-label="Add the app to your home screen"><div class="c"><img class="ic" alt="" src="assets/app-icon-180.png"><h3>Add Mark Talks Health to your home screen</h3><p>It opens full screen, straight into your protocol, like any other app.</p><ol></ol><button type="button" class="ok">Got it</button></div></div>
 </div>
 <script>
 (async function(){
   var shell=document.getElementById("shell"), fr=shell.querySelector("iframe"), ld=shell.querySelector(".ld");
   /* ---------- members only ---------- */
-  await MTH.require("gut");
+  await MTH.ready;
+  var PK=MTH.product();
+  if(MTH.user&&!MTH.owns(PK)&&MTH.ownsAny()&&!MTH.qs("p")) PK=MTH.owned[0];
+  await MTH.require(PK);
+  MTH.remember(PK);
+  var PP=MTH.config.products[PK], DIR={gut:"gut",sugar:"sugar",glp1:"glp1"}[PK];
+  shell.querySelector(".k").textContent=PP.name;
+  document.title="My app · "+PP.name;
+  shell.querySelector('.lnk a[href="course.html"]').href=PP.course;
+  /* owns more than one protocol: a switcher */
+  if(MTH.owned.length>1){
+    var sw=document.createElement("select"); sw.className="sw"; sw.setAttribute("aria-label","Switch protocol");
+    sw.innerHTML=MTH.config.order.filter(MTH.owns).map(function(k){ return '<option value="'+k+'"'+(k===PK?' selected':'')+'>'+MTH.config.products[k].short+'</option>'; }).join("");
+    sw.addEventListener("change",function(){ location.href="app.html?p="+sw.value+(window.__APPVIEW?"&view="+window.__APPVIEW:""); });
+    shell.querySelector(".ab .t").after(sw);
+  }
   /* the protocol reads window.parent.MTH_USER to save the plan to this member's account (Supabase gp_save / gp_load) */
   window.MTH_USER={ id:MTH.user.id, email:(MTH.user.email||"").toLowerCase() };
   shell.querySelector(".me").textContent=(MTH.user.email||"?").charAt(0).toUpperCase();
-  if(window.__DESK){ shell.querySelector(".lnk a[href='?view=app']").href="?view=app"; }
-  else if(window.__APPVIEW==="app"){ /* forced phone view on a computer: offer a way back */ var bk=shell.querySelector("a.home"); bk.href="app.html?view=desktop"; bk.setAttribute("aria-label","Back to the desktop view"); }
+  if(window.__DESK){ shell.querySelector(".lnk a[href='?view=app']").href="?p="+PK+"&view=app"; }
+  else if(window.__APPVIEW==="app"){ /* forced phone view on a computer: offer a way back */ var bk=shell.querySelector("a.home"); bk.href="app.html?p="+PK+"&view=desktop"; bk.setAttribute("aria-label","Back to the desktop view"); }
   fr.addEventListener("load",function(){ ld.style.display="none"; });
-  fr.src="../gut/index.html?mode=app"+(window.__DESK?"&view=desktop":"&view=app");
+  fr.src="../"+DIR+"/index.html?mode=app"+(window.__DESK?"&view=desktop":"&view=app");
 
   /* ---------- Install button: phones and tablets only, hidden once installed ---------- */
   var ins=shell.querySelector(".ins"), sh=shell.querySelector(".sh"), ua=navigator.userAgent||"";

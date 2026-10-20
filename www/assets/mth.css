@@ -145,3 +145,9 @@ h1.t em,h2.t em{font-style:italic;color:var(--terra)}
 .mthr-b:hover{opacity:1;transform:translateY(-1px)}
 .mthr-b:disabled{opacity:.22;cursor:default;transform:none}
 .mthr-b svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- email list form ---------- */
+.mx-list{display:flex;gap:10px;max-width:520px;flex-wrap:wrap}
+.mx-list .inp{flex:1 1 220px;min-height:50px}
+.mx-list button{flex:none;min-height:50px;border:0;cursor:pointer}
+.mx-list-ok{font-family:var(--serif);font-size:24px;color:var(--sage);margin:4px 0 0}

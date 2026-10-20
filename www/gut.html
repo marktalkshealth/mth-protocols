@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The Gut Health Protocol · Mark Talks Health</title>
 <meta name="description" content="Reset your gut in 7 days with a personalised plan: a guided green juice cleanse, the 7 healing steps, a 7-part course and your own healing app.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Mark Talks Health">
+<meta property="og:title" content="The Gut Health Protocol · Mark Talks Health">
+<meta property="og:description" content="Reset your gut in 7 days with a personalised plan: a guided green juice cleanse, the 7 healing steps, a 7-part course and your own healing app.">
+<meta property="og:image" content="https://marktalkshealth.github.io/mth-protocols/site/mark-kitchen.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#f7f1e7">
 <link rel="icon" href="assets/app-icon-192.png">
 <link rel="apple-touch-icon" href="assets/app-icon-180.png">
@@ -403,7 +409,7 @@ window.addEventListener("scroll",onScroll,{passive:true}); if(SW) SW.addEventLis
 MTH.ready.then(function(){
   var main=document.getElementById("page"); main.innerHTML="";
   MTH.mount(document.getElementById("design").innerHTML, main);
-  var own=MTH.owns("gut");
+  var K="gut", own=MTH.owns(K), P=MTH.config.products[K];
   if(own){
     document.querySelectorAll("#g2 .g2-buy").forEach(function(b){ b.innerHTML="Open my course"; });
     var amt=document.querySelector("#g2 .amt"); if(amt) amt.innerHTML='<b style="font-size:26px">You own this</b><small>Lifetime access</small>';
@@ -411,7 +417,7 @@ MTH.ready.then(function(){
   }
   if(MTH.qs("checkout")==="cancelled") MTH.toast("Checkout cancelled. Nothing was charged.");
   if(MTH.qs("locked")&&!own) MTH.toast("Get the protocol to open the course and your app.",3600);
-  if(MTH.qs("buy")&&MTH.user&&!own){ var b=document.querySelector("#checkout .g2-buy"); MTH.buy("gut",b); }
+  if(MTH.qs("buy")&&MTH.user&&!own){ var b=document.querySelector("#checkout .g2-buy"); MTH.buy(K,b); }
 });
 </script>
 </body>

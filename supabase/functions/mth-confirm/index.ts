@@ -25,8 +25,8 @@ async function grant(s: Record<string, any>) {
   if (!product || !uid) throw new Error("session missing product or member");
   const r = await fetch(`${SB_URL}/rest/v1/mth_enrollments?on_conflict=user_id,product`, {
     method: "POST",
-    headers: { apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}`, "Content-Type": "application/json", Prefer: "resolution=ignore-duplicates,return=minimal" },
-    body: JSON.stringify({ user_id: uid, product, source: "stripe", livemode: !!s.livemode, stripe_session: s.id, amount_cents: s.amount_total, currency: s.currency }),
+    headers: { apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}`, "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" },
+    body: JSON.stringify({ user_id: uid, product, source: "stripe", livemode: !!s.livemode, stripe_session: s.id, amount_cents: s.amount_total, currency: s.currency, active: true }),
   });
   if (!r.ok && r.status !== 409) throw new Error("grant " + r.status + " " + (await r.text()));
   return product as string;

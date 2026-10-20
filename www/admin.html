@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Admin · Mark Talks Health</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f7f1e7">
+<link rel="icon" href="assets/app-icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/mth.css">
+<script src="assets/vendor/supabase-2.118.0.js"></script>
+<script src="assets/mth.js"></script>
+<script src="assets/courses.js"></script>
+<style>
+.ad{max-width:1180px;margin:0 auto;padding:30px 20px 70px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 20px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.tabs button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:9px 16px;font-weight:600;font-size:14px;cursor:pointer;color:var(--muted)}
+.tabs button.on{background:var(--dark);border-color:var(--dark);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:760px){.kpis{grid-template-columns:repeat(4,1fr)}}
+.kpi{padding:16px 18px}
+.kpi b{display:block;font-family:var(--serif);font-size:40px;font-weight:500;line-height:1}
+.kpi span{font-size:13px;color:var(--muted)}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.bar .inp{min-height:44px;font-size:15px;flex:1 1 220px}
+.bar select{min-height:44px;border-radius:12px;border:1px solid var(--line);background:#fff;padding:0 12px;font:500 14px var(--sans)}
+.ct{width:100%;border-collapse:collapse;font-size:14px}
+.ct th{text-align:left;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);padding:8px 10px;border-bottom:1px solid var(--line)}
+.ct td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.ct tr{cursor:pointer}
+.ct tr:hover td{background:var(--bg)}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;background:var(--bg2);color:var(--muted);margin:0 4px 4px 0}
+.pill.own{background:var(--sageS);color:#3f4b38}
+.pill.list{background:#f3ead8;color:#6e5427}
+.pill.tag{background:var(--terraS);color:#7e3b25}
+@media(max-width:760px){.ct .hide-m{display:none}}
+.drawer{position:fixed;inset:0;z-index:70;background:rgba(43,39,36,.45);display:flex;justify-content:flex-end}
+.drawer .pn{width:min(480px,100%);height:100%;overflow:auto;background:var(--bg);padding:22px 20px 40px}
+.drawer h3{font-family:var(--serif);font-weight:500;font-size:28px;margin:4px 0 2px;word-break:break-all}
+.drawer textarea.inp{min-height:130px;font-size:15px;resize:vertical}
+.acc{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.ls{padding:16px 18px;margin-bottom:12px}
+.ls h4{margin:0 0 2px;font-family:var(--serif);font-weight:500;font-size:22px}
+.ls .row{display:grid;gap:10px;margin-top:12px}
+@media(min-width:860px){.ls .row{grid-template-columns:1fr 1fr}}
+.ls .inp{min-height:44px;font-size:14.5px}
+.ls .fl{display:flex;gap:8px;align-items:center}
+.ls .st{font-size:12.5px;color:var(--faint);margin-top:8px}
+.ok{color:var(--sage)!important}
+.sec-h{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--terra);font-weight:700;margin:22px 0 8px}
+</style>
+</head>
+<body>
+<main class="ad" id="ad"><div class="mx-wait">Admin</div></main>
+<script>
+(async function(){
+  await MTH.require();
+  var sb=MTH.sb, esc=MTH.esc, C=MTH.config, root=document.getElementById("ad");
+  var isAdmin=await sb.rpc("mth_is_admin");
+  if(isAdmin.data!==true){ root.innerHTML='<h1 class="t">Admins <em>only</em></h1><p class="lead">This page is for Mark. You’re signed in as '+esc(MTH.user.email)+'.</p><a class="b" href="index.html">Back to the site</a>'; return; }
+
+  root.innerHTML='<div class="kick">Mark Talks Health</div><h1 class="t">Admin</h1>'+
+    '<div class="tabs" role="tablist"><button data-t="home" class="on">Overview</button><button data-t="people">Contacts</button><button data-t="content">Course content</button><button data-t="access">Give access</button></div><div id="view"></div>';
+  var V=document.getElementById("view"), people=[];
+  function tab(t){ root.querySelectorAll(".tabs button").forEach(function(b){ b.classList.toggle("on",b.dataset.t===t); }); ({home:home,people:contacts,content:content,access:access})[t](); }
+  root.querySelectorAll(".tabs button").forEach(function(b){ b.onclick=function(){ tab(b.dataset.t); }; });
+  async function loadPeople(){ var r=await sb.rpc("mth_admin_contacts"); if(r.error){ MTH.toast("Couldn’t load contacts"); console.warn(r.error); people=[]; } else people=r.data||[]; return people; }
+  function money(c){ return "$"+(c/100).toFixed(c%100?2:0); }
+  function when(t){ if(!t) return "—"; var d=new Date(t); return d.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}); }
+
+  /* ---------------- overview ---------------- */
+  async function home(){
+    V.innerHTML='<div class="mx-wait" style="min-height:30vh">Loading…</div>';
+    await loadPeople();
+    var acct=people.filter(function(p){ return p.has_account; }).length, buyers=people.filter(function(p){ return p.owns&&p.owns.length; }), list=people.filter(function(p){ return p.list_opt_in; }).length;
+    var rev=buyers.reduce(function(a,p){ return a+Number(p.spent_cents||0); },0);
+    var per={}; buyers.forEach(function(p){ p.owns.forEach(function(k){ per[k]=(per[k]||0)+1; }); });
+    V.innerHTML='<div class="kpis"><div class="card kpi"><b>'+people.length+'</b><span>Contacts</span></div><div class="card kpi"><b>'+acct+'</b><span>Accounts (signed in)</span></div><div class="card kpi"><b>'+buyers.length+'</b><span>Customers</span></div><div class="card kpi"><b>'+money(rev)+'</b><span>Revenue (incl. test)</span></div></div>'+
+      '<div class="card" style="padding:18px;margin-top:14px"><div class="sec-h" style="margin-top:0">By protocol</div>'+C.order.map(function(k){ return '<div class="acc"><span>'+C.products[k].name+'</span><b>'+(per[k]||0)+'</b></div>'; }).join("")+'<div class="acc"><span>On the email list</span><b>'+list+'</b></div></div>'+
+      '<div class="card" style="padding:18px;margin-top:14px"><div class="sec-h" style="margin-top:0">Newest</div>'+(people.slice(0,6).map(function(p){ return '<div class="acc"><span>'+esc(p.email)+'</span><span class="small">'+when(p.last_sign_in||p.signed_up)+'</span></div>'; }).join("")||'<p class="muted">No one yet. They’ll appear here as soon as someone signs in or joins the list.</p>')+'</div>';
+  }
+
+  /* ---------------- contacts (CRM) ---------------- */
+  async function contacts(){
+    V.innerHTML='<div class="bar"><input class="inp" id="q" type="search" placeholder="Search email, name, tag or note"><select id="f"><option value="all">Everyone</option><option value="buy">Customers</option><option value="acct">Signed up, not bought</option><option value="list">Email list</option></select><button class="b sm ghost" id="csv">Export CSV</button><button class="b sm" id="add">Add contact</button></div><div class="card" style="overflow:auto"><table class="ct"><thead><tr><th>Contact</th><th>Owns</th><th class="hide-m">Tags</th><th class="hide-m">Last seen</th></tr></thead><tbody id="rows"><tr><td colspan="4">Loading…</td></tr></tbody></table></div>';
+    await loadPeople();
+    var q=document.getElementById("q"), f=document.getElementById("f");
+    function draw(){
+      var s=q.value.trim().toLowerCase(), m=f.value;
+      var list=people.filter(function(p){
+        if(m==="buy"&&!(p.owns&&p.owns.length)) return false;
+        if(m==="acct"&&!(p.has_account&&!(p.owns&&p.owns.length))) return false;
+        if(m==="list"&&!p.list_opt_in) return false;
+        if(!s) return true;
+        return [p.email,p.name,(p.tags||[]).join(" "),p.notes].join(" ").toLowerCase().indexOf(s)>-1; });
+      document.getElementById("rows").innerHTML=list.map(function(p,i){ return '<tr data-e="'+esc(p.email)+'"><td><b>'+esc(p.name||p.email)+'</b>'+(p.name?'<br><span class="small">'+esc(p.email)+'</span>':'')+(p.list_opt_in?'<br><span class="pill list">List</span>':'')+(!p.has_account?'<span class="pill">No account</span>':'')+'</td>'+
+        '<td>'+((p.owns||[]).map(function(k){ return '<span class="pill own">'+esc((C.products[k]||{}).short||k)+'</span>'; }).join("")||'<span class="small">—</span>')+'</td>'+
+        '<td class="hide-m">'+(p.tags||[]).map(function(t){ return '<span class="pill tag">'+esc(t)+'</span>'; }).join("")+'</td><td class="hide-m small">'+when(p.last_sign_in||p.signed_up)+'</td></tr>'; }).join("")||'<tr><td colspan="4" class="muted">No contacts match.</td></tr>';
+      document.querySelectorAll("#rows tr[data-e]").forEach(function(tr){ tr.onclick=function(){ open(tr.dataset.e); }; });
+    }
+    q.oninput=draw; f.onchange=draw; draw();
+    document.getElementById("csv").onclick=function(){
+      var head=["email","name","has_account","signed_up","last_sign_in","owns","spent","tags","notes","email_list","source"];
+      var lines=[head.join(",")].concat(people.map(function(p){ return [p.email,p.name,p.has_account,p.signed_up,p.last_sign_in,(p.owns||[]).join(" "),(Number(p.spent_cents||0)/100).toFixed(2),(p.tags||[]).join(" "),p.notes,p.list_opt_in,p.source].map(function(v){ v=v==null?"":String(v); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; }).join(","); }));
+      var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([lines.join("\n")],{type:"text/csv"})); a.download="mth-contacts-"+new Date().toISOString().slice(0,10)+".csv"; a.click();
+    };
+    document.getElementById("add").onclick=function(){ var e=prompt("Email address of the new contact"); if(e&&/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e.trim())) open(e.trim().toLowerCase(),true); };
+    async function open(email,isNew){
+      var p=people.filter(function(x){ return x.email===email; })[0]||{ email:email, tags:[], owns:[], has_account:false };
+      var d=document.createElement("div"); d.className="drawer";
+      d.innerHTML='<div class="pn" role="dialog" aria-label="Contact"><div style="display:flex;justify-content:space-between;align-items:center"><div class="kick">Contact</div><button class="b sm ghost" data-x>Close</button></div><h3>'+esc(p.email)+'</h3>'+
+        '<p class="small">'+(p.has_account?'Account since '+when(p.signed_up)+' · last seen '+when(p.last_sign_in):'No account yet')+(p.list_opt_in?' · on the email list':'')+(Number(p.spent_cents)?' · spent '+money(Number(p.spent_cents)):'')+'</p>'+
+        '<div class="field"><label>Name</label><input class="inp" id="dn" value="'+esc(p.name||"")+'"></div>'+
+        '<div class="field"><label>Tags (comma separated)</label><input class="inp" id="dt" value="'+esc((p.tags||[]).join(", "))+'" placeholder="vip, coaching, testimonial"></div>'+
+        '<div class="field"><label>Notes</label><textarea class="inp" id="dno" placeholder="Anything you want to remember">'+esc(p.notes||"")+'</textarea></div>'+
+        '<button class="b full" data-save>Save</button>'+
+        '<div class="sec-h">Access</div>'+C.order.map(function(k){ var has=(p.owns||[]).indexOf(k)>-1; return '<div class="acc"><span>'+C.products[k].name+'</span><button class="b sm '+(has?'ghost':'sage')+'" data-acc="'+k+'" data-on="'+(has?0:1)+'">'+(has?'Remove access':'Give access')+'</button></div>'; }).join("")+
+        (p.has_account?'':'<p class="small">They need to sign in once (with any email code) before you can give them access.</p>')+
+        '<p style="margin-top:18px"><a class="b sm ghost" href="mailto:'+esc(p.email)+'">Email them</a></p></div>';
+      document.body.appendChild(d);
+      d.addEventListener("click",function(e){ if(e.target===d||e.target.hasAttribute("data-x")) d.remove(); });
+      d.querySelector("[data-save]").onclick=async function(){
+        var tags=d.querySelector("#dt").value.split(",").map(function(t){ return t.trim().toLowerCase(); }).filter(Boolean);
+        var r=await sb.rpc("mth_admin_save_contact",{ p_email:p.email, p_name:d.querySelector("#dn").value, p_tags:tags, p_notes:d.querySelector("#dno").value });
+        if(r.error||r.data!=="ok"){ MTH.toast("Couldn’t save"); return; }
+        MTH.toast("Saved"); d.remove(); await loadPeople(); draw();
+      };
+      d.querySelectorAll("[data-acc]").forEach(function(b){ b.onclick=async function(){
+        var on=b.dataset.on==="1", k=b.dataset.acc;
+        if(!on&&!confirm("Remove "+p.email+"’s access to the "+C.products[k].name+"? (You can give it back any time.)")) return;
+        var r=await sb.rpc("mth_admin_set_access",{ p_email:p.email, p_product:k, p_active:on });
+        if(r.data==="no_account") return MTH.toast("They need to sign in once first.");
+        if(r.error||r.data!=="ok") return MTH.toast("Couldn’t change access");
+        MTH.toast(on?"Access given":"Access removed"); d.remove(); await loadPeople(); draw(); open(p.email);
+      }; });
+      if(isNew) d.querySelector("#dn").focus();
+    }
+  }
+
+  /* ---------------- course content: video links + ebook uploads ---------------- */
+  async function content(){
+    var pk=sessionStorage.getItem("mth_admin_p")||"gut";
+    V.innerHTML='<div class="bar"><select id="pp">'+C.order.map(function(k){ return '<option value="'+k+'"'+(k===pk?' selected':'')+'>'+C.products[k].name+'</option>'; }).join("")+'</select><a class="b sm ghost" id="pv" target="_blank" rel="noopener">Preview course</a></div>'+
+      '<p class="small" style="margin:-4px 0 14px">Video: paste a YouTube, Vimeo or Wistia link (unlisted works). Ebook: upload the file (HTML or PDF), or paste a link. Members only see these after buying.</p><div id="ls">Loading…</div>';
+    var pp=document.getElementById("pp"); pp.onchange=function(){ sessionStorage.setItem("mth_admin_p",pp.value); content(); };
+    document.getElementById("pv").href=C.products[pk].course;
+    var r=await sb.from("mth_lesson_media").select("lesson_id,video_url,ebook_url,updated_at").eq("product",pk);
+    var M={}; (r.data||[]).forEach(function(x){ M[x.lesson_id]=x; });
+    var course=window.MTH_COURSES[pk];
+    document.getElementById("ls").innerHTML=course.sections.map(function(s){ return '<div class="sec-h">'+(s.step?'Step '+s.step+' · ':'')+esc(s.title)+'</div>'+s.lessons.map(function(l){ var m=M[l.id]||{};
+      return '<div class="card ls" data-l="'+l.id+'"><h4>'+esc(l.title)+'</h4><div class="row">'+
+        '<div><label class="small">Video link</label><input class="inp" data-v value="'+esc(m.video_url||"")+'" placeholder="https://youtu.be/…"></div>'+
+        (l.app?'<div></div>':'<div><label class="small">Ebook</label><div class="fl"><input class="inp" data-e value="'+esc(m.ebook_url||"")+'" placeholder="Upload a file or paste a link"><label class="b sm ghost" style="flex:none">Upload<input type="file" accept=".html,.htm,.pdf" hidden data-f></label></div></div>')+
+        '</div><div class="fl" style="margin-top:12px"><button class="b sm" data-s>Save</button><span class="st">'+(m.video_url?'✓ video ':'no video yet ')+(l.app?'':(m.ebook_url?'· ✓ ebook':'· no ebook yet'))+'</span></div></div>'; }).join(""); }).join("");
+    document.querySelectorAll(".ls").forEach(function(card){
+      var id=card.dataset.l, st=card.querySelector(".st");
+      async function save(){
+        var row={ product:pk, lesson_id:id, video_url:card.querySelector("[data-v]").value.trim()||null, updated_at:new Date().toISOString() };
+        var e=card.querySelector("[data-e]"); if(e) row.ebook_url=e.value.trim()||null;
+        var r=await sb.from("mth_lesson_media").upsert(row,{ onConflict:"product,lesson_id" });
+        if(r.error){ st.textContent="Couldn’t save: "+r.error.message; st.classList.remove("ok"); return false; }
+        st.textContent="Saved ✓"; st.classList.add("ok"); return true;
+      }
+      card.querySelector("[data-s]").onclick=save;
+      var f=card.querySelector("[data-f]");
+      if(f) f.onchange=async function(){
+        var file=f.files[0]; if(!file) return;
+        var ext=(file.name.split(".").pop()||"html").toLowerCase(); if(["html","htm","pdf"].indexOf(ext)<0) return MTH.toast("Please upload an .html or .pdf file");
+        var path=pk+"/"+id+"."+ext;
+        st.textContent="Uploading "+file.name+"…"; st.classList.remove("ok");
+        var r=await sb.storage.from("course-files").upload(path,file,{ upsert:true, contentType:ext==="pdf"?"application/pdf":"text/html" });
+        if(r.error){ st.textContent="Upload failed: "+r.error.message; return; }
+        card.querySelector("[data-e]").value=path; await save(); st.textContent="Uploaded and saved ✓";
+      };
+    });
+  }
+
+  /* ---------------- give access ---------------- */
+  function access(){
+    V.innerHTML='<div class="card" style="padding:22px;max-width:560px"><h2 class="t" style="font-size:30px;margin-top:0">Give someone <em>access</em></h2><p class="small">For a comp, a friend, a refund swap or a test. They need to have signed in once first.</p>'+
+      '<div class="field"><label for="ge">Their email</label><input class="inp" id="ge" type="email" placeholder="name@example.com"></div>'+
+      '<div class="field"><label for="gp">Protocol</label><select id="gp" class="inp">'+C.order.map(function(k){ return '<option value="'+k+'">'+C.products[k].name+'</option>'; }).join("")+'</select></div>'+
+      '<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="b" id="give">Give access</button><button class="b ghost" id="me">Give it to me</button></div><p id="gm" class="small" style="margin-top:12px"></p></div>';
+    async function give(email){
+      var k=document.getElementById("gp").value, m=document.getElementById("gm");
+      var r=await sb.rpc("mth_admin_set_access",{ p_email:email, p_product:k, p_active:true });
+      if(r.data==="no_account"){ m.textContent=email+" hasn’t signed in yet. Ask them to sign in once, then try again."; return; }
+      if(r.error||r.data!=="ok"){ m.textContent="Couldn’t give access."; return; }
+      m.innerHTML="<b class='ok'>Done.</b> "+esc(email)+" now has the "+esc(C.products[k].name)+"."; await MTH.refresh();
+    }
+    document.getElementById("give").onclick=function(){ var e=document.getElementById("ge").value.trim(); if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) return MTH.toast("Enter an email"); give(e); };
+    document.getElementById("me").onclick=function(){ give(MTH.user.email); };
+  }
+
+  tab(location.hash==="#content"?"content":location.hash==="#people"?"people":"home");
+})();
+</script>
+</body>
+</html>

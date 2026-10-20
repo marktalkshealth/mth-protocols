@@ -3,8 +3,10 @@
 // Returns { url } to send the member to Stripe, or { already: true } if they own it.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
-const PRODUCTS: Record<string, { name: string; cents: number; desc: string }> = {
-  gut: { name: "The Gut Health Protocol", cents: 9700, desc: "Personalised healing app, 7-part course and ebooks. Lifetime access." },
+const PRODUCTS: Record<string, { name: string; cents: number; desc: string; sales: string }> = {
+  gut: { name: "The Gut Health Protocol", cents: 9700, desc: "Personalised healing app, 7-part course and ebooks. Lifetime access.", sales: "gut.html" },
+  sugar: { name: "The Diabetes Protocol", cents: 9700, desc: "Personalised healing app, 7-part course and ebooks. Lifetime access.", sales: "diabetes.html" },
+  glp1: { name: "The GLP-1 Weight Loss Protocol", cents: 9700, desc: "Personalised app, 7-part course and ebooks. Lifetime access.", sales: "glp1.html" },
 };
 const OK_HOSTS = ["raw.githack.com", "marktalkshealth.github.io", "marktalkshealth.com", "www.marktalkshealth.com", "localhost", "127.0.0.1"];
 const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info", "Access-Control-Allow-Methods": "POST, OPTIONS" };
@@ -29,7 +31,7 @@ function stripeKey(): { key?: string; err?: string } {
   return { key };
 }
 async function owns(uid: string, product: string) {
-  const r = await fetch(`${SB_URL}/rest/v1/mth_enrollments?select=id&user_id=eq.${uid}&product=eq.${product}`,
+  const r = await fetch(`${SB_URL}/rest/v1/mth_enrollments?select=id&user_id=eq.${uid}&product=eq.${product}&active=eq.true`,
     { headers: { apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}` } });
   const rows = r.ok ? await r.json() : [];
   return rows.length > 0;
@@ -65,8 +67,8 @@ Deno.serve(async (req) => {
     f.set("metadata[product]", product);
     f.set("metadata[user_id]", me.id);
     f.set("allow_promotion_codes", "true");
-    f.set("success_url", new URL("welcome.html", base).href + "?session_id={CHECKOUT_SESSION_ID}");
-    f.set("cancel_url", new URL("gut.html", base).href + "?checkout=cancelled#checkout");
+    f.set("success_url", new URL("welcome.html", base).href + "?p=" + product + "&session_id={CHECKOUT_SESSION_ID}");
+    f.set("cancel_url", new URL(P.sales, base).href + "?checkout=cancelled#checkout");
     const r = await fetch("https://api.stripe.com/v1/checkout/sessions", {
       method: "POST", body: f,
       headers: { Authorization: `Bearer ${sk.key}`, "Content-Type": "application/x-www-form-urlencoded" },

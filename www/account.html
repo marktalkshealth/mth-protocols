@@ -20,7 +20,8 @@
 .ac .p{display:flex;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
 .ac .p:first-of-type{border-top:0}
 .ac .p .im{width:64px;height:64px;border-radius:14px;background:#d8c4ad center/cover;flex:none}
-.ac .p .tx{flex:1;min-width:0}
+.ac .p .tx{flex:1;min-width:140px}
+.ac .p{flex-wrap:wrap}
 .ac .p b{font-family:var(--serif);font-size:22px;font-weight:500;display:block;line-height:1.1}
 .ac h3{margin:0 0 4px;font-family:var(--serif);font-weight:500;font-size:24px}
 </style>
@@ -30,14 +31,18 @@
 <script>
 (async function(){
   await MTH.require();
-  var P=MTH.config.products.gut, own=MTH.owns("gut"), rem=MTH.remembered();
+  var C=MTH.config, rem=MTH.remembered(), mine=C.order.filter(MTH.owns), others=C.order.filter(function(k){ return !MTH.owns(k); });
+  var IMG=C.assets+"steps/";
   document.getElementById("ac").innerHTML='<div class="kick">Your account</div><h1 class="t">Hello<em>.</em></h1><p class="lead">Signed in as <b>'+MTH.esc(MTH.user.email)+'</b></p>'+
-    '<div class="card"><h3>Your protocols</h3>'+(own?
-      '<div class="p"><div class="im" style="background-image:url(https://marktalkshealth.github.io/mth-protocols/site/steps/1-fasting.jpg)"></div><div class="tx"><b>'+P.name+'</b><span class="small">Lifetime access</span></div></div>'+
-      '<div class="row" style="margin-top:12px"><a class="b" href="'+P.app+'">Open my app</a><a class="b ghost" href="'+P.course+'">Open the course</a></div>'
-      :'<p class="muted" style="margin:6px 0 14px">You don\u2019t own a protocol yet.</p><a class="b" href="'+P.sales+'#checkout">Get the Gut Health Protocol · '+P.price+'</a>')+'</div>'+
+    '<div class="card"><h3>Your protocols</h3>'+(mine.length?mine.map(function(k){ var P=C.products[k];
+      return '<div class="p"><div class="im" style="background-image:url('+IMG+P.img+'.jpg)"></div><div class="tx"><b>'+P.name+'</b><span class="small">Lifetime access</span></div><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="b sm" href="'+P.app+'">App</a><a class="b sm ghost" href="'+P.course+'">Course</a></div></div>'; }).join("")
+      :'<p class="muted" style="margin:6px 0 4px">You don\u2019t own a protocol yet.</p>')+'</div>'+
+    (others.length?'<div class="card"><h3>'+(mine.length?'More protocols':'Choose a protocol')+'</h3>'+others.map(function(k){ var P=C.products[k];
+      return '<div class="p"><div class="im" style="background-image:url('+IMG+P.img+'.jpg)"></div><div class="tx"><b>'+P.name+'</b><span class="small">'+MTH.esc(P.line)+'</span></div><a class="b sm ghost" href="'+P.sales+'">'+P.price+'</a></div>'; }).join("")+'</div>':'')+
     '<div class="card"><h3>This device</h3><label class="check" style="margin:8px 0 6px"><input type="checkbox" id="rem"'+(rem?' checked':'')+'> Keep me signed in on this device</label><p class="small" style="margin:0 0 14px">Untick on a shared computer: you\u2019ll be signed out when the browser closes.</p><button class="b ghost" id="out">Sign out</button></div>'+
-    '<p class="small" style="margin-top:22px">Questions or a refund within 30 days? Email <a href="mailto:marktalkshealth@gmail.com">marktalkshealth@gmail.com</a>.</p>';
+    '<p class="small" style="margin-top:22px">Questions or a refund within 30 days? Email <a href="mailto:marktalkshealth@gmail.com">marktalkshealth@gmail.com</a>. See our <a href="refunds.html">refund policy</a>.</p>'+
+    '<p class="small admin-link hidden"><a class="b sm dark" href="admin.html">Open admin</a></p>';
+  MTH.sb.rpc("mth_is_admin").then(function(r){ if(r.data===true){ var a=document.querySelector(".admin-link"); if(a) a.classList.remove("hidden"); } });
   document.getElementById("out").onclick=MTH.signOut;
   document.getElementById("rem").onchange=async function(){
     MTH.setRemember(this.checked);
