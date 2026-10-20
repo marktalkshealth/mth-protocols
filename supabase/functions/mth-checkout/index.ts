@@ -1,6 +1,6 @@
 // Mark Talks Health: start a Stripe Checkout for a protocol.
-// POST { product: "gut", return_base: "https://…/" }  (signed in or not: guests buy first, the account is made after payment)
-// Returns { url } to send the member to Stripe, or { already: true } if they own it.
+// POST { product: "gut", return_base: "https://…/", embedded?: true }  (signed in or not: guests buy first, the account is made after payment)
+// Returns { url } (full-page Stripe), { client_secret } (pop-up Stripe on our page), or { already: true } if they own it.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const PRODUCTS: Record<string, { name: string; cents: number; desc: string; sales: string }> = {
@@ -70,14 +70,17 @@ Deno.serve(async (req) => {
       f.set("metadata[guest]", "1");   // Stripe asks for the email; the account is created from it after payment
     }
     f.set("allow_promotion_codes", "true");
-    f.set("success_url", new URL("welcome.html", base).href + "?p=" + product + "&session_id={CHECKOUT_SESSION_ID}");
-    f.set("cancel_url", new URL(P.sales, base).href + "?checkout=cancelled#checkout");
+    const back = new URL("welcome.html", base).href + "?p=" + product + "&session_id={CHECKOUT_SESSION_ID}";
+    const embedded = body.embedded === true;   // Stripe's form in a popup on our page instead of a redirect
+    if (embedded) { f.set("ui_mode", "embedded"); f.set("return_url", back); }
+    else { f.set("success_url", back); f.set("cancel_url", new URL(P.sales, base).href + "?checkout=cancelled#checkout"); }
     const r = await fetch("https://api.stripe.com/v1/checkout/sessions", {
       method: "POST", body: f,
       headers: { Authorization: `Bearer ${sk.key}`, "Content-Type": "application/x-www-form-urlencoded" },
     });
     const s = await r.json();
     if (!r.ok) { console.error("stripe", s); return json({ error: "stripe_error", message: s?.error?.message || "" }, 502); }
+    if (embedded) return json({ client_secret: s.client_secret, test: !s.livemode });
     return json({ url: s.url, test: !s.livemode });
   } catch (e) {
     console.error(e);
