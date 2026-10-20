@@ -6,7 +6,7 @@
 //   OUTBOUND_WEBHOOK_URL (+ OUTBOUND_WEBHOOK_SECRET)  any other tool (Zapier, Make, ManyChat, n8n…)
 // Every attempt is written to mth_sync_log so the admin can see what happened.
 
-export type SyncEvent = { email: string; name?: string | null; event: "list_join" | "signup" | "purchase" | "test"; product?: string | null; source?: string | null; utm?: Record<string, string> | null };
+export type SyncEvent = { email: string; name?: string | null; event: "list_join" | "signup" | "purchase" | "refund" | "test"; product?: string | null; source?: string | null; utm?: Record<string, string> | null };
 type Result = { provider: string; ok: boolean; detail: string };
 
 const env = (k: string) => (Deno.env.get(k) || "").trim();
@@ -23,6 +23,7 @@ export function tagsFor(ev: SyncEvent): string[] {
   if (ev.event === "list_join") t.push("mth-list");
   if (ev.event === "signup") t.push("mth-account");
   if (ev.event === "purchase") { t.push("mth-customer"); if (ev.product) t.push("mth-" + ev.product + "-customer"); }
+  if (ev.event === "refund") { t.push("mth-refunded"); if (ev.product) t.push("mth-" + ev.product + "-refunded"); }
   if (ev.event === "test") t.push("mth-test");
   if (ev.utm?.utm_source) t.push("src-" + String(ev.utm.utm_source).toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 30));
   return t;

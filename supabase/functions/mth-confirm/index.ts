@@ -27,7 +27,7 @@ async function grant(s: Record<string, any>) {
   const r = await fetch(`${SB_URL}/rest/v1/mth_enrollments?on_conflict=user_id,product`, {
     method: "POST",
     headers: { apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}`, "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" },
-    body: JSON.stringify({ user_id: uid, product, source: "stripe", livemode: !!s.livemode, stripe_session: s.id, amount_cents: s.amount_total, currency: s.currency, active: true }),
+    body: JSON.stringify({ user_id: uid, product, source: "stripe", livemode: !!s.livemode, stripe_session: s.id, payment_intent: s.payment_intent || null, amount_cents: s.amount_total, currency: s.currency, active: true }),
   });
   if (!r.ok && r.status !== 409) throw new Error("grant " + r.status + " " + (await r.text()));
   const email = String(s.customer_details?.email || s.customer_email || "").toLowerCase();
