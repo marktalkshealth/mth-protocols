@@ -2,6 +2,7 @@
 // POST { session_id }  (signed-in member's token in Authorization)  ->  { ok: true, product }
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { syncContact } from "./sync.ts";
+import { accountForEmail, checkoutEmail } from "./guest.ts";
 
 const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info", "Access-Control-Allow-Methods": "POST, OPTIONS" };
 const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { ...CORS, "Content-Type": "application/json" } });
@@ -22,8 +23,10 @@ function stripeKey(): { key?: string; err?: string } {
   return { key };
 }
 async function grant(s: Record<string, any>) {
-  const product = s.metadata?.product, uid = s.client_reference_id || s.metadata?.user_id;
-  if (!product || !uid) throw new Error("session missing product or member");
+  const product = s.metadata?.product;
+  let uid = s.client_reference_id || s.metadata?.user_id, tokenHash: string | null = null;
+  if (!product) throw new Error("session missing product");
+  if (!uid) { const a = await accountForEmail(checkoutEmail(s)); uid = a.id; tokenHash = a.tokenHash; }   // guest checkout
   const r = await fetch(`${SB_URL}/rest/v1/mth_enrollments?on_conflict=user_id,product`, {
     method: "POST",
     headers: { apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}`, "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" },
@@ -32,15 +35,14 @@ async function grant(s: Record<string, any>) {
   if (!r.ok && r.status !== 409) throw new Error("grant " + r.status + " " + (await r.text()));
   const email = String(s.customer_details?.email || s.customer_email || "").toLowerCase();
   if (email) { try { await syncContact({ email, name: s.customer_details?.name || null, event: "purchase", product, source: "stripe" }); } catch (_) { /* email service is best-effort */ } }
-  return product as string;
+  return { product: product as string, uid: uid as string, tokenHash };
 }
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return json({ error: "method" }, 405);
   try {
-    const me = await member(req);
-    if (!me) return json({ error: "sign_in_required" }, 401);
+    const me = await member(req);   // null when a guest comes back from Stripe
     const { session_id } = await req.json().catch(() => ({}));
     if (!/^cs_(test|live)_[A-Za-z0-9]+$/.test(String(session_id || ""))) return json({ error: "bad_session" }, 400);
     const sk = stripeKey();
@@ -48,10 +50,22 @@ Deno.serve(async (req) => {
     const r = await fetch(`https://api.stripe.com/v1/checkout/sessions/${session_id}`, { headers: { Authorization: `Bearer ${sk.key}` } });
     const s = await r.json();
     if (!r.ok) return json({ error: "stripe_error", message: s?.error?.message || "" }, 502);
-    if (s.client_reference_id !== me.id) return json({ error: "not_yours" }, 403);
+    const guest = !s.client_reference_id && s.metadata?.guest === "1";
+    if (!guest && (!me || s.client_reference_id !== me.id)) return json({ error: me ? "not_yours" : "sign_in_required" }, me ? 403 : 401);
     if (s.payment_status !== "paid") return json({ error: "not_paid", status: s.payment_status }, 402);
-    const product = await grant(s);
-    return json({ ok: true, product, test: !s.livemode });
+    const g = await grant(s);
+    const email = checkoutEmail(s);
+    if (!guest || (me && me.id === g.uid)) return json({ ok: true, product: g.product, email, test: !s.livemode });
+    // Guest: sign them straight in, once, and only soon after paying. Otherwise they sign in with the checkout email.
+    const fresh = Date.now() / 1000 - Number(s.created || 0) < 6 * 3600;
+    const svc = { apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}`, "Content-Type": "application/json", Prefer: "return=representation" };
+    let token: string | null = null;
+    if (fresh && g.tokenHash) {
+      const u = await fetch(`${SB_URL}/rest/v1/mth_enrollments?stripe_session=eq.${s.id}&autologin_at=is.null&select=id`, { method: "PATCH", headers: svc, body: JSON.stringify({ autologin_at: new Date().toISOString() }) });
+      const rows = u.ok ? await u.json() : [];
+      if (rows.length) token = g.tokenHash;
+    }
+    return json({ ok: true, product: g.product, email, token_hash: token, sign_in: !token, test: !s.livemode });
   } catch (e) {
     console.error(e);
     return json({ error: "server" }, 500);

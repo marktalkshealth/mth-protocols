@@ -3,13 +3,16 @@
 // Needs the STRIPE_WEBHOOK_SECRET (whsec_…) secret.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { syncContact } from "./sync.ts";
+import { accountForEmail, checkoutEmail } from "./guest.ts";
 
 const SB_URL = Deno.env.get("SUPABASE_URL")!;
 const SB_SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 async function grant(s: Record<string, any>) {
-  const product = s.metadata?.product, uid = s.client_reference_id || s.metadata?.user_id;
-  if (!product || !uid) throw new Error("session missing product or member");
+  const product = s.metadata?.product;
+  let uid = s.client_reference_id || s.metadata?.user_id, tokenHash: string | null = null;
+  if (!product) throw new Error("session missing product");
+  if (!uid) { const a = await accountForEmail(checkoutEmail(s)); uid = a.id; tokenHash = a.tokenHash; }   // guest checkout
   const r = await fetch(`${SB_URL}/rest/v1/mth_enrollments?on_conflict=user_id,product`, {
     method: "POST",
     headers: { apikey: SB_SERVICE, Authorization: `Bearer ${SB_SERVICE}`, "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" },

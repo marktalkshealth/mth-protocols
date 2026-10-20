@@ -1,5 +1,5 @@
 // Mark Talks Health: start a Stripe Checkout for a protocol.
-// POST { product: "gut", return_base: "https://…/www/" }  (signed-in member's token in Authorization)
+// POST { product: "gut", return_base: "https://…/" }  (signed in or not: guests buy first, the account is made after payment)
 // Returns { url } to send the member to Stripe, or { already: true } if they own it.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
@@ -8,7 +8,7 @@ const PRODUCTS: Record<string, { name: string; cents: number; desc: string; sale
   sugar: { name: "The Diabetes Protocol", cents: 9700, desc: "Personalised healing app, 7-part course and ebooks. Lifetime access.", sales: "diabetes.html" },
   glp1: { name: "The GLP-1 Weight Loss Protocol", cents: 9700, desc: "Personalised app, 7-part course and ebooks. Lifetime access.", sales: "glp1.html" },
 };
-const OK_HOSTS = ["raw.githack.com", "marktalkshealth.github.io", "marktalkshealth.com", "www.marktalkshealth.com", "localhost", "127.0.0.1"];
+const OK_HOSTS = ["raw.githack.com", "marktalkshealth.github.io", "marktalkshealth.com", "www.marktalkshealth.com", "mth-site.pages.dev", "localhost", "127.0.0.1"];
 const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info", "Access-Control-Allow-Methods": "POST, OPTIONS" };
 const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { ...CORS, "Content-Type": "application/json" } });
 
@@ -41,8 +41,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return json({ error: "method" }, 405);
   try {
-    const me = await member(req);
-    if (!me) return json({ error: "sign_in_required" }, 401);
+    const me = await member(req);   // null for a guest
     const body = await req.json().catch(() => ({}));
     const product = String(body.product || "gut");
     const P = PRODUCTS[product];
@@ -51,7 +50,7 @@ Deno.serve(async (req) => {
     try { base = new URL(String(body.return_base || "")); } catch { return json({ error: "bad_return" }, 400); }
     if (!OK_HOSTS.includes(base.hostname) || (base.protocol !== "https:" && base.hostname !== "localhost" && base.hostname !== "127.0.0.1")) return json({ error: "bad_return" }, 400);
     if (!base.pathname.endsWith("/")) base.pathname = base.pathname.replace(/[^/]*$/, "");
-    if (await owns(me.id, product)) return json({ already: true });
+    if (me && (await owns(me.id, product))) return json({ already: true });
     const sk = stripeKey();
     if (sk.err) return json({ error: sk.err }, 503);
 
@@ -62,10 +61,14 @@ Deno.serve(async (req) => {
     f.set("line_items[0][price_data][unit_amount]", String(P.cents));
     f.set("line_items[0][price_data][product_data][name]", P.name);
     f.set("line_items[0][price_data][product_data][description]", P.desc);
-    f.set("client_reference_id", me.id);
-    if (me.email) f.set("customer_email", me.email);
     f.set("metadata[product]", product);
-    f.set("metadata[user_id]", me.id);
+    if (me) {
+      f.set("client_reference_id", me.id);
+      if (me.email) f.set("customer_email", me.email);
+      f.set("metadata[user_id]", me.id);
+    } else {
+      f.set("metadata[guest]", "1");   // Stripe asks for the email; the account is created from it after payment
+    }
     f.set("allow_promotion_codes", "true");
     f.set("success_url", new URL("welcome.html", base).href + "?p=" + product + "&session_id={CHECKOUT_SESSION_ID}");
     f.set("cancel_url", new URL(P.sales, base).href + "?checkout=cancelled#checkout");
