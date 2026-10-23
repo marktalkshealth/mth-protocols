@@ -1,5 +1,11 @@
 # Mark Talks Health — how Claude runs the growth system
 
+> **Warning (Oct 23 2026):** the live site repo `marktalkshealth/mth-site` is AHEAD of `www/` here
+> (Diabetes and GLP-1 quizzes, step renames, course changes and the Healing Assessment were published
+> straight to mth-site). Do NOT run `tools/publish_site.sh` until `www/` is synced back from mth-site,
+> or those changes will be wiped. Edit mth-site directly for now.
+> `supabase/functions/mth-assess/` matches the deployed function (version 11).
+
 This file is for Claude (any session) working on Mark's business. It describes the
 system on branch `own-site-mvp` and how to operate it safely.
 
