@@ -1,9 +1,11 @@
 # Mark Talks Health — how Claude runs the growth system
 
-> **Warning (Oct 23 2026):** the live site repo `marktalkshealth/mth-site` is AHEAD of `www/` here
-> (Diabetes and GLP-1 quizzes, step renames, course changes and the Healing Assessment were published
-> straight to mth-site). Do NOT run `tools/publish_site.sh` until `www/` is synced back from mth-site,
-> or those changes will be wiped. Edit mth-site directly for now.
+> **Synced (Oct 24 2026):** `www/` (plus gut/sugar/glp1/hub, shared/, site/) now matches the live
+> `marktalkshealth/mth-site` repo. A dry run of `tools/publish_site.sh` reproduces the live site exactly,
+> except the Library (library.html, assets/library.*, assets/admin-library.js and 3 lines in admin.html),
+> which is intentionally unpublished until `supabase/pending/mth_library.sql` is applied.
+> RULE: edit here on `own-site-mvp`, then publish. Never edit mth-site directly. Before publishing,
+> dry-run into a copy of mth-site and check `git status` shows only the changes you expect.
 > `supabase/functions/mth-assess/` matches the deployed function (version 11).
 
 This file is for Claude (any session) working on Mark's business. It describes the

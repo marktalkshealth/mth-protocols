@@ -20,9 +20,6 @@ window.MTH_PICKS = {
       { name: "Exercise bike", why: "Easy, joint-friendly cardio at home, any weather.", search: "stationary exercise bike home" },
       { name: "Hand weights", why: "A pair of dumbbells covers most of the strength days.", search: "neoprene dumbbells set" },
     ] },
-    { key: "books", title: "My <em>books</em>", note: "Paperbacks and Kindle editions.", picks: [
-      { name: "Books in the Library", why: "My ebooks and guides, including the free downloads.", url: "library.html", internal: true },
-    ] },
   ],
 };
 

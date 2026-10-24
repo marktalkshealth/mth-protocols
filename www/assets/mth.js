@@ -1,5 +1,5 @@
 /* =================================================================
-   MARK TALKS HEALTH — OWN SITE CORE (no LearnWorlds)
+   MARK TALKS HEALTH — OWN SITE CORE
    Every page loads this after assets/vendor/supabase-*.js.
    - sign-in (email code) with "remember me"
    - who owns what (mth_enrollments in Supabase)
@@ -13,14 +13,14 @@
     supabaseKey:"sb_publishable_vxaKCnn-2XlvV7MmoV3wqg_dxgdqtz2",
     /* the three protocols: sales page, course and app for each */
     products:{
-      gut:  { name:"Gut Health Protocol", short:"Gut Health", price:"$97", was:"$147", sales:"gut.html",      course:"course.html?p=gut",   app:"app.html?p=gut",   img:"1-fasting", line:"Calm the gut lining and rebuild your microbiome with a guided juice cleanse." },
-      sugar:{ name:"Diabetes Protocol",   short:"Diabetes",   price:"$97", was:"$147", sales:"diabetes.html", course:"course.html?p=sugar", app:"app.html?p=sugar", img:"3-high-protein",    line:"Gain control of your blood sugar and enjoy steadier energy with your personalised protocol." },
-      glp1: { name:"GLP-1 Weight Loss Protocol", short:"GLP-1", price:"$97", was:"$147", sales:"glp1.html",   course:"course.html?p=glp1",  app:"app.html?p=glp1",  img:"4-cardio",  line:"Lose fat while protecting muscle. A customised roadmap for using GLP-1s intelligently." }
+      gut:  { name:"Gut Health Protocol", short:"Gut Health", price:"$97", was:"$147", sales:"gut.html",      course:"course.html?p=gut",   app:"app.html?p=gut",   img:"1-fasting", thumb:"/media/site/courses/gut.jpg", line:"Calm the gut lining and rebuild your microbiome with a guided juice cleanse." },
+      sugar:{ name:"Diabetes Protocol",   short:"Diabetes",   price:"$97", was:"$147", sales:"diabetes.html", course:"course.html?p=sugar", app:"app.html?p=sugar", img:"3-high-protein",    thumb:"/media/site/courses/sugar.jpg", line:"Gain control of your blood sugar and enjoy steadier energy with your personalised protocol." },
+      glp1: { name:"GLP-1 Weight Loss Protocol", short:"GLP-1", price:"$97", was:"$147", sales:"glp1.html",   course:"course.html?p=glp1",  app:"app.html?p=glp1",  img:"4-cardio",  thumb:"/media/site/courses/glp1.jpg", line:"Lose fat while protecting muscle. A customised roadmap for using GLP-1s intelligently." }
     },
     order:["gut","sugar","glp1"],
     stripeKey:"",                        /* Stripe publishable key (pk_live_…): turns on the pop-up checkout. Empty = full-page Stripe checkout */
     testMode:false,                      /* shows the "test checkout" ribbon; set false when Stripe is live */
-    assets:"https://marktalkshealth.github.io/mth-protocols/site/"   /* photos already hosted with the old site */
+    assets:"/media/site/"   /* photos already hosted with the old site */
   };
   var H=document.documentElement;
   var REMEMBER="mth_remember";
@@ -209,12 +209,12 @@
             :'<a class="b sm ghost" href="'+M.loginUrl()+'">Sign in</a>'+cta)+
         '<button class="mx-burger" type="button" aria-label="Open menu">'+ICON.menu+'</button></div></div>';
     var sh=document.createElement("div"); sh.className="mx-sheet"; sh.setAttribute("role","dialog"); sh.setAttribute("aria-label","Menu");
-    var sl=[["index.html","Home","Natural healing meets modern science"]];
-    CONFIG.order.forEach(function(k){ var q=CONFIG.products[k]; sl.push([M.owns(k)?q.course:q.sales,q.name,M.owns(k)?"Your course · open":"From "+q.price]); });
-    sl.push(["app.html","Apps","Your personal healing plan"]); sl.push(["community.html","Hub","Community, questions and live sessions"]);
+    /* menu: Home, My account, then only the courses this member bought */
+    var sl=[["index.html","Home",""]];
+    sl.push(inn?["account.html","My account",M.esc(M.user.email)]:[M.loginUrl(),"Sign in","Access your courses"]);
+    CONFIG.order.forEach(function(k){ var q=CONFIG.products[k]; if(M.owns(k)) sl.push([q.course,q.name,"Your course"]); });
+    if(!any) sl.push(["protocols.html","Courses","See the healing programs"]);
     sl.push(["picks.html","My Picks","Everything I recommend, on Amazon"]);
-    sl.push(["get-app.html","Get the app on your phone","Two taps, no app store"]);
-    if(inn) sl.push(["account.html","My account",M.esc(M.user.email)]);
     sh.innerHTML='<div class="top"><a class="mx-word" href="index.html">Mark Talks <em>Health</em></a><button class="mx-burger" type="button" aria-label="Close menu" style="display:grid">'+ICON.close+'</button></div>'+
       '<nav>'+sl.map(function(l){ return '<a href="'+l[0]+'">'+l[1]+(l[2]?'<small>'+l[2]+'</small>':'')+'</a>'; }).join("")+'</nav>'+
       '<div class="bot">'+(ownCur?'<a class="b full" href="'+P.app+'">Open my app</a>':'<a class="b full" href="'+P.sales+'#checkout">Start the '+P.name+' · '+P.price+'</a>')+
@@ -229,14 +229,20 @@
   function footer(){
     if(document.querySelector(".mx-f")||H.classList.contains("mx-bare")) return;
     var f=document.createElement("footer"); f.className="mx-f";
+    var pg=(location.pathname.split("/").filter(Boolean)[0]||"index").replace(/\.html$/,"");
+    if(["index","gut","diabetes","glp1","protocols","privacy","terms","refunds"].indexOf(pg)<0){   /* members' pages: one quiet line */
+      f.className="mx-f slim";
+      f.innerHTML='<div class="in"><div class="fine">&copy; '+new Date().getFullYear()+' Mark Talks Health · Educational, not medical advice · <a href="picks.html">My Picks</a> · <a href="mailto:marktalkshealth@gmail.com">Help</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a></div></div>';
+      document.body.appendChild(f); return;
+    }
     f.innerHTML='<div class="in"><div class="brand">Mark Talks Health<small>Natural healing meets modern science. Personalised protocols, guided day by day.</small></div>'+
-      '<nav aria-label="Footer"><a href="index.html">Home</a><a href="gut.html">Gut Health</a><a href="diabetes.html">Diabetes</a><a href="glp1.html">GLP-1</a><a href="library.html">Library</a><a href="picks.html">My Picks</a><a href="get-app.html">Get the app</a>'+(M.user?'<a href="account.html">My account</a>':'<a href="'+M.loginUrl()+'">Sign in</a>')+'<a href="mailto:marktalkshealth@gmail.com">Contact</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="refunds.html">Refunds</a></nav>'+
+      '<nav aria-label="Footer"><a href="index.html">Home</a><a href="gut.html">Gut Health</a><a href="diabetes.html">Diabetes</a><a href="glp1.html">GLP-1</a><a href="picks.html">My Picks</a>'+(M.user?'<a href="account.html">My account</a>':'<a href="'+M.loginUrl()+'">Sign in</a>')+'<a href="mailto:marktalkshealth@gmail.com">Contact</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="refunds.html">Refunds</a></nav>'+
       '<div class="fine">Educational program, not a substitute for professional medical advice, diagnosis or treatment. Individual results vary. Consult your healthcare provider before starting any fasting or cleansing protocol. &copy; '+new Date().getFullYear()+' Mark Talks Health</div></div>';
     document.body.appendChild(f);
   }
   M.chrome=function(){ header(); footer(); };
 
-  /* ---------- pieces copied from the LearnWorlds site script ---------- */
+  /* ---------- shared site pieces ---------- */
   var BASE=CONFIG.assets;
   function wistiaJs(){ if(document.getElementById("wistia-js")) return; var s=document.createElement("script"); s.id="wistia-js"; s.async=true; s.src="https://fast.wistia.com/assets/external/E-v1.js"; document.head.appendChild(s); }
   function videos(root){
@@ -340,7 +346,7 @@
     var scripts=[].slice.call(box.querySelectorAll("script"));
     target.appendChild(box);
     scripts.forEach(function(old){ var s=document.createElement("script"); if(old.src) s.src=old.src; else s.textContent=old.textContent; old.parentNode.replaceChild(s,old); });
-    if(box.querySelector(".mthp[data-proto]")&&!document.getElementById("mthp-js")){ var s=document.createElement("script"); s.id="mthp-js"; s.src=BASE+"phone.js?v=4"; document.head.appendChild(s); }
+    if(box.querySelector(".mthp[data-proto]")&&!document.getElementById("mthp-js")){ var s=document.createElement("script"); s.id="mthp-js"; s.src=BASE+"phone.js?v=5"; document.head.appendChild(s); }
     if(box.querySelector(".mthv")) videos(box);
     try{ rails(box); }catch(e){}
     return box;

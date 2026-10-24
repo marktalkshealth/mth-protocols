@@ -13,7 +13,7 @@ sed -i 's|fr.src="../"+DIR|fr.src=DIR|' "$DST/app.html"
 sed -i 's|src="../hub/index.html"|src="hub/index.html"|' "$DST/community.html"
 # photos, app engines and Hub music now ship with the site (no more loading from the old GitHub Pages site)
 mkdir -p "$DST/media/site" "$DST/media/shared" "$DST/hub/tracks"
-cp -R "$SRC/site/steps" "$DST/media/site/"
+for d in steps courses sales; do [ -d "$SRC/site/$d" ] && cp -R "$SRC/site/$d" "$DST/media/site/"; done
 cp "$SRC"/site/*.jpg "$SRC"/site/*.png "$SRC"/site/phone.js "$DST/media/site/" 2>/dev/null || true
 cp "$SRC"/shared/*.js "$DST/media/shared/"
 cp "$SRC"/hub/tracks/*.mp3 "$DST/hub/tracks/"

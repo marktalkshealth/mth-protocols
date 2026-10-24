@@ -67,7 +67,7 @@
       }
       function need() {
         R0.classList.remove('mth-pwaiting');
-        var home = 'https://marktalkshealth.learnworlds.com'; try { if (document.referrer) home = new URL(document.referrer).origin; } catch (e) {}
+        var home = 'https://marktalkshealth.com'; try { if (document.referrer) home = new URL(document.referrer).origin; } catch (e) {}
         var d = document.createElement('div'); d.className = 'mth-pneed';
         d.innerHTML = '<h2>Build your plan first</h2><p>Your ' + (PLAN === 'meals' ? 'meal planner' : 'exercise planner') + ' is made from your healing plan. Set it up in the Healing App (it takes about a minute), then come back here.</p><a href="' + home + '/app" target="_top">Open the Healing App</a>';
         var o = document.querySelector('.di-outer'); if (o) o.style.display = 'none';
@@ -327,7 +327,7 @@ html.mth-app.mth-wait body::after { content: 'Opening your plan…'; position: f
     if (!F || !F.items.length) F = { items: [
       { label: 'Breakfast', text: 'Eggs with soft cooked vegetables' },
       { label: 'Lunch', text: 'A big salad with olive oil and fish or chicken' },
-      { label: 'Dinner', text: 'Protein with cooked vegetables, and a cup of bone broth first' }], tip: 'Small portions, eaten slowly.' };
+      { label: 'Dinner', text: 'Protein with cooked vegetables, and a glass of water first' }], tip: 'Small portions, eaten slowly.' };
     F.items.forEach(function (i) { i.e = foodEmoji(i.text); });
     return F;
   }
