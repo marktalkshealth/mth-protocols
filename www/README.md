@@ -16,7 +16,7 @@ Branch `own-site-mvp`. Nothing here touches the live LearnWorlds site or `main`.
 | `community.html` | The Healing Hub, for anyone who owns a protocol |
 | `welcome.html` | After payment: confirms with Stripe and unlocks everything |
 | `account.html` | Purchases, "keep me signed in", sign out (and a link to Admin for you) |
-| `admin.html` | **Your admin** — CRM (overview, pipeline stages, contacts, person timelines, notes, tasks, sales), course content, access, Conversions (which posts bring sign-ups and sales), Integrations, Social Studio |
+| `admin.html` | **Your admin** — CRM (overview, pipeline stages, contacts, person timelines, notes, tasks, sales), course content, access, Conversions (which posts bring sign-ups and sales), Integrations, Social Studio, Thumbnails (AI thumbnail maker) |
 | `go.html` | Tracking links for social posts (`go.html?p=<post>&s=instagram`) |
 | `terms.html` · `privacy.html` · `refunds.html` · `404.html` | Draft legal pages — please read before going live |
 
@@ -45,4 +45,5 @@ The sales pages and homepage are built from the LearnWorlds designs in `site/` b
 - **Social Studio:** board / calendar / list of posts, idea engine built from your course facts, script + teleprompter, captions per platform, media uploads, ready check, tracking links, **Export for Metricool** (bulk-upload CSV).
 - **Email service:** add `KIT_API_KEY` (or Resend / MailerLite / a webhook) in Supabase secrets; list sign-ups, accounts and purchases sync automatically with tags. Admin → Integrations shows status and a log.
 - **Leads in:** `mth-hook` (add `HOOK_SECRET`) for ManyChat, Zapier, Make.
+- **Thumbnails:** Admin → Thumbnails. Needs Supabase secret `GEMINI_API_KEY` (Google AI Studio key with billing). Optional `GEMINI_IMAGE_MODEL`. Face photos and results live in the private `mth-thumbs` storage bucket (function `mth-thumbs`).
 - **For Claude:** see `ORCHESTRATION.md` in the repo root.

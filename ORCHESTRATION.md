@@ -18,7 +18,8 @@ system on branch `own-site-mvp` and how to operate it safely.
 - **Test link:** https://raw.githack.com/marktalkshealth/mth-protocols/own-site-mvp/www/index.html
 - **Supabase project:** `oihefcsonqjeicelezln` (Postgres + auth + storage + edge functions).
 - **Edge functions:** `mth-checkout`, `mth-confirm`, `mth-stripe-webhook` (Stripe, test mode unless `ALLOW_LIVE=true`),
-  `mth-sync` (email service sync + status), `mth-hook` (leads in from ManyChat/Zapier, needs `HOOK_SECRET`).
+  `mth-sync` (email service sync + status), `mth-hook` (leads in from ManyChat/Zapier, needs `HOOK_SECRET`),
+  `mth-thumbs` (admin-only AI thumbnail maker → Google image model, needs `GEMINI_API_KEY`; files in private bucket `mth-thumbs`, screen `assets/admin-thumbs.js`).
   Source in `supabase/functions/` (the shared email code is `_shared/sync.ts`, copied into each function as `sync.ts`).
 
 ## Data (all admin-only unless noted)
