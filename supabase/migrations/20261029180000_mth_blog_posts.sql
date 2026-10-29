@@ -18,10 +18,11 @@ create table if not exists public.mth_blog_posts (
   updated_at  timestamptz not null default now()
 );
 alter table public.mth_blog_posts enable row level security;
-drop policy if exists "read live articles" on public.mth_blog_posts;
-create policy "read live articles" on public.mth_blog_posts for select using (status = 'published' or (select public.mth_is_admin()));
-drop policy if exists "admin writes articles" on public.mth_blog_posts;
-create policy "admin writes articles" on public.mth_blog_posts for all using ((select public.mth_is_admin())) with check ((select public.mth_is_admin()));
+-- visitors (anon) can't run mth_is_admin(), so the public read policy must not call it
+drop policy if exists "anyone reads live articles" on public.mth_blog_posts;
+create policy "anyone reads live articles" on public.mth_blog_posts for select to anon, authenticated using (status = 'published');
+drop policy if exists "admin manages articles" on public.mth_blog_posts;
+create policy "admin manages articles" on public.mth_blog_posts for all to authenticated using ((select public.mth_is_admin())) with check ((select public.mth_is_admin()));
 grant select on public.mth_blog_posts to anon, authenticated;
 grant insert, update, delete on public.mth_blog_posts to authenticated;
 
