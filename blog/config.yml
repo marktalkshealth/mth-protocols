@@ -1,0 +1,89 @@
+# Mark Talks Health blog settings. Read by tools/build_blog.py and tools/check_blog.py.
+site: https://marktalkshealth.com
+brand: Mark Talks Health
+blog:
+  title: The Mark Talks Health Blog
+  seo_title: Gut Health & Natural Healing Research, Explained
+  description: Deep, research-backed articles on gut health, fasting and natural healing. Every article starts with the problem, walks through the studies and ends with a plan you can use.
+  kicker: The Blog
+  headline: Research you can <em>actually use</em>
+  dek: Every article follows the same formula. The problem, the study, the solution. Real studies, linked so you can read them yourself, and a plan you can start this week.
+
+author:
+  name: Mark
+  slug: mark
+  job: Health educator, creator of Mark Talks Health
+  photo: /media/site/mark-kitchen.jpg
+  short: I'm Mark. I lost 100 pounds by changing how I eat, move, sleep and handle stress, and I've spent years since digging through the research on gut health, fasting and natural healing.
+  bio: |
+    I'm Mark, the health educator behind Mark Talks Health. I lost 100 pounds by changing how I eat, move, sleep and handle stress, and that experience is why I believe in lifestyle as medicine: looking at the whole person, not just one symptom.
+
+    I'm not a doctor, and nothing here replaces one. What I do is read the research so you don't have to. Every article on this blog links to the original studies, says plainly when a finding comes from mice rather than people, and tells you the limits of each study. My courses and apps turn that research into a daily plan you can follow alongside your healthcare provider.
+
+# Calls to action. Links carry utm tags so Admin -> Conversions credits the blog.
+ctas:
+  gut:
+    name: The Gut Health Protocol
+    line: A 7-day reset built on the 7 healing steps in this article, with a personalised plan from your own symptoms in the app, video lessons and daily check-ins.
+    price: $97
+    was: $147
+    url: /gut
+    image: /media/site/courses/gut.jpg
+    image_alt: The Gut Health Protocol course cover
+  sugar:
+    name: The Diabetes Protocol
+    line: Gain control of your blood sugar with a personalised plan, video lessons and a daily app.
+    price: $97
+    was: $147
+    url: /diabetes
+    image: /media/site/courses/sugar.jpg
+    image_alt: The Diabetes Protocol course cover
+  glp1:
+    name: The GLP-1 Weight Loss Protocol
+    line: Lose fat while protecting muscle with a customised roadmap, video lessons and a daily app.
+    price: $97
+    was: $147
+    url: /glp1
+    image: /media/site/courses/glp1.jpg
+    image_alt: The GLP-1 Weight Loss Protocol course cover
+
+categories:
+  gut-health: Gut Health
+  fasting: Fasting
+  nutrition: Nutrition
+  stress: Stress & Mind
+
+# Public site pages listed in sitemap.xml (paths as Cloudflare serves them).
+pages:
+  - {path: /, priority: 1.0}
+  - {path: /protocols, priority: 0.8}
+  - {path: /gut, priority: 0.9}
+  - {path: /diabetes, priority: 0.8}
+  - {path: /glp1, priority: 0.8}
+  - {path: /healing, priority: 0.7}
+  - {path: /picks, priority: 0.5}
+  - {path: /partners, priority: 0.4}
+  - {path: /privacy, priority: 0.2}
+  - {path: /terms, priority: 0.2}
+  - {path: /refunds, priority: 0.2}
+
+# Pages search engines should not crawl (members-only, admin, app engines, tracking links).
+robots_disallow:
+  - /admin
+  - /account
+  - /welcome
+  - /login
+  - /course
+  - /app
+  - /community
+  - /checkin
+  - /snapshot
+  - /library
+  - /go
+  - /hub/
+  - /gut/
+  - /sugar/
+  - /glp1/
+
+# Brand rules every article is checked against (case-insensitive whole words).
+banned_words: [keto, ketogenic, "ice cream"]
