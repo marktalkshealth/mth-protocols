@@ -28,10 +28,10 @@
     return P;
   }
   var TABS = [
-    ["home", "Home", "community.html"],
+    ["home", "Home", "community.html#home"],
     ["courses", "Courses", "#course"],
     ["heal", "Heal", "#app"],
-    ["community", "Community", "hub-classic.html"],
+    ["community", "Community", "community.html#community"],
     ["blog", "Blog", "/blog/"]
   ];
   function href(t) { var P = links(); return t[2] === "#course" ? P.course : t[2] === "#app" ? P.app : t[2]; }
@@ -50,20 +50,20 @@
   }
   function word(active) {
     var t = TABS.filter(function (x) { return x[0] === active; })[0];
-    return (t ? t[1] : "Home").toLowerCase() === "home" ? "community" : t[1].toLowerCase();
+    return (t ? t[1] : "Home").toLowerCase();
   }
 
   window.MTHNav = {
     tabs: TABS,
     top: function (active, o) {
       return '<header class="cm-top">' +
-        '<a class="cm-word" href="community.html">' + M.esc(word(active)) + '</a>' +
+        '<a class="cm-word" href="community.html#home">' + M.esc((o && o.word) || word(active)) + '</a>' +
         '<label for="cmSearch" class="cm-sr">Search</label>' +
         '<input id="cmSearch" class="cm-search" placeholder="Search posts, lessons, recipes">' +
         '<nav class="cm-tabs" aria-label="Sections">' + tabs(active, false) + '</nav>' +
         '<div class="cm-icons">' +
         '<button type="button" class="cm-ib phone" aria-label="Search">' + ic("search") + '</button>' +
-        '<a class="cm-ib" href="community.html#companion" aria-label="Healing Companion">' + ic("chat") + '</a>' +
+        '<a class="cm-ib" href="community.html#journal" aria-label="Healing Companion journal">' + ic("chat") + '</a>' +
         '<a class="cm-ib" href="account.html" aria-label="Your account"><span class="cm-av me" aria-hidden="true">' + M.esc(initial(o)) + '</span></a>' +
         '</div></header>';
     },
