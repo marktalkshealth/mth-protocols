@@ -10,7 +10,7 @@ cp -R "$SRC/www/." "$DST/"
 rm -f "$DST/README.md"
 for d in gut sugar glp1 hub; do mkdir -p "$DST/$d"; cp "$SRC/$d/index.html" "$DST/$d/"; done
 sed -i 's|fr.src="../"+DIR|fr.src=DIR|' "$DST/app.html"
-sed -i 's|src="../hub/index.html"|src="hub/index.html"|' "$DST/community.html"
+sed -i 's|src="../hub/index.html"|src="hub/index.html"|' "$DST/hub-classic.html"
 # photos, app engines and Hub music now ship with the site (no more loading from the old GitHub Pages site)
 mkdir -p "$DST/media/site" "$DST/media/shared" "$DST/hub/tracks"
 for d in steps courses sales; do [ -d "$SRC/site/$d" ] && cp -R "$SRC/site/$d" "$DST/media/site/"; done
