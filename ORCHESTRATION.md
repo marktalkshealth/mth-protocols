@@ -11,8 +11,8 @@
 > **WARNING (Nov 2 2026):** the live `mth-site` repo now has many changes that are NOT in `www/` here
 > (newer admin tools, blog images, email images, functions/unsubscribe.js and more). Do NOT run
 > `tools/publish_site.sh` until `www/` is synced back from mth-site, or it will wipe those changes.
-> The Community app (community.html, assets/community.*, assets/member-nav.js, hub-classic.html,
-> course.html frame) was copied into mth-site by hand (commit f18a52e).
+> The Facebook-style Community app was published by hand (mth-site f18a52e) and then taken back off
+> at Mark's request (mth-site 801bb80). That work lives on branch `community-feed` here.
 
 This file is for Claude (any session) working on Mark's business. It describes the
 system on branch `own-site-mvp` and how to operate it safely.
