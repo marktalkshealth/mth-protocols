@@ -8,6 +8,12 @@
 > dry-run into a copy of mth-site and check `git status` shows only the changes you expect.
 > `supabase/functions/mth-assess/` matches the deployed function (version 11).
 
+> **WARNING (Nov 2 2026):** the live `mth-site` repo now has many changes that are NOT in `www/` here
+> (newer admin tools, blog images, email images, functions/unsubscribe.js and more). Do NOT run
+> `tools/publish_site.sh` until `www/` is synced back from mth-site, or it will wipe those changes.
+> The Community app (community.html, assets/community.*, assets/member-nav.js, hub-classic.html,
+> course.html frame) was copied into mth-site by hand (commit f18a52e).
+
 This file is for Claude (any session) working on Mark's business. It describes the
 system on branch `own-site-mvp` and how to operate it safely.
 
