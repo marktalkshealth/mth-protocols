@@ -57,7 +57,6 @@ html.cm-page,html.cm-page body{background:var(--bg2)}
   color:#fff!important;background:var(--dark) center/cover no-repeat;overflow:hidden;isolation:isolate;text-shadow:0 1px 8px rgba(0,0,0,.45)}
 .cm-story:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(20,17,15,.38) 0%,rgba(20,17,15,0) 34%,rgba(20,17,15,0) 48%,rgba(20,17,15,.78) 100%)}
 .cm-story:hover:before{background:linear-gradient(180deg,rgba(20,17,15,.3) 0%,rgba(20,17,15,0) 34%,rgba(20,17,15,0) 48%,rgba(20,17,15,.7) 100%)}
-.cm-story[data-crop]{background-size:auto 225%;background-position:center 100%}
 .cm-story b{display:block;font-weight:600}
 .cm-story .big{font-family:var(--serif);font-size:46px;font-weight:600;line-height:.9;margin-bottom:4px}
 .cm-story .k{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#f1d9a6}
@@ -131,7 +130,8 @@ html.cm-page,html.cm-page body{background:var(--bg2)}
   .cm-side{display:flex;flex-direction:column;gap:2px;flex:0 1 280px;position:sticky;top:84px}
   .cm-side a{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:10px;font-size:15px}
   .cm-side a:hover{background:var(--line)}
-  .cm-side a.room{padding:10px}
+  .cm-side a.room{padding:6px 10px}
+  .cm-side .rimg{width:36px;height:36px;border-radius:9px;background:var(--line) center/cover no-repeat;flex:none}
   .cm-side .cm-av{width:36px;height:36px;font-size:13px}
   .cm-si{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--bg);color:var(--ink);flex:none}
   .cm-si svg{width:18px!important;height:18px!important}

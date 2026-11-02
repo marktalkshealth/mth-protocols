@@ -111,15 +111,37 @@
   };
 
   /* ---------- stories row ---------- */
-  /* photos: on the live site they're in /media/site/, in the test preview they're in ../site/ */
+  /* photos: Mark's own are in /media/site/ (../site/ in the test preview).
+     Stock photos are free Unsplash License photos (no credit required), linked from Unsplash for now. */
   var IMG = /githack|githubusercontent|^localhost$|^127\./.test(location.hostname) ? "../site/" : "/media/site/";
-  function photo(file) { return (/^steps\//.test(file) ? ' data-crop' : '') + ' style="background-image:url(\'' + IMG + file + '\')"'; }
+  function us(id) { return "https://images.unsplash.com/photo-" + id + "?auto=format&fit=crop&w=640&q=70"; }
+  var PHOTOS = {
+    days: [
+      us("1575487426366-079595af2247"), /* 1 Fasting & Cleanse: green juice */
+      us("1516390118834-21602d501886"), /* 2 Meditation & Journaling: mug + open book */
+      us("1505028106030-e07ea1bd80c3"), /* 3 Nature: tree-lined path, golden light */
+      us("1613940512699-fc9150817bb2"), /* 4 Sleep & Clean Air: sunny bedroom */
+      us("1763254123615-c51d91d83b7b"), /* 5 Music & Spirituality: candles */
+      us("1597892657493-6847b9640bac"), /* 6 Cardio & Weights: running shoes */
+      us("1601316585772-ba1e6dae9cfc")  /* 7 High-Protein: salmon plate */
+    ],
+    piano: us("1763254123615-c51d91d83b7b"),
+    mark: IMG + "mark-kitchen.jpg",
+    rooms: {
+      "Gut Health": us("1760368104798-63e896bdca09"),     /* pickled vegetables */
+      "Diabetes": us("1591189863430-ab87e120f312"),       /* fresh greens */
+      "GLP-1": us("1758438919146-f3f59a6d2544"),          /* walking in a sunlit forest */
+      "Wins & check-ins": us("1503789597747-41de608aca69") /* hikers together */
+    }
+  };
+  function photo(url) { return ' style="background-image:url(\'' + url + '\')"'; }
+  function dayPhoto() { var n = parseInt(ctx.dayNum, 10) || 1; return PHOTOS.days[(n - 1) % 7]; }
   var STORY = {
-    day: function () { return '<a class="cm-story" href="#today"' + photo("steps/7-nature.jpg") + '><span class="k">Your day</span><span><b class="big">' + esc(ctx.dayNum) + '</b><b>' + esc(ctx.dayName) + '</b></span></a>'; },
-    live: function () { return '<a class="cm-story" href="hub-classic.html"' + photo("mark-kitchen.jpg") + '><span class="pill">LIVE</span><b>Weekly Q&amp;A with Mark</b></a>'; },
-    piano: function () { return '<a class="cm-story" href="hub-classic.html"' + photo("steps/5-music.jpg") + '>' + ic("music") + '<b>Healing Piano · today\'s track</b></a>'; },
-    member1: function () { return DEMO ? '<a class="cm-story" href="#m"' + photo("steps/2-meditation.jpg") + '><span class="ring">DL</span><b>Dana · morning meditation</b></a>' : ""; },
-    member2: function () { return DEMO ? '<a class="cm-story" href="#m"' + photo("steps/1-fasting.jpg") + '><span class="ring g">TB</span><b>Tom · first juice day</b></a>' : ""; }
+    day: function () { return '<a class="cm-story" href="#today"' + photo(dayPhoto()) + '><span class="k">Your day</span><span><b class="big">' + esc(ctx.dayNum) + '</b><b>' + esc(ctx.dayName) + '</b></span></a>'; },
+    live: function () { return '<a class="cm-story" href="hub-classic.html"' + photo(PHOTOS.mark) + '><span class="pill">LIVE</span><b>Weekly Q&amp;A with Mark</b></a>'; },
+    piano: function () { return '<a class="cm-story" href="hub-classic.html"' + photo(PHOTOS.piano) + '>' + ic("music") + '<b>Healing Piano · today\'s track</b></a>'; },
+    member1: function () { return DEMO ? '<a class="cm-story" href="#m"' + photo(PHOTOS.days[1]) + '><span class="ring">DL</span><b>Dana · morning journal</b></a>' : ""; },
+    member2: function () { return DEMO ? '<a class="cm-story" href="#m"' + photo(PHOTOS.days[0]) + '><span class="ring g">TB</span><b>Tom · first juice day</b></a>' : ""; }
   };
 
   /* ---------- frame: top bar, side menu, right rail, bottom tabs ---------- */
@@ -137,7 +159,7 @@
     return '<aside class="cm-side" aria-label="Your shortcuts">' + L.map(function (l) {
       return '<a href="' + esc(l[0]) + '">' + l[1] + '<span>' + l[2] + '</span></a>';
     }).join("") + '<hr><span class="cm-sh">Rooms</span>' +
-      ["Gut Health", "Diabetes", "GLP-1", "Wins & check-ins"].map(function (r) { return '<a href="hub-classic.html" class="room"><span>' + esc(r) + '</span></a>'; }).join("") +
+      Object.keys(PHOTOS.rooms).map(function (r) { return '<a href="hub-classic.html" class="room"><span class="rimg"' + photo(PHOTOS.rooms[r]) + '></span><span>' + esc(r) + '</span></a>'; }).join("") +
       '</aside>';
   }
   function rail() {
