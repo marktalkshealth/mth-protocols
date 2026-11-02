@@ -111,41 +111,19 @@
   };
 
   /* ---------- stories row ---------- */
+  /* photos: on the live site they're in /media/site/, in the test preview they're in ../site/ */
+  var IMG = /githack|githubusercontent|^localhost$|^127\./.test(location.hostname) ? "../site/" : "/media/site/";
+  function photo(file) { return (/^steps\//.test(file) ? ' data-crop' : '') + ' style="background-image:url(\'' + IMG + file + '\')"'; }
   var STORY = {
-    day: function () { return '<a class="cm-story dark" href="#today"><span class="k">Your day</span><span><b class="big">' + esc(ctx.dayNum) + '</b><b>' + esc(ctx.dayName) + '</b></span></a>'; },
-    live: function () { return '<a class="cm-story terra" href="hub-classic.html"><span class="pill">LIVE</span><b>Weekly Q&amp;A with Mark</b></a>'; },
-    piano: function () { return '<a class="cm-story sage" href="hub-classic.html">' + ic("music") + '<b>Healing Piano · today\'s track</b></a>'; },
-    member1: function () { return DEMO ? '<a class="cm-story sand" href="#m"><span class="ring">DL</span><b>Dana · Day 5 walk</b></a>' : ""; },
-    member2: function () { return DEMO ? '<a class="cm-story sand2" href="#m"><span class="ring g">TB</span><b>Tom · first juice day</b></a>' : ""; }
+    day: function () { return '<a class="cm-story" href="#today"' + photo("steps/7-nature.jpg") + '><span class="k">Your day</span><span><b class="big">' + esc(ctx.dayNum) + '</b><b>' + esc(ctx.dayName) + '</b></span></a>'; },
+    live: function () { return '<a class="cm-story" href="hub-classic.html"' + photo("mark-kitchen.jpg") + '><span class="pill">LIVE</span><b>Weekly Q&amp;A with Mark</b></a>'; },
+    piano: function () { return '<a class="cm-story" href="hub-classic.html"' + photo("steps/5-music.jpg") + '>' + ic("music") + '<b>Healing Piano · today\'s track</b></a>'; },
+    member1: function () { return DEMO ? '<a class="cm-story" href="#m"' + photo("steps/2-meditation.jpg") + '><span class="ring">DL</span><b>Dana · morning meditation</b></a>' : ""; },
+    member2: function () { return DEMO ? '<a class="cm-story" href="#m"' + photo("steps/1-fasting.jpg") + '><span class="ring g">TB</span><b>Tom · first juice day</b></a>' : ""; }
   };
 
   /* ---------- frame: top bar, side menu, right rail, bottom tabs ---------- */
-  function topbar() {
-    return '<header class="cm-top">' +
-      '<a class="cm-word" href="community.html">community</a>' +
-      '<label for="cmSearch" class="cm-sr">Search the community</label>' +
-      '<input id="cmSearch" class="cm-search" placeholder="Search posts, lessons, recipes">' +
-      '<nav class="cm-tabs" aria-label="Sections">' + tabs("top") + '</nav>' +
-      '<div class="cm-icons">' +
-      '<button type="button" class="cm-ib phone" aria-label="Search">' + ic("search") + '</button>' +
-      '<a class="cm-ib" href="#companion" aria-label="Healing Companion">' + ic("chat") + '</a>' +
-      '<a class="cm-ib" href="account.html" aria-label="Your account">' + av(ctx.initial, "me") + '</a>' +
-      '</div></header>';
-  }
-  var TABS = [
-    ["feed", "Feed", "home", "community.html"],
-    ["today", "Today", "today", "#app"],
-    ["live", "Live", "live", "hub-classic.html"],
-    ["shop", "Shop", "shop", "picks.html"],
-    ["me", "Me", "me", "account.html"]
-  ];
-  function tabs(where) {
-    return TABS.map(function (t) {
-      var href = t[3] === "#app" ? ctx.app : t[3], cur = t[0] === "feed";
-      return '<a class="cm-tab' + (cur ? " on" : "") + '" href="' + esc(href) + '"' + (cur ? ' aria-current="page"' : "") + '>' +
-        (where === "bottom" ? ic(t[2]) : "") + '<span>' + t[1] + '</span></a>';
-    }).join("");
-  }
+  function topbar() { return window.MTHNav.top("home", { initial: ctx.initial }); }
   function side() {
     var L = [
       ["account.html", av(ctx.initial, "me"), esc(ctx.name)],
@@ -185,7 +163,7 @@
       '<div class="cm-body">' + side() +
       '<main class="cm-feed" id="feed">' + composer + stories + FEED.map(function (k) { return CARDS[k] ? CARDS[k]() : ""; }).join("") + '</main>' +
       rail() + '</div>' +
-      '<nav class="cm-bottom" aria-label="Main">' + tabs("bottom") + '</nav>';
+      window.MTHNav.bottom("home");
     wire();
   }
 
