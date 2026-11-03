@@ -24,7 +24,9 @@
 > on the blog front page via `assets/blog-render.mjs`), and cache versions 202611031700. NOT in `www/` here.
 > `mth-meta` (v7, source now in `supabase/functions/mth-meta/`) also sends neutral custom events mth_signup / mth_account /
 > mth_order next to Lead / CompleteRegistration / Purchase (Meta can block standard-event optimisation for health accounts);
-> its cron now runs every 15 minutes. DECISIONS (Mark, Nov 3): the ad freebie is the gut quiz; the homepage keeps
+> its cron now runs every 15 minutes.
+> Also live (mth-site 87b345a): the gut / diabetes / GLP-1 quiz results end with the matching protocol offer
+> (`$147` → `$97`, `MTH.buy`), guarantee and sales-page link (`assets/quiz.js` full()). DECISIONS (Mark, Nov 3): the ad freebie is the gut quiz; the homepage keeps
 > app demo → Healing Assessment (no change); ads never point at the homepage.
 
 This file is for Claude (any session) working on Mark's business. It describes the
