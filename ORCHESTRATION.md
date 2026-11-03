@@ -18,6 +18,15 @@
 > mth-site (cfb1f6e): a `<div id="docTalk">` inside `.hc-risk-row` plus a script tag in gut/sugar/glp1. Here, only the
 > script tag was added (these app copies are behind live); the module inserts itself under the risk panel if the div is missing.
 
+> **Nov 3 2026 (later):** published by hand to mth-site (17db163): `start.html` = the Meta ad landing page
+> (marktalkshealth.com/start, neutral URL on purpose; the 7-question gut quiz is the first thing on screen, `data-source="start"`),
+> the weekly email signup (`MTH.newsBox` in mth.js: top of the public footer for signed-out visitors, under every blog article and
+> on the blog front page via `assets/blog-render.mjs`), and cache versions 202611031700. NOT in `www/` here.
+> `mth-meta` (v7, source now in `supabase/functions/mth-meta/`) also sends neutral custom events mth_signup / mth_account /
+> mth_order next to Lead / CompleteRegistration / Purchase (Meta can block standard-event optimisation for health accounts);
+> its cron now runs every 15 minutes. DECISIONS (Mark, Nov 3): the ad freebie is the gut quiz; the homepage keeps
+> app demo → Healing Assessment (no change); ads never point at the homepage.
+
 This file is for Claude (any session) working on Mark's business. It describes the
 system on branch `own-site-mvp` and how to operate it safely.
 
