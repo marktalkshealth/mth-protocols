@@ -14,6 +14,10 @@
 > The Facebook-style Community app was published by hand (mth-site f18a52e) and then taken back off
 > at Mark's request (mth-site 801bb80). That work lives on branch `community-feed` here.
 
+> **Nov 3 2026:** Talk to Your Doctor (`shared/doctor.js` → live `media/shared/doctor.js`) was published by hand to
+> mth-site (cfb1f6e): a `<div id="docTalk">` inside `.hc-risk-row` plus a script tag in gut/sugar/glp1. Here, only the
+> script tag was added (these app copies are behind live); the module inserts itself under the risk panel if the div is missing.
+
 This file is for Claude (any session) working on Mark's business. It describes the
 system on branch `own-site-mvp` and how to operate it safely.
 
