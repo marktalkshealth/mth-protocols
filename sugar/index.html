@@ -1780,7 +1780,6 @@ input[type=range]::-webkit-slider-thumb:active {
             <div class="gs-tools"><span class="gs-count"><b id="gsTotal">0</b>checked</span><button type="button" class="li-clear" id="gsClear">Clear</button></div>
           </div>
           <div class="gs-cols" id="gsCols"></div>
-          <label class="lab-mini" id="labMini" for="labFile" tabindex="0" title="Drop blood work, stool tests, scans or other doctor reports here"><span class="lab-mini-ico" aria-hidden="true">📄</span><b>Doctor tests</b><span class="lab-mini-sub" id="labMiniSub">drop a report here or tap to add</span></label>
           <div id="gsMedNote"></div>
         </div>
 
@@ -1901,6 +1900,27 @@ input[type=range]::-webkit-slider-thumb:active {
 <div class="main" id="main"></div>
 
 <style id="layout-lab-styles">
+/* Nov 4 2026: tighter checklist header + two real columns with the Doctor tests box in the gap */
+.hc-mid .gs-head { margin-bottom: 5px; align-items: center; }
+.hc-mid .gs-head > div:first-child { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.hc-mid .gs-head .di-title { font-size: 1.05rem !important; margin: 0 !important; }
+.hc-mid .gs-head .gs-lede { display: none; }
+.hc-mid .gs-count b { font-size: 1.05rem; }
+.hc-mid .gs-cols { columns: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: stretch; }
+.hc-mid .gs-colw { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.hc-mid .gs-colw .gs-grp { margin: 0 !important; }
+.hc-mid .gs-colw .lab-mini { flex: 1 1 auto; justify-content: center; min-height: 92px; }
+@media (max-width: 560px) { .hc-mid .gs-cols { grid-template-columns: 1fr; } }
+.lab-mini { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px; padding: 12px 10px; border: 1.5px dashed #2e5c45; border-radius: 9px; background: #f4f8f5; cursor: pointer; transition: border-color .15s, background .15s; }
+.lab-mini:hover, .lab-mini.drag, .lab-mini:focus-visible { background: #e3efe7; outline: none; }
+.lab-mini.drag { border-style: solid; }
+.lab-mini-ico { font-size: 1.3rem; line-height: 1; }
+.lab-mini-t { font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: #2e5c45; }
+.lab-mini-main { font-size: .7rem; font-weight: 600; color: var(--text); }
+.lab-mini-sub { font-size: .6rem; color: var(--muted); }
+.lab-mini.has { border-style: solid; background: #e3efe7; }
+.lab-mini.has .lab-mini-sub { color: #2e5c45; font-weight: 700; font-size: .64rem; }
+
 /* ═══ 3-column layout: Intake · Symptoms + Tests · Integrated Healing ═══ */
 .hc-grid3 { display: grid; grid-template-columns: minmax(250px,.95fr) minmax(0,1.35fr) minmax(290px,1.05fr); gap: 10px; align-items: stretch; }
 .hc-col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
@@ -1942,12 +1962,6 @@ input[type=range]::-webkit-slider-thumb:active {
 .lab-drop { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 10px; border: 1.5px dashed #b9b0a4; border-radius: 12px;
   background: var(--cream); cursor: pointer; text-align: center; transition: border-color .2s, background .2s; }
 .lab-drop:hover, .lab-drop.drag, .lab-drop:focus-visible { border-color: #2e5c45; background: #eef5f0; outline: none; }
-.lab-mini { display: flex; align-items: center; gap: 6px; margin-top: 8px; padding: 5px 9px; border: 1.5px dashed #b9b0a4; border-radius: 8px; cursor: pointer; font-size: .68rem; color: var(--muted); transition: border-color .15s, background .15s; }
-.lab-mini b { color: var(--text); font-weight: 600; }
-.lab-mini:hover, .lab-mini.drag, .lab-mini:focus-visible { border-color: #2e5c45; background: #eef5f0; outline: none; }
-.lab-mini.has { border-style: solid; border-color: #2e5c45; background: #eef5f0; }
-.lab-mini.has .lab-mini-sub { color: #2e5c45; font-weight: 600; }
-.lab-mini-ico { font-size: .85rem; line-height: 1; }
 .lab-drop-ico { font-size: 1.2rem; line-height: 1; }
 .lab-drop-main { font-size: .76rem; font-weight: 600; color: var(--text); }
 .lab-drop-sub { font-size: .6rem; color: var(--muted); }
@@ -2657,7 +2671,7 @@ function labRenderTable() {
   const keys = LAB_ALL.map(m => m.k).filter(k => LAB.items[k]);
   cnt.textContent = keys.length ? '· ' + keys.length : '';
   const mini = document.getElementById('labMini'), msub = document.getElementById('labMiniSub');
-  if (mini && msub) { mini.classList.toggle('has', !!keys.length); msub.textContent = keys.length ? `${keys.length} result${keys.length > 1 ? 's' : ''} added ✓ · drop more or press Generate` : 'drop a report here or tap to add'; }
+  if (mini && msub) { mini.classList.toggle('has', !!keys.length); msub.textContent = keys.length ? `${keys.length} result${keys.length > 1 ? 's' : ''} added ✓ · drop more or press Generate` : 'or tap to upload · PDF or photo'; }
   if (!keys.length) { tb.innerHTML = `<tr><td class="lab-empty">No results yet. Upload a report, paste text, or try the sample panel.</td></tr>`; return; }
   tb.innerHTML = keys.map(k => {
     const m = LAB_BY[k], it = LAB.items[k], gr = labGrade(k) || { st: 'opt' };
@@ -2751,13 +2765,7 @@ document.addEventListener('DOMContentLoaded', () => {
   ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('drag'); }));
   drop.addEventListener('drop', e => labHandleFiles(e.dataTransfer.files));
   drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); file.click(); } });
-  const mini = g('labMini');
-  if (mini) {
-    ['dragenter', 'dragover'].forEach(ev => mini.addEventListener(ev, e => { e.preventDefault(); mini.classList.add('drag'); }));
-    ['dragleave', 'drop'].forEach(ev => mini.addEventListener(ev, e => { e.preventDefault(); mini.classList.remove('drag'); }));
-    mini.addEventListener('drop', e => labHandleFiles(e.dataTransfer.files));
-    mini.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); file.click(); } });
-  }
+  labMiniWire();
   g('labReadPaste').addEventListener('click', () => {
     const items = labParseText(g('labPaste').value);
     labMerge(items);
@@ -5130,12 +5138,44 @@ const GS_CHIP = { crash:'Post-meal crash', crave:'Sugar cravings', hangry:'Shaky
   sedentary:'Sitting a lot', alcohol:'Regular alcohol', smoke:'Smoking / vaping', shift:'Shift work', stress:'High stress', steroids:'Weight-raising meds',
   insulin:'Insulin', sulfo:'Sulfonylurea', sglt2:'SGLT2 drug', metformin:'Metformin', glp1:'GLP-1 drug', bpmed:'BP / water pills',
   hypo:'Low-sugar episodes', dka:'Ketoacidosis signs', wtloss:'Unplanned weight loss', chest:'Chest pain', foot:'Foot sore', stroke:'Stroke signs' };
+// Nov 4 2026: checklist in two real columns, and the Doctor tests drop box fills the gap under the shorter column
+function gsTwoCols(groups) {
+  const w = GUT_SYM_GROUPS.map(g => g.items.length + 3), total = w.reduce((a, b) => a + b, 0);
+  const A = [], B = []; let sa = 0;
+  groups.forEach((h, i) => { if (sa + w[i] / 2 <= total / 2 && B.length === 0) { A.push(h); sa += w[i]; } else B.push(h); });
+  const box = `<label class="lab-mini" id="labMini" for="labFile" tabindex="0" title="Drop blood work, stool tests, scans or other doctor reports here">` +
+    `<span class="lab-mini-ico" aria-hidden="true">📄</span><span class="lab-mini-t">Doctor tests</span>` +
+    `<span class="lab-mini-main">Drop your blood work, stool test or scan here</span>` +
+    `<span class="lab-mini-sub" id="labMiniSub">or tap to upload · PDF or photo</span></label>`;
+  if (sa <= total - sa) A.push(box); else B.push(box);
+  return `<div class="gs-colw">${A.join('')}</div><div class="gs-colw">${B.join('')}</div>`;
+}
+function labMiniWire() {
+  const mini = document.getElementById('labMini'), file = document.getElementById('labFile');
+  if (!mini || !file || mini.dataset.wired) return; mini.dataset.wired = '1';
+  ['dragenter', 'dragover'].forEach(ev => mini.addEventListener(ev, e => { e.preventDefault(); mini.classList.add('drag'); }));
+  ['dragleave', 'drop'].forEach(ev => mini.addEventListener(ev, e => { e.preventDefault(); mini.classList.remove('drag'); }));
+  mini.addEventListener('drop', e => labHandleFiles(e.dataTransfer.files));
+  mini.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); file.click(); } });
+  if (typeof labRenderTable === 'function') labRenderTable();
+  // keep the box under whichever column is shorter (re-checks when the panel is shown or resized)
+  const host = document.getElementById('gsCols');
+  const place = () => {
+    const cols = host.querySelectorAll('.gs-colw'); if (cols.length < 2) return;
+    const h = c => Array.from(c.children).filter(x => x !== mini).reduce((t, x) => t + x.offsetHeight, 0);
+    const a = h(cols[0]), b = h(cols[1]); if (!a && !b) return;
+    const want = a <= b ? cols[0] : cols[1]; if (mini.parentNode !== want) want.appendChild(mini);
+  };
+  place(); if (window.ResizeObserver) new ResizeObserver(place).observe(host);
+}
 function gsRender() {
   const host = document.getElementById('gsCols'); if (!host) return;
-  host.innerHTML = GUT_SYM_GROUPS.map(g =>
+  const gsHtml = GUT_SYM_GROUPS.map(g =>
     `<fieldset class="gs-grp${g.red ? ' red' : ''}${g.med ? ' med' : ''}" data-g="${g.key}"><legend class="gs-grp-name"><span><span aria-hidden="true">${g.icon}</span> ${g.name}</span><span class="gs-grp-n" id="gsN_${g.key}"></span></legend><div class="gs-chips">` +
     g.items.map(it => `<label class="gs-chip" for="gs_${it.id}" title="${it.name}"><input type="checkbox" id="gs_${it.id}" data-id="${it.id}"><span>${GS_CHIP[it.id] || it.name}</span></label>`).join('') +
-    `</div></fieldset>`).join('');
+    `</div></fieldset>`);
+  host.innerHTML = gsTwoCols(gsHtml);
+  labMiniWire();
   host.addEventListener('change', e => {
     const t = e.target; if (!t.dataset.id) return;
     GUT_SYM_VALS[t.dataset.id] = t.checked;
