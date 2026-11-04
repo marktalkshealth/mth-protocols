@@ -1780,6 +1780,7 @@ input[type=range]::-webkit-slider-thumb:active {
             <div class="gs-tools"><span class="gs-count"><b id="gsTotal">0</b>checked</span><button type="button" class="li-clear" id="gsClear">Clear</button></div>
           </div>
           <div class="gs-cols" id="gsCols"></div>
+          <label class="lab-mini" id="labMini" for="labFile" tabindex="0" title="Drop blood work, stool tests, scans or other doctor reports here"><span class="lab-mini-ico" aria-hidden="true">📄</span><b>Doctor tests</b><span class="lab-mini-sub" id="labMiniSub">drop a report here or tap to add</span></label>
           <div id="gsMedNote"></div>
         </div>
 
@@ -1941,6 +1942,12 @@ input[type=range]::-webkit-slider-thumb:active {
 .lab-drop { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 10px; border: 1.5px dashed #b9b0a4; border-radius: 12px;
   background: var(--cream); cursor: pointer; text-align: center; transition: border-color .2s, background .2s; }
 .lab-drop:hover, .lab-drop.drag, .lab-drop:focus-visible { border-color: #2e5c45; background: #eef5f0; outline: none; }
+.lab-mini { display: flex; align-items: center; gap: 6px; margin-top: 8px; padding: 5px 9px; border: 1.5px dashed #b9b0a4; border-radius: 8px; cursor: pointer; font-size: .68rem; color: var(--muted); transition: border-color .15s, background .15s; }
+.lab-mini b { color: var(--text); font-weight: 600; }
+.lab-mini:hover, .lab-mini.drag, .lab-mini:focus-visible { border-color: #2e5c45; background: #eef5f0; outline: none; }
+.lab-mini.has { border-style: solid; border-color: #2e5c45; background: #eef5f0; }
+.lab-mini.has .lab-mini-sub { color: #2e5c45; font-weight: 600; }
+.lab-mini-ico { font-size: .85rem; line-height: 1; }
 .lab-drop-ico { font-size: 1.2rem; line-height: 1; }
 .lab-drop-main { font-size: .76rem; font-weight: 600; color: var(--text); }
 .lab-drop-sub { font-size: .6rem; color: var(--muted); }
@@ -2619,6 +2626,7 @@ async function labPdfText(file) {
 }
 async function labHandleFiles(files) {
   files = Array.from(files || []); if (!files.length) return;
+  { const ms = document.getElementById('labMiniSub'); if (ms) ms.textContent = 'reading…'; }
   let total = 0;
   for (const f of files) {
     try {
@@ -2640,6 +2648,7 @@ async function labHandleFiles(files) {
 function labRenderFiles() {
   const el = document.getElementById('labFiles'); if (!el) return;
   el.innerHTML = LAB.files.map(f => `<span class="lab-file${f.err || !f.c ? ' err' : ''}">${labEsc(f.n)} · ${f.err ? 'unreadable' : f.c + ' found'}</span>`).join('');
+  labRenderTable();
 }
 
 // ─── table ───
@@ -2647,6 +2656,8 @@ function labRenderTable() {
   const tb = document.getElementById('labTable'), cnt = document.getElementById('labCount'); if (!tb) return;
   const keys = LAB_ALL.map(m => m.k).filter(k => LAB.items[k]);
   cnt.textContent = keys.length ? '· ' + keys.length : '';
+  const mini = document.getElementById('labMini'), msub = document.getElementById('labMiniSub');
+  if (mini && msub) { mini.classList.toggle('has', !!keys.length); msub.textContent = keys.length ? `${keys.length} result${keys.length > 1 ? 's' : ''} added ✓ · drop more or press Generate` : 'drop a report here or tap to add'; }
   if (!keys.length) { tb.innerHTML = `<tr><td class="lab-empty">No results yet. Upload a report, paste text, or try the sample panel.</td></tr>`; return; }
   tb.innerHTML = keys.map(k => {
     const m = LAB_BY[k], it = LAB.items[k], gr = labGrade(k) || { st: 'opt' };
@@ -2740,6 +2751,13 @@ document.addEventListener('DOMContentLoaded', () => {
   ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('drag'); }));
   drop.addEventListener('drop', e => labHandleFiles(e.dataTransfer.files));
   drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); file.click(); } });
+  const mini = g('labMini');
+  if (mini) {
+    ['dragenter', 'dragover'].forEach(ev => mini.addEventListener(ev, e => { e.preventDefault(); mini.classList.add('drag'); }));
+    ['dragleave', 'drop'].forEach(ev => mini.addEventListener(ev, e => { e.preventDefault(); mini.classList.remove('drag'); }));
+    mini.addEventListener('drop', e => labHandleFiles(e.dataTransfer.files));
+    mini.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); file.click(); } });
+  }
   g('labReadPaste').addEventListener('click', () => {
     const items = labParseText(g('labPaste').value);
     labMerge(items);
