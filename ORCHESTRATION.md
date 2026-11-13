@@ -29,6 +29,28 @@
 > (`$147` → `$97`, `MTH.buy`), guarantee and sales-page link (`assets/quiz.js` full()). DECISIONS (Mark, Nov 3): the ad freebie is the gut quiz; the homepage keeps
 > app demo → Healing Assessment (no change); ads never point at the homepage.
 
+> **Nov 13 2026 — own "Metricool" (auto-post + comment auto-DMs). BUILT, NOT LIVE YET.**
+> Branch `social-autopost` here: `supabase/migrations/20261113040000_mth_social_autopost.sql`, `supabase/functions/mth-social/`
+> (`core.ts` = the engine, no Supabase imports so it runs under test; `index.ts` = HTTP + database), tests in
+> `supabase/tests/mth-social.test.ts` (`node --experimental-strip-types`, 17 checks against a fake Instagram/Facebook/YouTube).
+> Branch `social-autopost` in **mth-site** (afdfe04): `assets/admin-social.js` (Social → "Auto-post & DMs"), the Auto-post tick box in
+> `assets/admin-studio.js`, the extra tab in `assets/admin-hub.js`, script tags in `admin.html`.
+> TO GO LIVE (needs Mark awake; the Supabase connector asks him to approve database changes): 1) apply the migration,
+> 2) deploy `mth-social` with `verify_jwt=false` (it checks the cron secret / admin itself), 3) merge mth-site `social-autopost` into `main`.
+> Until all three are done nothing changed on the live site or database.
+> How it works: pg_cron `mth-social-tick` calls the function every 2 minutes, only while `mth_social_settings.enabled` or `.dm_enabled`.
+> Posts: only `mth_posts.auto_publish = true`, status ready/scheduled, `publish_at` within the last 24 h → Instagram + Facebook Page
+> (one Meta system-user token; the Page token is kept in Vault as `mth_social_fb_page_token`). Per-platform result in `mth_posts.publish_state`.
+> NEVER write `publish_state` from a screen or a session (a stale copy can make a post go out twice); use the function's `retry` action.
+> Claude sessions must not set `auto_publish`, flip the switches, or add keywords on their own: those are Mark's to do in the admin.
+> Comments: polled (Instagram comment webhooks need App Review), keywords in `mth_dm_keywords`, one answer per comment in `mth_dm_log`.
+> NOT included, on purpose: YouTube uploads (Google locks uploads from an unaudited API project to private) and TikTok (private until
+> TikTok audits the app) → those two still go by hand / Metricool. Media must be a public https link; the `social-media` bucket takes
+> files up to 50 MB on the free Supabase plan (longer videos need Cloudflare R2 or Supabase Pro — not decided).
+> UNTESTED AGAINST THE REAL PLATFORMS: first live post and first live DM are the real test. Two things to watch: whether Meta allows the
+> private reply at Standard Access (Instagram should; Facebook Messenger may ask for App Review), and Facebook Reels processing errors
+> that arrive after the publish call.
+
 This file is for Claude (any session) working on Mark's business. It describes the
 system on branch `own-site-mvp` and how to operate it safely.
 
