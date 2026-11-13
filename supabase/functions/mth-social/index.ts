@@ -7,6 +7,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { ApiError, makeEngine, type DmRow, type Json, type Keyword, type Post, type Settings, type Store } from "./core.ts";
+import { makeLab, type AutoRef, type Item, type LabStore } from "./lab.ts";
 
 const SB_URL = Deno.env.get("SUPABASE_URL")!, SB_ANON = Deno.env.get("SUPABASE_ANON_KEY")!, SB_SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const db = createClient(SB_URL, SB_SERVICE, { auth: { persistSession: false } });
@@ -41,7 +42,33 @@ const store: Store = {
   async keywordHit(id) { await db.rpc("mth_dm_keyword_hit", { p_id: id }); },
   async log(row) { await db.from("mth_sync_log").insert({ email: null, event: row.event, provider: row.provider, ok: row.ok, detail: row.detail.slice(0, 500) }); },
 };
-const engine = makeEngine({ store, fetch: (...a) => fetch(...a), now: () => Date.now(), env: (k) => (Deno.env.get(k) || "").trim() });
+// the testing lab's own reads and writes (results over time, comments)
+const ITEM_COLS = "id,platform,external_id,posted_at,last_snap_at,via,post_id,comments,comments_pulled,duration_sec";
+const labStore: LabStore = {
+  settings: store.settings, saveSettings: store.saveSettings, secret: store.secret,
+  async autoRefs(sinceIso) {
+    const rows = must(await db.from("mth_posts").select("id,publish_state,experiment_id,variant").eq("auto_publish", true).gte("publish_at", sinceIso).limit(500)) || [];
+    const out: Record<string, AutoRef> = {};
+    for (const r of rows as { id: number; publish_state: Record<string, { id?: string }> | null; experiment_id: number | null; variant: string | null }[])
+      for (const [pl, st] of Object.entries(r.publish_state || {})) if (st && st.id) out[`${pl}:${st.id}`] = { post_id: r.id, experiment_id: r.experiment_id, variant: r.variant };
+    return out;
+  },
+  async items(platform, sinceIso) { return (must(await db.from("mth_social_items").select(ITEM_COLS).eq("platform", platform).eq("gone", false).gte("posted_at", sinceIso).order("posted_at", { ascending: false }).limit(300)) || []) as Item[]; },
+  async addItems(rows) { must(await db.from("mth_social_items").upsert(rows, { onConflict: "platform,external_id", ignoreDuplicates: true })); },
+  async linkItem(id, ref) { must(await db.from("mth_social_items").update({ via: "auto", post_id: ref.post_id, experiment_id: ref.experiment_id, variant: ref.variant }).eq("id", id)); },
+  async snapshot(item, nums, raw, ageHours, nowIso) {
+    must(await db.from("mth_social_snapshots").insert({ item_id: item.id, captured_at: nowIso, age_hours: Math.round(ageHours * 100) / 100, ...nums, raw }));
+    const latest: Json = { last_snap_at: nowIso };
+    for (const [k, v] of Object.entries(nums)) if (v !== null && v !== undefined) latest[k] = v;   // a number the platform didn't send this time keeps its last value
+    must(await db.from("mth_social_items").update(latest).eq("id", item.id));
+  },
+  async saveComments(rows) { must(await db.from("mth_social_comments").upsert(rows, { onConflict: "platform,comment_id", ignoreDuplicates: true })); },
+  async markPulled(id, count) { must(await db.from("mth_social_items").update({ comments_pulled: count }).eq("id", id)); },
+};
+// deno-lint-ignore prefer-const
+let lab: ReturnType<typeof makeLab>;
+const engine = makeEngine({ store, fetch: (...a) => fetch(...a), now: () => Date.now(), env: (k) => (Deno.env.get(k) || "").trim(), after: (until) => lab.run(until) });
+lab = makeLab({ store: labStore, engine, now: () => Date.now() });
 
 async function isAdmin(req: Request) {
   const auth = req.headers.get("Authorization") || "";
@@ -110,6 +137,13 @@ Deno.serve(async (req) => {
           if (!mine) return json({ error: "It’s already running. Try again in a minute." }, 409);
           return json({ ok: true, result: await engine.tick() });
         }
+        case "lab_run": {   // "Refresh the numbers now" on the Tests & results screen
+          const { data: mine } = await db.rpc("mth_social_claim_tick", { p_seconds: 170 });
+          if (!mine) return json({ error: "It’s already running. Try again in a minute." }, 409);
+          try { return json({ ok: true, result: await lab.run(Date.now() + 100e3, true) }); }
+          finally { await store.saveSettings({ tick_lock_until: null }); }
+        }
+        case "set_metrics": { await store.saveSettings({ metrics_enabled: !!b.on }); return json(await status()); }
         case "retry": {
           const r = await db.from("mth_posts").select("id,publish_state").eq("id", Number(b.post_id)).single();
           if (r.error || !r.data) return json({ error: "Post not found." }, 404);

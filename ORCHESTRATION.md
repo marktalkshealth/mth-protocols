@@ -37,6 +37,17 @@
 > Site (mth-site afdfe04, published by hand, NOT in `www/` here): `assets/admin-social.js` (Social → "Auto-post & DMs"), the Auto-post
 > tick box in `assets/admin-studio.js`, the extra tab in `assets/admin-hub.js`, script tags in `admin.html`.
 > Still to do by Mark: connect Meta (system-user token) and optionally YouTube on that screen, then flip the switches.
+> **Nov 13 2026 (later) — the testing lab. LIVE.** Migration `20261113050000_mth_social_lab.sql` applied; `mth-social` v2 deployed
+> (verified byte-identical to `supabase/functions/mth-social/` here: `index.ts`, `core.ts`, `lab.ts`). Site: mth-site `assets/admin-lab.js`
+> (Social → "Tests & results"), published by hand, NOT in `www/`.
+> `lab.ts` runs inside the same 2-minute tick, at most every 15 minutes, read-only: lists every post on Instagram / the Facebook Page /
+> YouTube (hand-posted too) into `mth_social_items`, records numbers by age in `mth_social_snapshots` (every 30 min for 6 h, hourly to
+> 48 h, 6-hourly to 14 d, daily to 60 d), stores comments in `mth_social_comments` (`tone` is empty: AI tone-grading costs money and
+> needs Mark's go-ahead). `mth_lab_items(p_hours, p_days)` returns each post's numbers at a fixed age; the screen does the statistics
+> (Mann-Whitney, checked against scipy). Experiments: `mth_experiments`; a post is in a test via `experiment_id` + `variant` on
+> `mth_social_items` (and on `mth_posts` before it goes out). Retired platform metrics are remembered in `poll_state.lab_bad` and skipped.
+> Not built: thumbnail A/B (YouTube Studio's own Test & Compare does this; the API can't read thumbnail click-through), paid-ad tests
+> (ad spend is already on the Paid ads screen via `mth-meta`), AI comment tone.
 > How it works: pg_cron `mth-social-tick` calls the function every 2 minutes, only while `mth_social_settings.enabled` or `.dm_enabled`.
 > Posts: only `mth_posts.auto_publish = true`, status ready/scheduled, `publish_at` within the last 24 h → Instagram + Facebook Page
 > (one Meta system-user token; the Page token is kept in Vault as `mth_social_fb_page_token`). Per-platform result in `mth_posts.publish_state`.

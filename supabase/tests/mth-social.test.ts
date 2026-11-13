@@ -208,4 +208,93 @@ await t("a keyword only answers comments made after it was created", async () =>
   w.igComments.IGM1 = [{ id: "c1", text: "gut", username: "anna", timestamp: iso(NOW - 600e3) }];
   await engine.tick(); assert.equal(w.dmsSent.length, 0);
 });
+
+
+/* ---------------- the results collector ---------------- */
+import { makeLab, snapEveryMs, isoDuration, type LabStore, type Item } from "../functions/mth-social/lab.ts";
+function labWorld() {
+  const L: any = { settings: { metrics_enabled: true, fb_page_id: "PAGE", ig_id: "IG", yt_channel_id: "UCme", poll_state: {} }, items: [] as any[], snaps: [] as any[], comments: [] as any[], refs: {} as any, calls: [] as string[], igMedia: [] as any[], fbPosts: [] as any[], ytVideos: [] as any[], refuse: new Set<string>(), seq: 1 };
+  const store: LabStore = {
+    async settings() { return structuredClone(L.settings); }, async saveSettings(p) { Object.assign(L.settings, structuredClone(p)); }, async secret() { return "PAGETOKEN"; },
+    async autoRefs() { return L.refs; },
+    async items(pl) { return structuredClone(L.items.filter((i: any) => i.platform === pl)); },
+    async addItems(rows) { for (const r of rows) if (!L.items.find((i: any) => i.platform === r.platform && i.external_id === r.external_id)) L.items.push({ id: L.seq++, last_snap_at: null, comments: null, comments_pulled: null, ...r }); },
+    async linkItem(id, ref) { Object.assign(L.items.find((i: any) => i.id === id), { via: "auto", ...ref }); },
+    async snapshot(item, nums, raw, age, at) { L.snaps.push({ item_id: item.id, age, ...nums, raw }); const it = L.items.find((i: any) => i.id === item.id); it.last_snap_at = at; for (const [k, v] of Object.entries(nums)) if (v != null) it[k] = v; },
+    async saveComments(rows) { for (const r of rows) if (!L.comments.find((c: any) => c.comment_id === r.comment_id)) L.comments.push(r); },
+    async markPulled(id, n) { L.items.find((i: any) => i.id === id).comments_pulled = n; },
+  };
+  const engine = {
+    async meta(path: string, o: any) {
+      L.calls.push(path + (o.params?.metric ? "?" + o.params.metric : ""));
+      if (path === "IG/media") return { data: L.igMedia };
+      if (path === "PAGE/published_posts") return { data: L.fbPosts };
+      if (/\/insights$/.test(path)) {
+        const ms = String(o.params.metric).split(",");
+        if (ms.some((m) => L.refuse.has(m))) throw new Error("(#100) metric[0] must be one of the following values");
+        const V: any = { views: 1200, reach: 900, saved: 14, shares: 9, total_interactions: 80, ig_reels_avg_watch_time: 7350, ig_reels_video_view_total_time: 8820000, post_media_view: 640, post_total_media_view_unique: 500, post_video_views: 610, post_video_avg_time_watched: 5200, post_video_view_time: 3300000 };
+        return { data: ms.map((m) => ({ name: m, values: [{ value: V[m] }] })) };
+      }
+      if (/\/comments$/.test(path)) return { data: path.startsWith("IGM") ? [{ id: "ic1", text: "GUT", username: "anna", timestamp: iso(NOW - 60e3), like_count: 2 }] : [{ id: "fc1", message: "Wow", from: { name: "Dee" }, created_time: iso(NOW - 60e3), like_count: 0 }] };
+      throw new Error("unhandled " + path);
+    },
+    async ytAccess() { return "ya29"; },
+    async yt(path: string, _a: string, o: any = {}) {
+      L.calls.push("yt:" + path);
+      if (path === "channels") return { items: [{ contentDetails: { relatedPlaylists: { uploads: "UU1" } } }] };
+      if (path === "playlistItems") return { items: L.ytVideos.map((v: any) => ({ contentDetails: { videoId: v.id } })) };
+      if (path === "videos") return { items: L.ytVideos };
+      if (path === "reports") return { columnHeaders: [{ name: "video" }, { name: "views" }, { name: "estimatedMinutesWatched" }, { name: "averageViewDuration" }], rows: L.ytVideos.map((v: any) => [v.id, 100, 50, 212]) };
+      if (path === "commentThreads") return { items: [{ id: "yc1", snippet: { topLevelComment: { id: "yc1", snippet: { textOriginal: "great", authorDisplayName: "Eli", likeCount: 1, publishedAt: iso(NOW - 60e3) } } } }] };
+      throw new Error("unhandled yt " + path + JSON.stringify(o.params || {}));
+    },
+  };
+  return { L, lab: makeLab({ store, engine, now: () => NOW }) };
+}
+await t("recording schedule and YouTube durations", () => {
+  assert.equal(snapEveryMs(3600e3), 30 * 60e3); assert.equal(snapEveryMs(20 * 3600e3), 3600e3); assert.equal(snapEveryMs(5 * 864e5), 6 * 3600e3); assert.equal(snapEveryMs(30 * 864e5), 864e5); assert.equal(snapEveryMs(90 * 864e5), null);
+  assert.equal(isoDuration("PT58S"), 58); assert.equal(isoDuration("PT18M4S"), 1084); assert.equal(isoDuration("PT1H2M3S"), 3723); assert.equal(isoDuration("nope"), null);
+});
+await t("collector: finds hand-posted and auto-posted content, records numbers, stores comments", async () => {
+  const { L, lab } = labWorld();
+  L.igMedia = [{ id: "IGM1", timestamp: iso(NOW - 2 * 3600e3), media_type: "VIDEO", media_product_type: "REELS", permalink: "https://ig/r/1", caption: "Red 40 is in your cereal", like_count: 40, comments_count: 3, thumbnail_url: "https://t/1.jpg" },
+               { id: "IGM2", timestamp: iso(NOW - 30 * 3600e3), media_type: "IMAGE", media_product_type: "FEED", permalink: "https://ig/p/2", caption: "Photo", like_count: 5, comments_count: 0, media_url: "https://t/2.jpg" }];
+  L.fbPosts = [{ id: "PAGE_55", created_time: iso(NOW - 3 * 3600e3), message: "Reel on FB", permalink_url: "https://www.facebook.com/reel/V1", attachments: { data: [{ media_type: "video", target: { id: "V1" } }] }, shares: { count: 4 }, reactions: { summary: { total_count: 22 } }, comments: { summary: { total_count: 1 } } }];
+  L.ytVideos = [{ id: "yt1", snippet: { title: "Banned Everywhere But America", publishedAt: iso(NOW - 5 * 864e5), thumbnails: { medium: { url: "https://i.ytimg.com/1.jpg" } } }, statistics: { viewCount: "5321", likeCount: "210", commentCount: "33" }, contentDetails: { duration: "PT18M4S" }, status: { privacyStatus: "public" } },
+                { id: "yt2", snippet: { title: "private draft", publishedAt: iso(NOW - 864e5) }, statistics: {}, contentDetails: { duration: "PT40S" }, status: { privacyStatus: "private" } }];
+  L.refs = { "instagram:IGM1": { post_id: 7, experiment_id: 3, variant: "B" }, "facebook:V1": { post_id: 7, experiment_id: 3, variant: "B" } };
+  const r: any = await lab.run(NOW + 100e3);
+  assert.equal(L.items.length, 4, "private YouTube video is left out");
+  const ig1 = L.items.find((i: any) => i.external_id === "IGM1"), fb = L.items.find((i: any) => i.platform === "facebook"), y = L.items.find((i: any) => i.platform === "youtube");
+  assert.deepEqual([ig1.via, ig1.post_id, ig1.variant, ig1.kind], ["auto", 7, "B", "reel"]);
+  assert.deepEqual([fb.via, fb.post_id, fb.kind], ["auto", 7, "reel"], "Facebook reel matched by its video id");
+  assert.equal(L.items.find((i: any) => i.external_id === "IGM2").via, "hand");
+  assert.deepEqual([ig1.views, ig1.reach, ig1.likes, ig1.comments, ig1.shares, ig1.saves, ig1.avg_watch_sec, ig1.watch_sec], [1200, 900, 40, 3, 9, 14, 7.35, 8820]);
+  assert.deepEqual([fb.views, fb.reach, fb.likes, fb.comments, fb.shares, fb.avg_watch_sec, fb.watch_sec], [640, 500, 22, 1, 4, 5.2, 3300]);
+  assert.deepEqual([y.views, y.likes, y.comments, y.duration_sec, y.kind, y.avg_watch_sec, y.watch_sec], [5321, 210, 33, 1084, "video", 212, 3000]);
+  assert.equal(L.snaps.length, 4); assert.equal(Math.round(L.snaps.find((s: any) => s.item_id === ig1.id).age), 2);
+  assert.deepEqual(L.comments.map((c: any) => c.comment_id).sort(), ["fc1", "ic1", "yc1"]);
+  assert.equal(r.instagram.recorded, 2);
+  // 5 minutes later: nothing is due, and it doesn't even ask
+  const before = L.calls.length; NOW += 5 * 60e3; assert.deepEqual(await lab.run(NOW + 100e3), { skipped: "not_due" }); assert.equal(L.calls.length, before);
+  // 31 minutes after the first run: the 2-hour-old reel is recorded again, the 30-hour-old photo is not (hourly)
+  NOW += 26 * 60e3; await lab.run(NOW + 100e3);
+  assert.equal(L.snaps.filter((s: any) => s.item_id === ig1.id).length, 2);
+  assert.equal(L.snaps.filter((s: any) => s.item_id === L.items.find((i: any) => i.external_id === "IGM2").id).length, 1);
+  assert.equal(L.comments.length, 3, "comments are not fetched again while the count is unchanged");
+});
+await t("collector: a number the platform retired is skipped from then on, the rest still arrive", async () => {
+  const { L, lab } = labWorld(); L.settings.yt_channel_id = null; L.refuse.add("ig_reels_video_view_total_time");
+  L.igMedia = [{ id: "IGM1", timestamp: iso(NOW - 3600e3), media_type: "VIDEO", media_product_type: "REELS", like_count: 1, comments_count: 0 }];
+  await lab.run(NOW + 100e3);
+  const it = L.items[0]; assert.equal(it.views, 1200); assert.equal(it.avg_watch_sec, 7.35); assert.equal(it.watch_sec ?? null, null);
+  assert.deepEqual(L.settings.poll_state.lab_bad["ig:REELS"], ["ig_reels_video_view_total_time"]);
+  const before = L.calls.length; NOW += 31 * 60e3; await lab.run(NOW + 100e3);
+  const asked = L.calls.slice(before).filter((c: string) => c.includes("insights"));
+  assert.equal(asked.length, 1, "one combined request, no retired number in it"); assert.equal(asked[0].includes("ig_reels_video_view_total_time"), false);
+});
+await t("collector: switched off = it does nothing", async () => {
+  const { L, lab } = labWorld(); L.settings.metrics_enabled = false;
+  assert.deepEqual(await lab.run(NOW + 100e3), { off: true }); assert.equal(L.calls.length, 0);
+});
 console.log(`\n${n} checks passed`);

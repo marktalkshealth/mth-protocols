@@ -49,7 +49,7 @@ export type Store = {
   keywordHit(id: number): Promise<void>;
   log(row: { event: string; provider: string; ok: boolean; detail: string }): Promise<void>;
 };
-export type Deps = { store: Store; fetch: typeof fetch; now: () => number; env: (k: string) => string };
+export type Deps = { store: Store; fetch: typeof fetch; now: () => number; env: (k: string) => string; after?: (budgetUntil: number) => Promise<Json> };
 
 export class ApiError extends Error {
   code?: number; sub?: number; status?: number;
@@ -135,7 +135,7 @@ export function makeEngine(d: Deps) {
       const dbg: any = await meta("debug_token", { token, params: { input_token: token } });
       const x = dbg.data || {};
       if (x.expires_at && Number(x.expires_at) > 0) note = `This token runs out on ${new Date(Number(x.expires_at) * 1000).toISOString().slice(0, 10)}. Use a system-user token (it never runs out).`;
-      const need = ["pages_manage_posts", "pages_read_engagement", "pages_manage_engagement", "pages_messaging", "instagram_basic", "instagram_content_publish", "instagram_manage_comments", "instagram_manage_messages"];
+      const need = ["pages_manage_posts", "pages_read_engagement", "pages_manage_engagement", "pages_messaging", "instagram_basic", "instagram_content_publish", "instagram_manage_comments", "instagram_manage_messages", "instagram_manage_insights", "read_insights"];
       const have: string[] = x.scopes || [];
       const missing = have.length ? need.filter((s) => !have.includes(s)) : [];
       if (missing.length) note = `${note ? note + " " : ""}Missing permissions: ${missing.join(", ")}.`;
@@ -401,8 +401,8 @@ export function makeEngine(d: Deps) {
     if (!r.ok || !j.access_token) throw new ApiError("YouTube sign-in has expired: " + short(j.error_description || j.error || r.status, 160) + ". Connect YouTube again.");
     return String(j.access_token);
   }
-  async function yt(path: string, access: string, o: { method?: string; params?: Record<string, string>; json?: unknown } = {}) {
-    const u = new URL(`${YT}/${path}`);
+  async function yt(path: string, access: string, o: { method?: string; params?: Record<string, string>; json?: unknown; base?: string } = {}) {
+    const u = new URL(`${o.base || YT}/${path}`);
     for (const [k, v] of Object.entries(o.params || {})) u.searchParams.set(k, v);
     const r = await d.fetch(u.toString(), { method: o.method || "GET", headers: { Authorization: `Bearer ${access}`, ...(o.json ? { "Content-Type": "application/json" } : {}) }, body: o.json ? JSON.stringify(o.json) : undefined });
     const j: any = await r.json().catch(() => ({}));
@@ -447,6 +447,7 @@ export function makeEngine(d: Deps) {
     const out: Json = { at: nowIso() };
     try { out.posting = await publishDue(until); } catch (e) { out.posting = { error: short((e as Error).message, 250) }; }
     try { out.dms = await answerComments(until); } catch (e) { out.dms = { error: short((e as Error).message, 250) }; }
+    if (d.after) { try { out.lab = await d.after(until); } catch (e) { out.lab = { error: short((e as Error).message, 250) }; } }   // the results collector (lab.ts)
     await store.saveSettings({ last_tick_at: nowIso(), last_tick: out, tick_lock_until: null });
     return out;
   }
@@ -459,7 +460,7 @@ export function makeEngine(d: Deps) {
     const s = await store.settings();
     await store.saveSettings({ poll_state: { ...(s.poll_state || {}), yt_state: state, yt_state_at: d.now() } });
     const u = new URL("https://accounts.google.com/o/oauth2/v2/auth");
-    u.search = new URLSearchParams({ client_id: id, redirect_uri: redirect, response_type: "code", access_type: "offline", prompt: "consent", include_granted_scopes: "true", scope: "https://www.googleapis.com/auth/youtube.force-ssl", state }).toString();
+    u.search = new URLSearchParams({ client_id: id, redirect_uri: redirect, response_type: "code", access_type: "offline", prompt: "consent", include_granted_scopes: "true", scope: "https://www.googleapis.com/auth/youtube.force-ssl https://www.googleapis.com/auth/yt-analytics.readonly", state }).toString();
     return { url: u.toString() };
   }
   async function ytCallback(code: string, state: string, redirect: string) {
@@ -484,5 +485,5 @@ export function makeEngine(d: Deps) {
     return { ok: true };
   }
 
-  return { connectMeta, pickPage, disconnectMeta, testMeta, publishDue, answerComments, tick, retry, ytAuthUrl, ytCallback, ytDisconnect, meta };
+  return { connectMeta, pickPage, disconnectMeta, testMeta, publishDue, answerComments, tick, retry, ytAuthUrl, ytCallback, ytDisconnect, meta, yt, ytAccess };
 }
