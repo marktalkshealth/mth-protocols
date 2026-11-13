@@ -29,15 +29,14 @@
 > (`$147` → `$97`, `MTH.buy`), guarantee and sales-page link (`assets/quiz.js` full()). DECISIONS (Mark, Nov 3): the ad freebie is the gut quiz; the homepage keeps
 > app demo → Healing Assessment (no change); ads never point at the homepage.
 
-> **Nov 13 2026 — own "Metricool" (auto-post + comment auto-DMs). BUILT, NOT LIVE YET.**
-> Branch `social-autopost` here: `supabase/migrations/20261113040000_mth_social_autopost.sql`, `supabase/functions/mth-social/`
-> (`core.ts` = the engine, no Supabase imports so it runs under test; `index.ts` = HTTP + database), tests in
-> `supabase/tests/mth-social.test.ts` (`node --experimental-strip-types`, 17 checks against a fake Instagram/Facebook/YouTube).
-> Branch `social-autopost` in **mth-site** (afdfe04): `assets/admin-social.js` (Social → "Auto-post & DMs"), the Auto-post tick box in
-> `assets/admin-studio.js`, the extra tab in `assets/admin-hub.js`, script tags in `admin.html`.
-> TO GO LIVE (needs Mark awake; the Supabase connector asks him to approve database changes): 1) apply the migration,
-> 2) deploy `mth-social` with `verify_jwt=false` (it checks the cron secret / admin itself), 3) merge mth-site `social-autopost` into `main`.
-> Until all three are done nothing changed on the live site or database.
+> **Nov 13 2026 — own "Metricool" (auto-post + comment auto-DMs). LIVE since Nov 12 2026 23:23 Central, both switches OFF.**
+> Database: migration `supabase/migrations/20261113040000_mth_social_autopost.sql` applied. Edge function `mth-social` v1 deployed
+> (`verify_jwt=false`; it checks the cron secret / admin itself). Source: `supabase/functions/mth-social/` (`core.ts` = the engine, no
+> Supabase imports so it runs under test; `index.ts` = HTTP + database). Tests: `supabase/tests/mth-social.test.ts`
+> (`node --experimental-strip-types`, 17 checks against a fake Instagram/Facebook/YouTube).
+> Site (mth-site afdfe04, published by hand, NOT in `www/` here): `assets/admin-social.js` (Social → "Auto-post & DMs"), the Auto-post
+> tick box in `assets/admin-studio.js`, the extra tab in `assets/admin-hub.js`, script tags in `admin.html`.
+> Still to do by Mark: connect Meta (system-user token) and optionally YouTube on that screen, then flip the switches.
 > How it works: pg_cron `mth-social-tick` calls the function every 2 minutes, only while `mth_social_settings.enabled` or `.dm_enabled`.
 > Posts: only `mth_posts.auto_publish = true`, status ready/scheduled, `publish_at` within the last 24 h → Instagram + Facebook Page
 > (one Meta system-user token; the Page token is kept in Vault as `mth_social_fb_page_token`). Per-platform result in `mth_posts.publish_state`.
