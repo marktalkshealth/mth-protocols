@@ -1,5 +1,10 @@
 # Mark Talks Health — how Claude runs the growth system
 
+> **Nov 14 2026 (evening) — SEO pass, published by hand to mth-site (cc1b35f), NOT in `www/` here:** canonical + og:url + absolute og:image +
+> twitter card on 12 public pages; JSON-LD Organization/WebSite (home) and Course + Offer $97 USD (gut/diabetes/glp1); `llms.txt` for AI agents;
+> quiz pages added to the sitemap; `assets/blog-render.mjs` fetchPosts has a 6 s timeout and `withBackup()` keeps a 30-day last-good copy of
+> each blog page and the sitemap in the Cloudflare edge cache, so a slow database no longer hangs /blog/ or /sitemap.xml.
+
 > **Nov 14 2026 — BACKGROUND JOBS PAUSED (Supabase free-plan Disk IO budget ran out; the database was too slow to query).**
 > At Mark's request the cron "tick" of `mth-social` (v3), `mth-meta` (v8) and `mth-mail` (v12) now returns `{paused:true}` at once
 > (a `CRON_PAUSED = true` constant at the top of each function). Admin screens, test sends, unsubscribes and Resend webhooks still work.
