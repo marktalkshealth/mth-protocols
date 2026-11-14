@@ -53,7 +53,8 @@ async function run() {
   const { data: done } = await db.from("mth_meta_sent").select("event_id").gte("created_at", new Date(Date.now() - 8 * 864e5).toISOString());
   const seen = new Set((done || []).map((d) => d.event_id));
   const { data: admins } = await db.from("mth_admins").select("email");
-  const skip = new Set([...(admins || []).map((a) => String(a.email).toLowerCase()), "markwalker9523@gmail.com", "marktalkshealth@gmail.com"]);   // Mark's own logins: tests never count
+  // Mark's own logins (the admins table, plus any extra addresses in the MTH_SKIP_EMAILS secret, comma separated): tests never count
+  const skip = new Set([...(admins || []).map((a) => String(a.email).toLowerCase()), ...env("MTH_SKIP_EMAILS").toLowerCase().split(",").map((x) => x.trim()).filter(Boolean)]);
   const { data: evs } = await db.from("mth_events").select("id,anon_id,email,event,utm,value_cents,created_at")
     .in("event", Object.keys(MAP)).gte("created_at", since).order("id").limit(400);
   const todo = ((evs || []) as Ev[]).filter((e) => !seen.has(e.id) && e.email);
@@ -146,12 +147,16 @@ async function isAdmin(req: Request) {
   return a.ok && (await a.json()) === true;
 }
 
+const CRON_PAUSED = true;
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return json({ error: "method" }, 405);
   try {
     const b = await req.json().catch(() => ({}));
     const action = String(b.action || "");
+    // PAUSED Nov 14 2026 (Supabase Disk IO budget ran out): the background tick does nothing.
+    // To resume: set CRON_PAUSED = false below and redeploy.
+    if (action === "tick" && CRON_PAUSED) return json({ ok: true, paused: true });
     if (action === "tick") {
       const { data: ok } = await db.rpc("mth_mail_cron_ok", { p_secret: String(req.headers.get("x-mth-cron") || "") });
       if (!ok) return json({ error: "bad_secret" }, 401);

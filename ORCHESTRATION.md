@@ -1,5 +1,14 @@
 # Mark Talks Health — how Claude runs the growth system
 
+> **Nov 14 2026 — BACKGROUND JOBS PAUSED (Supabase free-plan Disk IO budget ran out; the database was too slow to query).**
+> At Mark's request the cron "tick" of `mth-social` (v3), `mth-meta` (v8) and `mth-mail` (v12) now returns `{paused:true}` at once
+> (a `CRON_PAUSED = true` constant at the top of each function). Admin screens, test sends, unsubscribes and Resend webhooks still work.
+> The pg_cron jobs themselves still fire (could not reach SQL to unschedule them); each call is now a no-op.
+> To resume: set `CRON_PAUSED = false` and redeploy each (mth-mail's live source: fetch with get_edge_function — it is not in this repo).
+> `mth-meta` no longer hard-codes Mark's two login addresses: extra test addresses go in the `MTH_SKIP_EMAILS` secret (comma separated);
+> the `mth_admins` table is still used. Next planned work: 4 comment keywords (GUT, SUGAR, GLP1, HEAL) → matching quiz → per-quiz
+> email series → matching course. Needs a "starts when they take quiz X" email trigger (mth-assess / mth_join only know list_join today).
+
 > **Synced (Oct 24 2026):** `www/` (plus gut/sugar/glp1/hub, shared/, site/) now matches the live
 > `marktalkshealth/mth-site` repo. A dry run of `tools/publish_site.sh` reproduces the live site exactly,
 > except the Library (library.html, assets/library.*, assets/admin-library.js and 3 lines in admin.html),

@@ -84,6 +84,7 @@ async function status() {
   return { ok: true, settings: safe, meta_connected: meta && !!s.fb_page_id, yt_client: ytClient, yt_connected: ytRefresh && !!s.yt_channel_id, redirect_uri: SELF };
 }
 
+const CRON_PAUSED = true;
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
 
@@ -102,6 +103,9 @@ Deno.serve(async (req) => {
     const b = await req.json().catch(() => ({}));
     const action = String(b.action || "");
 
+    // PAUSED Nov 14 2026 (Supabase Disk IO budget ran out): the 2-minute background tick does nothing.
+    // To resume: set CRON_PAUSED = false below and redeploy.
+    if (action === "tick" && CRON_PAUSED) return json({ ok: true, paused: true });
     if (action === "tick") {
       const { data: ok } = await db.rpc("mth_mail_cron_ok", { p_secret: String(req.headers.get("x-mth-cron") || "") });
       if (!ok) return json({ error: "bad_secret" }, 401);
